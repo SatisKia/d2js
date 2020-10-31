@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>Java言語からJavaScriptへの変換基礎</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>iアプリから「HTML5 Canvas + JavaScript」アプリへ移植する場合、Java言語からJavaScriptへ変換して記述する必要があります。</P>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>変数の宣言</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>JavaScriptでは、変数は全て var として定義します。例えば次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Java</td>
+<td bgcolor="#cccccc">JavaScript</td>
+</tr>
+<tr>
+<td valign="top">int a;<br/>
+boolean b;<br/>
+MyObject c;</td>
+<td valign="top">var a;<br/>
+var b;<br/>
+var c;</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>配列の宣言</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>JavaScriptでは、配列の定義も変数と同様に var として定義します。例えば次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Java</td>
+<td bgcolor="#cccccc">JavaScript</td>
+</tr>
+<tr>
+<td valign="top">int[] a;<br/>
+a = new int[10];</td>
+<td valign="top">var a;<br/>
+a = new Array( 10 );</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Java</td>
+<td bgcolor="#cccccc">JavaScript</td>
+</tr>
+<tr>
+<td valign="top">int[][] a;<br/>
+a = new int[2][10];</td>
+<td valign="top">var a;<br/>
+a = new Array( 2 );<br/>
+a[0] = new Array( 10 );<br/>
+a[1] = new Array( 10 );</td>
+</tr>
+</table>
+</p>
+
+<p>また、JavaScriptでは、配列の初期化の記述には"["と"]"を使用します。例えば次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Java</td>
+<td bgcolor="#cccccc">JavaScript</td>
+</tr>
+<tr>
+<td valign="top">int[] a = { 12, 34, 56 };<br/>
+int[][] b = {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ 1, 2, 3 },<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ 4, 5, 6 }<br/>
+};</td>
+<td valign="top">var a = [ 12, 34, 56 ];<br/>
+var b = [<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[ 1, 2, 3 ],<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[ 4, 5, 6 ]<br/>
+];</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>関数の宣言</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>JavaScriptでは、関数の宣言には function を使用します。例えば次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Java</td>
+<td bgcolor="#cccccc">JavaScript</td>
+</tr>
+<tr>
+<td valign="top">void abc( int a, boolean b ){ … }<br/>
+int def(){ … }</td>
+<td valign="top">function abc( a, b ){ … }<br/>
+function def(){ … }</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>数値を表す型について</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>JavaScriptでは、数値は実数になります。Javaでの int 型は実数に置き換えられることになりますが、ここでの注意点は、整数での除算や剰余の箇所を全て変更する必要があることです。</p>
+
+<p>もっとも容易な対応は、「_Math.js」の _DIV()／_MOD() 関数を使用することです。この関数を使用し、次のように書き換えます。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Java</td>
+<td bgcolor="#cccccc">JavaScript</td>
+</tr>
+<tr>
+<td valign="top">b = a / 100;<br/>
+c = rand.nextInt() % 10;</td>
+<td valign="top">b = _DIV( a, 100 );<br/>
+c = _MOD( rand.nextInt(), 10 );</td>
+</tr>
+</table>
+</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

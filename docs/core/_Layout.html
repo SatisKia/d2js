@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_Layout.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>_USE_LAYOUTMOUSE／_USE_LAYOUTTOUCH を有効にせずにレイアウトイベントを発生させるクラス _Layout が定義されています。</p>
+
+<p><div>init() 関数内で以下のいずれかの設定を有効にする必要があります。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"><b>_USE_MOUSE</b></td><td>マウスイベントを使用します。</td></tr>
+<tr><td valign="top"><b>_USE_TOUCH</b></td><td>タッチイベントを使用します。</td></tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>コンストラクタ</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>_Layout</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>_Layout</b>(src)<br/>
+<p>_Layout コンストラクタです。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">src</td><td>内部で構築される要素に割り当てるイメージリソースURL</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+あらかじめ1px×1pxの透明なイメージファイルを用意し、それを指定する等してください。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>メソッド</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>clear</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>clear</b>()</p>
+<p>すべてのレイアウト情報を削除します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+「_Main.js」の clearLayout() に相当する機能です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>add</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>add</b>(x,y,width,height,id)</p>
+<p>レイアウト情報を追加します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>矩形の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>矩形の高さを指定します。</td></tr>
+<tr><td valign="top">id</td><td>割り当てるレイアウトIDを指定します。0 以上の値を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+「_Main.js」の addLayout() に相当する機能です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>addArea</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>addArea</b>(x,y,width,height,id,areaName,shape,coords)</p>
+<p>レイアウト情報を追加します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>矩形の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>矩形の高さを指定します。</td></tr>
+<tr><td valign="top">id</td><td>割り当てるレイアウトIDを指定します。0 以上の値を指定します。</td></tr>
+<tr><td valign="top">areaName</td><td>割り当てる一意のエリア名を指定します。</td></tr>
+<tr><td valign="top">shape</td><td>領域の形</td></tr>
+<tr><td valign="top">coords</td><td>領域の座標</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><div><b>補足説明：</b><br/>
+shape と coords には、以下の指定が有効です。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td bgcolor="#cccccc">shape</td><td bgcolor="#cccccc">coords</td></tr>
+<tr><td valign="top">"circle"</td><td>"<i>中心X座標</i>,<i>中心Y座標</i>,<i>半径</i>"</td></tr>
+<tr><td valign="top">"poly"</td><td>"<i>X座標1</i>,<i>Y座標1</i>,<i>X座標2</i>,<i>Y座標2</i>…"</td></tr>
+<tr><td valign="top">"rect"</td><td>"<i>左上X座標</i>,<i>左上Y座標</i>,<i>右下X座標</i>,<i>右下Y座標</i>"</td></tr>
+</table>
+「_Main.js」の addLayoutArea() に相当する機能です。</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>get</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>get</b>(id)</p>
+<p>レイアウト情報を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">id</td><td>取得するレイアウト情報のレイアウトIDを指定します。</td></tr>
+</table>
+</div></p>
+<p><div><b>戻り値：</b><br/>
+レイアウト情報を保持するオブジェクトを返します。指定したレイアウトIDに対応するオブジェクトが無かった場合、null を返します。<br/>
+オブジェクトのプロパティは以下のものです。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>矩形の左上のX座標</td></tr>
+<tr><td valign="top">y</td><td>矩形の左上のY座標</td></tr>
+<tr><td valign="top">width</td><td>矩形の幅</td></tr>
+<tr><td valign="top">height</td><td>矩形の高さ</td></tr>
+<tr><td valign="top">id</td><td>レイアウトID</td></tr>
+</table>
+</div></p>
+<p><b>補足説明：</b><br/>
+「_Main.js」の getLayout() に相当する機能です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>check</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>check</b>()</p>
+<p>マウスポインタまたはタッチ座標がヒットしているレイアウトを確認します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+レイアウトとヒットしている場合、ヒットしているレイアウトIDを返します。どのレイアウトにもヒットしていない場合、-1 を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>handleEvent</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>handleEvent</b>(type,param)</p>
+<p>各種イベントの通知をハンドリングします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">type</td><td>processEvent() 関数に渡される、イベントのタイプ</td></tr>
+<tr><td valign="top">param</td><td>processEvent() 関数に渡される、イベントのパラメータ</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+本関数を、processEvent() 関数内で呼び出してください。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

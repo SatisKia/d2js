@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_Storage.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>HTML5 ストレージの読み書きの機能を提供します。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>canUseStorage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>canUseStorage</b>()</p>
+<p>HTML5 ストレージをサポートしているかどうかチェックします。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+HTML5 ストレージをサポートしている場合 true、サポートしていない場合 false</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getStorage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getStorage</b>(key,defValue)</p>
+<p>キー名と値の組み合わせで保存している場合、キーに対応する値を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">key</td><td>キー文字列を指定します。</td></tr>
+<tr><td valign="top">defValue</td><td>そのキーの値が存在しないときの初期値を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+キーに対応する値を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setStorage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setStorage</b>(key,value)</p>
+<p>キー名と値の組み合わせでデータを保存します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">key</td><td>キー文字列を指定します。</td></tr>
+<tr><td valign="top">value</td><td>キーに対応する値を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>clearStorage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>clearStorage</b>()</p>
+<p></p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>beginStorageRead</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>beginStorageRead</b>(key)</p>
+<p>データの読み出しを開始します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">key</td><td>endStorageWrite() により保存されたデータのキー文字列を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>storageRead</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>storageRead</b>()</p>
+<p>データを1個読み出します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+読み出したデータを返します。</p>
+<p><b>補足説明：</b><br/>
+本処理呼び出しは beginStorageRead() から endStorageRead() の中で有効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>endStorageRead</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>endStorageRead</b>()</p>
+<p>データ読み出しを終了します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>beginStorageWrite</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>beginStorageWrite</b>()</p>
+<p>データの書き出しを開始します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>storageWrite</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>storageWrite</b>(str)</p>
+<p>データを1個書き出します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">str</td><td>書き出すデータを指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+本処理呼び出しは beginStorageWrite() から endStorageWrite() の中で有効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>endStorageWrite</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>endStorageWrite</b>(key)</p>
+<p>データ書き出しを終了します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">key</td><td>キー文字列を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>アプリ設定データの読み書き</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>アプリ設定データの読み書きには、Cookie または HTML5 ストレージを使用します。</p>
+
+<p>Cookie を使用するには「_Cookie.js」を、HTML5 ストレージを使用するには「_Storage.js」をインクルードします。</p>
+
+<p>配列形式で読み書きする方法と、パラメータ形式で読み書きする方法があります。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>配列形式での読み書き</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>データを書き込んだ順番で、データを読み出す方法です。配列データの読み書きに便利です。</p>
+
+<p>データを書き込むプログラムは、例えば次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Cookie</td>
+<td bgcolor="#cccccc">HTML5 ストレージ</td>
+</tr>
+<tr>
+<td>var save = new Array( 3 );<br/>
+save[0] = 123;<br/>
+save[1] = 45;<br/>
+save[2] = 67;<br/>
+<br/>
+beginCookieWrite();<br/>
+for( var i = 0; i &lt; 3; i++ )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;cookieWrite( "" + save[i] );<br/>
+}<br/>
+endCookieWrite( "save1" );</td>
+<td>var save = new Array( 3 );<br/>
+save[0] = 123;<br/>
+save[1] = 45;<br/>
+save[2] = 67;<br/>
+<br/>
+beginStorageWrite();<br/>
+for( var i = 0; i &lt; 3; i++ )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;storageWrite( "" + save[i] );<br/>
+}<br/>
+endStorageWrite( "save1" );</td>
+</tr>
+</table>
+</p>
+
+<p>このデータを読み込むプログラムは、例えば次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Cookie</td>
+<td bgcolor="#cccccc">HTML5 ストレージ</td>
+</tr>
+<tr>
+<td>var save = new Array( 3 );<br/>
+<br/>
+beginCookieRead( "save1" );<br/>
+for( var i = 0; i &lt; 3; i++ )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;save[i] = parseInt( cookieRead() );<br/>
+}<br/>
+endCookieRead();</td>
+<td>var save = new Array( 3 );<br/>
+<br/>
+beginStorageRead( "save1" );<br/>
+for( var i = 0; i &lt; 3; i++ )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;save[i] = parseInt( storageRead() );<br/>
+}<br/>
+endStorageRead();</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>パラメータ形式での読み書き</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>データをパラメータ形式で書き込み、キー文字列を指定して読み出す方法です。</p>
+
+<p>データを書き込むプログラムは、例えば次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Cookie</td>
+<td bgcolor="#cccccc">HTML5 ストレージ</td>
+</tr>
+<tr>
+<td>var score = 12345;<br/>
+var stage = 6;<br/>
+var level = 7;<br/>
+<br/>
+setCookie( "sc", "" + score );<br/>
+setCookie( "st", "" + stage );<br/>
+setCookie( "lv", "" + level );</td>
+<td>var score = 12345;<br/>
+var stage = 6;<br/>
+var level = 7;<br/>
+<br/>
+setStorage( "sc", "" + score );<br/>
+setStorage( "st", "" + stage );<br/>
+setStorage( "lv", "" + level );</td>
+</tr>
+</table>
+</p>
+
+<p>このデータを読み込むプログラムは、例えば次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td bgcolor="#cccccc">Cookie</td>
+<td bgcolor="#cccccc">HTML5 ストレージ</td>
+</tr>
+<tr>
+<td>var level = parseInt( getCookie( "lv", "0" ) );<br/>
+var score = parseInt( getCookie( "sc", "0" ) );</td>
+<td>var level = parseInt( getStorage( "lv", "0" ) );<br/>
+var score = parseInt( getStorage( "sc", "0" ) );</td>
+</tr>
+</table>
+</p>
+
+<p>これで、変数 level には値 7 が、変数 score には値 12345 が入ります。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

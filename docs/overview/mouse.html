@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>マウスイベントの処理</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>マウスイベントが発生すると、<b>processEvent()</b> 関数が呼び出されます。この関数の中で、イベントのタイプを識別してください。processEvent() 関数の記述例は次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>function processEvent( type, param )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;switch( type )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _MOUSE_DOWN_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// マウスボタンが押された<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _MOUSE_MOVE_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// マウスポインタが移動した<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _MOUSE_OUT_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// キャンバスからマウスポインタが出た<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _MOUSE_OVER_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// キャンバスにマウスポインタが入った<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _MOUSE_UP_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// マウスボタンが離された<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+}</td>
+</tr>
+</table>
+</p>
+
+<p>イベントのタイプは、<b>_MOUSE_DOWN_EVENT</b>／<b>_MOUSE_MOVE_EVENT</b>／<b>_MOUSE_OUT_EVENT</b>／<b>_MOUSE_OVER_EVENT</b>／<b>_MOUSE_UP_EVENT</b> の5種類です。</p>
+
+<p>マウスポインタの座標は、「_Main.js」の <b>getMouseX()</b>／<b>getMouseY()</b> で取得できます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>レイアウトイベントの処理</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「_Main.js」の addLayout() でレイアウトを設定している場合、レイアウトイベントが発生するようになります。processEvent() 関数の記述例は次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>function processEvent( type, param )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;switch( type )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _LAYOUT_DOWN_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// レイアウト上でマウスボタンが押された<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _LAYOUT_UP_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// レイアウト上でマウスボタンが離された<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+}</td>
+</tr>
+</table>
+</p>
+
+<p>イベントのタイプは、<b>_LAYOUT_DOWN_EVENT</b>／<b>_LAYOUT_UP_EVENT</b> の2種類で、パラメータは、レイアウトIDです。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

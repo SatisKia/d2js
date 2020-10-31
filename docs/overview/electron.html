@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>Electronの紹介</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>Electronを使用しますと、ブラウザアプリをデスクトップアプリにすることができます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>Node.jsのインストール</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>●ダウンロードサイト<br/>
+<a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>Electronのインストール</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「Node.js command prompt」を起動し、下記のコマンドを実行します。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>npm install electron -g<br/>
+npm i electron-packager -g<br/>
+npm install asar -g</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>プロジェクトの初期設定</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>プロジェクトフォルダ内に移動して、下記のコマンドを実行します。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>npm init -y</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>パッケージ化</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>Electronのバージョンを確認しておきます。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>electron -v</td>
+</tr>
+</table>
+</p>
+
+<p>プロジェクトフォルダ内に移動して、下記のコマンドでパッケージ化します。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>electron-packager . &lt;アプリ名&gt; --electron-version=&lt;Electronのバージョン&gt; --platform=win32 --arch=x64 --app-copyright=&lt;著作権表記&gt; --app-version=&lt;アプリのバージョン&gt; --icon=&lt;アイコンファイル名&gt; --overwrite</td>
+</tr>
+</table>
+</p>
+
+<p>「アプリ名」に指定した名称がフォルダ名に使用され、実行ファイル名になります。<br/>
+「Electronのバージョン」には、先ほど確認したバージョンを指定します。</p>
+
+<p>x86バイナリを作成する場合は「--arch=x64」を「--arch=ia32」に変えます。<br/>
+asarにかける場合は「--asar」を付けます。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

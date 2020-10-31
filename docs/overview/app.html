@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>アプリの流れ</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>D2JSを使った「HTML5 Canvas + JavaScript」アプリでの、プログラムの流れを説明していきます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>アプリの初期設定</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>アプリが起動する前に、まず <b>init()</b> 関数が呼び出されます。</p>
+
+<p>ここで、D2JSの環境設定を行ってください。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>アプリの起動失敗</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>HTML5 Canvas をサポートしていない場合で _USE_EXCANVAS を有効にしていないとき、<b>error()</b> 関数が呼び出されます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>アプリの起動</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>アプリが起動したら、<b>start()</b> 関数が呼び出されます。</p>
+
+<p>ここで、アプリで使用するデータを構築したり、各種初期化を行ってください。</p>
+
+<p>また、「_Main.js」の setCurrent() でカレントのキャンバスを設定してください。</p>
+
+<p>start() 関数の戻り値は Boolean 型です。true または false を返してください。<br/>
+true を返すと、タイマーによる paint() 関数呼び出しが開始されます。<br/>
+false を返すと、タイマーが停止した状態になります。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>フレーム毎の描画</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>フレーム毎に、<b>paint()</b> 関数が呼び出されます。</p>
+
+<p>ここで、フレーム毎のアプリ更新処理と描画処理を全て記述してください。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>イベント検知</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>各種イベントが発生すると、<b>processEvent()</b> 関数が呼び出されます。</p>
+
+<p>ここで、キーイベント、マウスイベント、タッチイベント、ボタンイベント、リサイズイベントが検知できます。<br/>
+詳細は『<a href="key.html">キーイベントの処理</a>』、『<a href="mouse.html">マウスイベントの処理</a>』、『<a href="touch.html">タッチイベントの処理</a>』、『<a href="button.html">ボタンイベントの処理</a>』、『<a href="resize.html">リサイズイベントの処理</a>』の項を参照ください。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

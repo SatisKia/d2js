@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>スマートフォン対応について</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>_USE_MOUSE を有効にしてマウスイベントを検知すると、予期しない動作になることがあるため、マウスイベントは使用しないほうが無難です。「D2JS」を使用してスマートフォンに対応するには、次の3つの方法があります。</p>
+
+<p>a）_USE_TOUCH を有効にすることで、タッチイベントが検知できます。</p>
+
+<p>b）_USE_LAYOUTTOUCH を有効にして「_Main.js」の addLayout() でレイアウトを設定する、または、_USE_TOUCH を有効にして「_Layout.js」を使用することで、レイアウトイベントが検知できます。</p>
+
+<p>c）_USE_TOUCH を有効にして「_Button.js」を使用することで、ボタンイベントが検知できます。</p>
+
+<hr />
+
+<p>「_Button.js」または「_Layout.js」を使用した場合、ボタン領域またはレイアウト領域をタッチするとハイライト表示されます。&lt;head&gt; から &lt;/head&gt; の中に以下の記述をすることで、ハイライト表示を抑制できます。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>&lt;style type="text/css"&gt;<br/>
+img {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-webkit-tap-highlight-color: rgba(0,0,0,0);<br/>
+}<br/>
+&lt;/style&gt;</td>
+</tr>
+</table>
+</p>
+
+<hr />
+
+<p>スマートフォン独自の meta 要素を設定します。</p>
+
+<p><div>例1：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>&lt;meta name="viewport" content="target-densitydpi=device-dpi, width=480, user-scalable=no" /&gt;</td>
+</tr>
+</table>
+</div></p>
+
+<p><div>例2：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>&lt;meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" /&gt;</td>
+</tr>
+</table>
+</div></p>
+
+<hr />
+
+<p>CSS で margin と padding をなくすことで、余白を取り除くことができます。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>&lt;style type="text/css"&gt;<br/>
+html, body {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;margin: 0;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;padding: 0;<br/>
+}<br/>
+&lt;/style&gt;</td>
+</tr>
+</table>
+</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

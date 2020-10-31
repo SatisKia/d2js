@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_Vector.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>オブジェクトを配列管理する機能を提供するクラス _Vector が定義されています。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>コンストラクタ</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>_Vector</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>_Vector</b>(len)</p>
+<p>_Vector コンストラクタです。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">len</td><td>要素数の上限を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>メソッド</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>size</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>size</b>()</p>
+<p>要素数を返します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+要素数</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>isEmpty</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>isEmpty</b>()</p>
+<p>要素を持たないかどうかを判定します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+要素がない場合は true、そうでない場合は false</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>elementAt</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>elementAt</b>(index)</p>
+<p>指定されたインデックスのオブジェクトを返します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">index</td><td>インデックス</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+指定されたインデックスのオブジェクト</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>firstElement</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>firstElement</b>()</p>
+<p>最初のオブジェクトを返します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+最初のオブジェクト</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>lastElement</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>lastElement</b>()</p>
+<p>最後のオブジェクトを返します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+最後のオブジェクト</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setElementAt</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setElementAt</b>(obj,index)</p>
+<p>指定された index の要素に、指定されたオブジェクトを設定します。そのインデックスにあった要素は破棄されます。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">obj</td><td>設定されるオブジェクト</td></tr>
+<tr><td valign="top">index</td><td>インデックス</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>removeElementAt</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>removeElementAt</b>(index)</p>
+<p>指定されたインデックスの要素を削除します。指定された index と等しいか、それより大きいインデックスを持つすべての要素は前方に移動し、そのインデックスの値は以前より1つ小さい値になります。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">index</td><td>削除される要素のインデックス</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>insertElementAt</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>insertElementAt</b>(obj,index)</p>
+<p>指定されたインデックスに、指定されたオブジェクトを要素として挿入します。指定された index に等しいか、それより大きいインデックスの要素はすべて1つ後方のインデックスにずれます。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">obj</td><td>挿入されるオブジェクト</td></tr>
+<tr><td valign="top">index</td><td>新しい要素を挿入する位置</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>addElement</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>addElement</b>(obj)</p>
+<p>指定のオブジェクトを末尾に追加し、要素数を 1 増やします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">obj</td><td>追加されるオブジェクト</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>removeAllElements</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>removeAllElements</b>()</p>
+<p>すべての要素を削除し、要素数を 0 に設定します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

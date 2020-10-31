@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_Image.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>イメージリソースを読み込む機能、オフスクリーンイメージ機能を提供します。</p>
+
+<p><div>init() 関数内で以下の設定を有効にすることで、機能を付加できます。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"><b>_USE_LOCKIMAGE</b></td><td>オフスクリーンイメージ機能を有効にします。</td></tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>loadImage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>loadImage</b>(src)</p>
+<p>Image オブジェクトを構築します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">src</td><td>イメージリソースURL</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+構築された Image オブジェクトを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>isImageBusy</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>isImageBusy</b>()</p>
+<p>Image オブジェクトがイメージリソースを読み込み中かどうかを示す値を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+イメージリソースを読み込んでいてビジーな場合は true、それ以外の場合は false を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>_Image オブジェクトのコンストラクタ</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>_Image</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>_Image</b>(width,height)</p>
+<p>_Image コンストラクタです。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">width</td><td>オフスクリーンの幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>オフスクリーンの高さを指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LOCKIMAGE が有効にされている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>_Image オブジェクトのメソッド</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>lock</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>lock</b>()</p>
+<p>オフスクリーンへの描画の開始を宣言します。オフスクリーンはクリアされます。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LOCKIMAGE が有効にされている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>unlock</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>unlock</b>()</p>
+<p>オフスクリーンへの描画の終了を宣言します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LOCKIMAGE が有効にされている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getWidth</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getWidth</b>()</p>
+<p>オフスクリーンイメージの幅を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+オフスクリーンイメージの幅を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LOCKIMAGE が有効にされている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getHeight</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getHeight</b>()</p>
+<p>オフスクリーンイメージの高さを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+オフスクリーンイメージの高さを返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LOCKIMAGE が有効にされている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getImage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getImage</b>()</p>
+<p>オフスクリーンイメージの Image オブジェクトを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+Image オブジェクトを返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LOCKIMAGE が有効にされている場合にのみ使用できます。</span></p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

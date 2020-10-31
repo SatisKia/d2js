@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>サーバーとの通信</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>サーバーと通信するには、「_HttpRequest.js」をインクルードします。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>GETリクエストを送信</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「_HttpRequest.js」の <b>httpGet()</b> を使用します。</p>
+
+<p>ドメインを超えたサーバーに対しGETを行う場合、サーバー側のレスポンスヘッダの指定が必要になります。</p>
+
+<p><div>PHPの例：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>header( "Access-Control-Allow-Origin: *" );</td>
+</tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>POSTリクエストを送信</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「_HttpRequest.js」の <b>httpPost()</b> を使用します。</p>
+
+<p><div>httpPost() のパラメータに指定するMIMEタイプの例：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>application/x-www-form-urlencoded</td>
+<td>通常（特に文字列だけを送信する場合）</td>
+</tr>
+<tr>
+<td>application/json</td>
+<td>JSON</td>
+</tr>
+</table>
+</div></p>
+
+<p>ドメインを超えたサーバーに対しPOSTを行う場合、サーバー側のレスポンスヘッダの指定が必要になります。</p>
+
+<p><div>PHPの例：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>header( "Access-Control-Allow-Origin: *" );<br/>
+header( "Access-Control-Allow-Headers: Content-Type" );</td>
+</tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>サーバーからレスポンス受信</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>httpGet() または httpPost() で通信オブジェクトの作成に成功し、サーバーからレスポンス受信した場合、<b>onHttpResponse()</b> 関数または <b>onHttpError()</b> 関数が呼び出されます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>通信オブジェクトの破棄</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>通信オブジェクトを破棄するには、onHttpResponse() 関数または onHttpError() 関数の内部で、通信オブジェクトに null を代入してください。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>文字列リソースの利用</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>HTML内に埋め込まれた &lt;span&gt; 要素等の内容を文字列リソースとして利用できます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>HTML内に文字列リソースを埋め込む</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>&lt;body&gt; から &lt;/body&gt; の中に以下の記述をします。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>&lt;span id="<i>シンボル</i>" style="display:none"&gt;<i>文字列</i>&lt;/span&gt;</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>HTML内に埋め込まれた文字列リソースを使用する</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>HTML内に埋め込まれた文字列リソースは、</p>
+
+<p><b>・「_Main.js」の getResString()</b></p>
+
+<p>で取得して、文字列として使用することができます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>ツール「string2html」の使用</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>ツール「string2html」を使用すると、文字列リソース定義ファイルから、HTML記述を作成することができます。</p>
+
+<hr />
+
+<p>まず、文字列リソース定義ファイルを用意します。記述方法は、文字列とIDとをタブ文字で区切って記述した行を連ねます。例えば、次のようになります。文字コードはアプリのHTMLファイルでの文字コードを使用してください。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>あいうえお・STRING_A<br/>
+かきくけこ・STRING_B<br/>
+さしすせそ・STRING_C</td>
+</tr>
+</table>
+※「・」は実際にはタブ文字</p>
+
+<p>なお、改行のみの行を含めることもできます。</p>
+
+<hr />
+
+<p><b>ツール「string2html」使用法：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>string2html &lt;<i>in_file</i>&gt; &lt;<i>out_html</i>&gt;</td>
+</tr>
+</table>
+</p>
+
+<p>・<i>in_file</i><br/>
+文字列リソース定義ファイルを指定します。</p>
+
+<p>・<i>out_html</i><br/>
+出力するHTMLファイル名を指定します。</p>
+
+<hr />
+
+<p>なお、本ツールを使用して出力されたHTMLファイルの内容を、&lt;body&gt; から &lt;/body&gt; の中に別途組み込む必要があります。最も簡単な方法は、組み込む箇所の前と後ろとを別ファイルにしておき、「copy /B」を使用して連結する方法です。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

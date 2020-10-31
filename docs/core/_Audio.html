@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_Audio.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>オーディオの再生機能を提供します。</p>
+
+<p><div>init() 関数内で以下の設定を有効にすることで、機能を付加できます。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"><b>_USE_AUDIOEX</b></td><td>HTML5 Audio オブジェクトをサポートしていない場合に &lt;audio&gt;／&lt;bgsound&gt;／&lt;embed&gt; のいずれかの要素を使用します。<br/>audioExElement() 関数を実装する必要があります。</td></tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>canUseAudio</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>canUseAudio</b>()</p>
+<p>HTML5 Audio オブジェクトをサポートしているかどうかチェックします。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+HTML5 Audio オブジェクトをサポートしている場合 true、サポートしていない場合 false</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>canPlayType</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>canPlayType</b>(type)</p>
+<p>指定されたMIMEタイプをサポートしているかどうかチェックします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">type</td><td>MIMEタイプ</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+指定されたMIMEタイプをサポートしている場合 true、サポートしていない場合 false</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>loadAudio</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>loadAudio</b>(src)</p>
+<p>オーディオオブジェクトを構築します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">src</td><td>オーディオリソースURL</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+構築されたオーディオオブジェクトを返します。構築に失敗した場合 null を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>isLoaded</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>isLoaded</b>(audio)</p>
+<p>オーディオの読み込みが完了したかどうかチェックします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+読み込みが完了して再生可能な場合 true、そうでない場合 false</p>
+<p><b>補足説明：</b><br/>
+HTML5 Audio オブジェクトで有効です。<br/>
+&lt;audio&gt;、&lt;bgsound&gt;、&lt;embed&gt; 要素では無効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>loadAndPlayAudio</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>loadAndPlayAudio</b>(src,loop)</p>
+<p>オーディオオブジェクトを構築して再生します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">src</td><td>オーディオリソースURL</td></tr>
+<tr><td valign="top">loop</td><td>ループさせる場合 true、そうでない場合 false</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+構築されたオーディオオブジェクトを返します。構築に失敗した場合 null を返します。</p>
+<p><b>補足説明：</b><br/>
+ブラウザによっては loop が機能しない場合もあります。その場合、isPlaying() で停止を確認して手動で再生する必要があります。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>stopAudio</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>stopAudio</b>(audio)</p>
+<p>オーディオを停止します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>reloadAudio</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>reloadAudio</b>(audio)</p>
+<p>オーディオを再読み込みします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+PCブラウザでは、ループ状態を変更して再生する前に本関数を呼び出す必要があります。スマートフォンでは必要ありません。スマートフォンで本関数を呼び出すと、再生が不安定になります。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>playAudio</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>playAudio</b>(audio,loop)</p>
+<p>オーディオを再生します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+<tr><td valign="top">loop</td><td>ループさせる場合 true、そうでない場合 false</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+ブラウザによっては loop が機能しない場合もあります。その場合、isPlaying() で停止を確認して手動で再生する必要があります。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>isPlaying</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>isPlaying</b>(audio)</p>
+<p>オーディオが再生中かどうかチェックします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+再生中の場合 true、そうでない場合 false</p>
+<p><b>補足説明：</b><br/>
+HTML5 Audio オブジェクトと &lt;audio&gt; 要素で有効です。<br/>
+&lt;bgsound&gt;、&lt;embed&gt; 要素では無効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>pauseAudio</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>pauseAudio</b>(audio)</p>
+<p>オーディオを一時停止します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+HTML5 Audio オブジェクトで有効です。<br/>
+&lt;audio&gt;、&lt;bgsound&gt;、&lt;embed&gt; 要素では無効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>restartAudio</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>restartAudio</b>(audio)</p>
+<p>オーディオの再生を再開します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+HTML5 Audio オブジェクトで有効です。<br/>
+&lt;audio&gt;、&lt;bgsound&gt;、&lt;embed&gt; 要素では無効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setVolume</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setVolume</b>(audio,volume)</p>
+<p>オーディオの音量を変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+<tr><td valign="top">volume</td><td>音量の割合を指定します（0～100）。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+HTML5 Audio オブジェクトで有効です。<br/>
+&lt;audio&gt;、&lt;bgsound&gt;、&lt;embed&gt; 要素では無効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getCurrentTime</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getCurrentTime</b>(audio)</p>
+<p>曲頭からの演奏時間を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">audio</td><td>オーディオオブジェクト</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+曲頭からの演奏時間をミリ秒単位で返します。</p>
+<p><b>補足説明：</b><br/>
+HTML5 Audio オブジェクトで有効です。<br/>
+&lt;audio&gt;、&lt;bgsound&gt;、&lt;embed&gt; 要素では無効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>audioExElement</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>audioExElement</b>()</p>
+<p>_USE_AUDIOEX を有効にした場合、本関数を実装して、"audio"／"bgsound"／"embed" のいずれかの文字列を返してください。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

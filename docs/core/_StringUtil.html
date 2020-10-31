@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_StringUtil.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>文字列用のユーティリティクラス _StringUtil が定義されています。</p>
+
+<!--
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>コンストラクタ</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b></p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>メソッド</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setHeadWrap</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setHeadWrap</b>(str)</p>
+<p>行頭禁則の文字セットを設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">str</td><td>行頭禁則の文字セット</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setEndWrap</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setEndWrap</b>(str)</p>
+<p>行末禁則の文字セットを設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">str</td><td>行末禁則の文字セット</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>trim</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>trim</b>(str)</p>
+<p>文字列の先頭および末尾にあるホワイトスペースを取り除きます。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">str</td><td>先頭および末尾のホワイトスペースを取り除く前の文字列</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+先頭および末尾のホワイトスペースを取り除いた後の文字列</p>
+<p><b>補足説明：</b><br/>
+スペースは、半角・全角を問いません。どちらも削除対象となります。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>truncate</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>truncate</b>(str,width,truncation)</p>
+<p>文字列を省略します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">str</td><td>省略前の文字列</td></tr>
+<tr><td valign="top">width</td><td>省略した際の幅</td></tr>
+<tr><td valign="top">truncation</td><td>省略を表す文字</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+省略後の文字列を返します。省略の必要が無かった場合は、str に指定された文字列をそのまま返します。</p>
+<p><b>補足説明：</b><br/>
+本処理呼び出しの前に、<br/>
+・_Graphics／_ScalableGraphics クラスの setFont() メソッド<br/>
+でフォントを設定しておく必要があります。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>wrap</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>wrap</b>(str,width)</p>
+<p>指定した幅で文字列を分割します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">str</td><td>分割前の文字列</td></tr>
+<tr><td valign="top">width</td><td>分割する幅</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+分割された文字列の配列を返します。</p>
+<p><b>補足説明：</b><br/>
+setHeadWrap()／setEndWrap() メソッドの設定を参照します。<br/>
+また、本処理呼び出しの前に、<br/>
+・_Graphics／_ScalableGraphics クラスの setFont() メソッド<br/>
+でフォントを設定しておく必要があります。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

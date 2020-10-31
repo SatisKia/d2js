@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_Button.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>ボタン情報を保持するオブジェクトです。</p>
+
+<p><div>init() 関数内で以下のいずれかの設定を有効にする必要があります。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"><b>_USE_MOUSE</b></td><td>マウスイベントを使用します。</td></tr>
+<tr><td valign="top"><b>_USE_TOUCH</b></td><td>タッチイベントを使用します。</td></tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>createButton</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>createButton</b>(parent,src,x,y,width,height)</p>
+<p>イメージリソースから _Button オブジェクトを構築して表示します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">parent</td><td>親の要素を指定します。</td></tr>
+<tr><td valign="top">src</td><td>イメージリソースURL</td></tr>
+<tr><td valign="top">x</td><td>親の要素からの相対X座標</td></tr>
+<tr><td valign="top">y</td><td>親の要素からの相対Y座標</td></tr>
+<tr><td valign="top">width</td><td>ボタンの幅</td></tr>
+<tr><td valign="top">height</td><td>ボタンの高さ</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+構築された _Button オブジェクトを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>createButtonArea</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>createButtonArea</b>(parent,src,x,y,width,height,areaName,shape,coords)</p>
+<p>イメージリソースから _Button オブジェクトを構築して表示します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">parent</td><td>親の要素を指定します。</td></tr>
+<tr><td valign="top">src</td><td>イメージリソースURL</td></tr>
+<tr><td valign="top">x</td><td>親の要素からの相対X座標</td></tr>
+<tr><td valign="top">y</td><td>親の要素からの相対Y座標</td></tr>
+<tr><td valign="top">width</td><td>ボタンの幅</td></tr>
+<tr><td valign="top">height</td><td>ボタンの高さ</td></tr>
+<tr><td valign="top">areaName</td><td>割り当てる一意のエリア名を指定します。</td></tr>
+<tr><td valign="top">shape</td><td>領域の形</td></tr>
+<tr><td valign="top">coords</td><td>領域の座標</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+構築された _Button オブジェクトを返します。</p>
+<p><div><b>補足説明：</b><br/>
+shape と coords には、以下の指定が有効です。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td bgcolor="#cccccc">shape</td><td bgcolor="#cccccc">coords</td></tr>
+<tr><td valign="top">"circle"</td><td>"<i>中心X座標</i>,<i>中心Y座標</i>,<i>半径</i>"</td></tr>
+<tr><td valign="top">"poly"</td><td>"<i>X座標1</i>,<i>Y座標1</i>,<i>X座標2</i>,<i>Y座標2</i>…"</td></tr>
+<tr><td valign="top">"rect"</td><td>"<i>左上X座標</i>,<i>左上Y座標</i>,<i>右下X座標</i>,<i>右下Y座標</i>"</td></tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>attachButton</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>attachButton</b>(parent,id,x,y,width,height)</p>
+<p>&lt;img&gt; 要素から _Button オブジェクトを構築して表示します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">parent</td><td>親の要素を指定します。</td></tr>
+<tr><td valign="top">id</td><td>&lt;img&gt; 要素の id 属性</td></tr>
+<tr><td valign="top">x</td><td>親の要素からの相対X座標</td></tr>
+<tr><td valign="top">y</td><td>親の要素からの相対Y座標</td></tr>
+<tr><td valign="top">width</td><td>ボタンの幅</td></tr>
+<tr><td valign="top">height</td><td>ボタンの高さ</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+構築された _Button オブジェクトを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>attachButtonArea</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>attachButtonArea</b>(parent,id,x,y,width,height,areaId)</p>
+<p>イメージマップの定義が関連付けられた &lt;img&gt; 要素から _Button オブジェクトを構築して表示します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">parent</td><td>親の要素を指定します。</td></tr>
+<tr><td valign="top">id</td><td>&lt;img&gt; 要素の id 属性</td></tr>
+<tr><td valign="top">x</td><td>親の要素からの相対X座標</td></tr>
+<tr><td valign="top">y</td><td>親の要素からの相対Y座標</td></tr>
+<tr><td valign="top">width</td><td>ボタンの幅</td></tr>
+<tr><td valign="top">height</td><td>ボタンの高さ</td></tr>
+<tr><td valign="top">areaId</td><td>&lt;area&gt; 要素の id 属性</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+構築された _Button オブジェクトを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>removeButton</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>removeButton</b>(button)</p>
+<p>ボタンを削除します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+createButton()／createButtonArea() で構築されたボタンのみ有効です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>buttonElement</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>buttonElement</b>(button)</p>
+<p>_Button オブジェクトの要素を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+_Button オブジェクトの要素を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>buttonX</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>buttonX</b>(button)</p>
+<p>親の要素からの相対X座標を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+親の要素からの相対X座標を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>buttonY</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>buttonY</b>(button)</p>
+<p>親の要素からの相対Y座標を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+親の要素からの相対Y座標を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>buttonWidth</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>buttonWidth</b>(button)</p>
+<p>ボタンの幅を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+ボタンの幅を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>buttonHeight</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>buttonHeight</b>(button)</p>
+<p>ボタンの高さを取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+ボタンの高さを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonSrc</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonSrc</b>(button,src)</p>
+<p>イメージリソースを差し替えます。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">src</td><td>新しいイメージリソースURL</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonX</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonX</b>(button,x)</p>
+<p>ボタンのX座標を変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">x</td><td>親の要素からの相対X座標</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonY</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonY</b>(button,y)</p>
+<p>ボタンのY座標を変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">y</td><td>親の要素からの相対Y座標</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonPos</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonPos</b>(button,x,y)</p>
+<p>ボタンの位置を変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">x</td><td>親の要素からの相対X座標</td></tr>
+<tr><td valign="top">y</td><td>親の要素からの相対Y座標</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonWidth</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonWidth</b>(button,width)</p>
+<p>ボタンの幅を変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">width</td><td>ボタンの幅</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonHeight</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonHeight</b>(button,height)</p>
+<p>ボタンの高さを変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">height</td><td>ボタンの高さ</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonSize</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonSize</b>(button,width,height)</p>
+<p>ボタンの大きさを変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">width</td><td>ボタンの幅</td></tr>
+<tr><td valign="top">height</td><td>ボタンの高さ</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonPosSize</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonPosSize</b>(button,x,y,width,height)</p>
+<p>ボタンの位置と大きさを変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">x</td><td>親の要素からの相対X座標</td></tr>
+<tr><td valign="top">y</td><td>親の要素からの相対Y座標</td></tr>
+<tr><td valign="top">width</td><td>ボタンの幅</td></tr>
+<tr><td valign="top">height</td><td>ボタンの高さ</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>updateButtonPos</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>updateButtonPos</b>(button)</p>
+<p>親の要素のブラウザ画面内での座標が変更されたことを、ボタンに反映させます。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setButtonArea</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setButtonArea</b>(button,shape,coords)</p>
+<p>領域を変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">button</td><td>_Button オブジェクト</td></tr>
+<tr><td valign="top">shape</td><td>領域の形</td></tr>
+<tr><td valign="top">coords</td><td>領域の座標</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><div><b>補足説明：</b><br/>
+shape と coords には、以下の指定が有効です。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td bgcolor="#cccccc">shape</td><td bgcolor="#cccccc">coords</td></tr>
+<tr><td valign="top">"circle"</td><td>"<i>中心X座標</i>,<i>中心Y座標</i>,<i>半径</i>"</td></tr>
+<tr><td valign="top">"poly"</td><td>"<i>X座標1</i>,<i>Y座標1</i>,<i>X座標2</i>,<i>Y座標2</i>…"</td></tr>
+<tr><td valign="top">"rect"</td><td>"<i>左上X座標</i>,<i>左上Y座標</i>,<i>右下X座標</i>,<i>右下Y座標</i>"</td></tr>
+</table>
+</div></p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

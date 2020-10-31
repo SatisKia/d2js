@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title></title>
+<script type="text/javascript" src="Main.js"></script>
+<script type="text/javascript">
+
+window.onload = d2js_onload;
+window.onorientationchange = d2js_onorientationchange;
+window.onresize = d2js_onresize;
+
+function init()
+{
+	_USE_MOUSE = true;
+}
+
+</script>
+</head>
+<body>
+
+<!-- テスト用にキャンバスを下げる -->
+<br/>
+<br/>
+<br/>
+
+<div align="center">
+<canvas id="canvas0" width="640" height="480"></canvas>
+</div>
+
+<!-- リソース -->
+<img id="res_img0" src="res/com.jpg" style="display:none" />
+<img id="res_img1" src="res/rax.jpg" style="display:none" />
+<img id="res_img2" src="res/ray.jpg" style="display:none" />
+<span id="res_str0" style="display:none">こむ</span>
+<span id="res_str1" style="display:none">ラクス</span>
+<span id="res_str2" style="display:none">レイ</span>
+
+</body>
+</html>

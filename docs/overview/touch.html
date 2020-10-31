@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>タッチイベントの処理</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>タッチイベントが発生すると、<b>processEvent()</b> 関数が呼び出されます。この関数の中で、イベントのタイプを識別してください。processEvent() 関数の記述例は次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>function processEvent( type, param )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;switch( type )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _TOUCH_START_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// タッチが開始された<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _TOUCH_MOVE_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// タッチムーブした<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _TOUCH_END_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// タッチが終了した<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+}</td>
+</tr>
+</table>
+</p>
+
+<p>イベントのタイプは、<b>_TOUCH_START_EVENT</b>／<b>_TOUCH_MOVE_EVENT</b>／<b>_TOUCH_END_EVENT</b> の3種類です。</p>
+
+<p>タッチ数および座標は、「_Main.js」の <b>touchNum()</b>／<b>getTouchX()</b>／<b>getTouchY()</b> で取得できます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>レイアウトイベントの処理</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「_Main.js」の addLayout() でレイアウトを設定している場合、レイアウトイベントが発生するようになります。processEvent() 関数の記述例は次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>function processEvent( type, param )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;switch( type )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _LAYOUT_DOWN_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// レイアウト上でタッチが開始された<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _LAYOUT_UP_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// レイアウト上でタッチが終了した<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+}</td>
+</tr>
+</table>
+</p>
+
+<p>イベントのタイプは、<b>_LAYOUT_DOWN_EVENT</b>／<b>_LAYOUT_UP_EVENT</b> の2種類で、パラメータは、レイアウトIDです。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>タッチされているレイアウトの判別</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>イベント検知以外に、タッチされているレイアウトを判別する方法があります。「_Main.js」の <b>getLayoutState()</b> を使用する方法です。使用例を示します。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>var layout = getLayoutState();<br/>
+<br/>
+if( (layout &amp; layoutBit( 2 )) != 0 )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;// レイアウトIDが 2 のレイアウトが押されている<br/>
+}</td>
+</tr>
+</table>
+</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

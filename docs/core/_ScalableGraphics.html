@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_ScalableGraphics.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>イメージ、シェイプ、文字列の描画をスケーラブルに行う機能を提供するクラス _ScalableGraphics が定義されています。</p>
+
+<p><div>init() 関数内で以下の設定を有効にすることで、機能を付加できます。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"><b>_USE_DRAWSTRINGEX</b></td><td>HTML5 Canvas テキストAPIをサポートしていない場合に &lt;span&gt; 要素を使用します。</td></tr>
+</table>
+</div></p>
+
+<!--
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>コンストラクタ</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b></p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>メソッド</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>canUseClip</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>canUseClip</b>()</p>
+<p>クリッピングをサポートしているかどうかチェックします。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+クリッピングをサポートしている場合 true、サポートしていない場合 false</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>canUseText</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>canUseText</b>()</p>
+<p>HTML5 Canvas テキストAPIをサポートしているかどうかチェックします。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+HTML5 Canvas テキストAPIをサポートしている場合 true、サポートしていない場合 false</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setScale</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setScale</b>(scale)</p>
+<p>拡大率を設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">scale</td><td>拡大率を指定します。1.0 で等倍になります。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>scale</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>scale</b>()</p>
+<p>拡大率を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+拡大率を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getColorOfRGB</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getColorOfRGB</b>(r,g,b)</p>
+<p>RGB値を指定してそのRGB値に対応するカラーを表す文字列を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">r</td><td>赤要素の輝度を指定します（0～255）。</td></tr>
+<tr><td valign="top">g</td><td>緑要素の輝度を指定します（0～255）。</td></tr>
+<tr><td valign="top">b</td><td>青要素の輝度を指定します（0～255）。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+カラーを表す文字列を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setStrokeWidth</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setStrokeWidth</b>(width)</p>
+<p>拡大前での線幅を設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">width</td><td>拡大前での線幅を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setColor</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setColor</b>(color)</p>
+<p>描画に使用する色を設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">color</td><td>描画に使用する色を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setAlpha</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setAlpha</b>(a)</p>
+<p>描画で参照されるα値を設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">a</td><td>α値を指定します（0～255）。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+α値とは、255 で不透明、0 で完全な透明になる値です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setROP</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setROP</b>(mode)</p>
+<p>ラスタオペレーションを設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">mode</td><td>ラスタオペレーションを指定します。次のいずれかを指定します。<br/>
+<br/>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr><td>_ROP_COPY</td><td>　通常合成。</td></tr>
+<tr><td>_ROP_ADD</td><td>　加算合成。</td></tr>
+</table>
+</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setFont</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setFont</b>(size,family)</p>
+<p>文字列描画に使用するフォントを設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">size</td><td>拡大前でのフォントサイズを指定します。</td></tr>
+<tr><td valign="top">family</td><td>フォントファミリー名</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>stringWidth</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>stringWidth</b>(str)</p>
+<p>指定した文字列の、拡大前での幅を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">str</td><td>文字列を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+文字列を表示するのに必要な幅の、拡大前での値を返します。</p>
+<p><b>補足説明：</b><br/>
+本処理呼び出しの前に、setFont() メソッドでフォントを設定しておく必要があります。<br/>
+DoJaでの Font クラスの stringWidth() メソッドに相当する機能です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>fontHeight</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>fontHeight</b>()</p>
+<p>フォントの拡大前での高さを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+フォントの拡大前での高さを返します。</p>
+<p><b>補足説明：</b><br/>
+DoJaでの Font クラスの getHeight() メソッドに相当する機能です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>clearClip</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>clearClip</b>()</p>
+<p>現在設定されているクリッピング領域を解除します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setClip</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setClip</b>(x,y,width,height)</p>
+<p>引数によって指定された矩形をクリッピング領域として設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>拡大前での、新しいクリッピング領域の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>拡大前での、新しいクリッピング領域の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>拡大前での、新しいクリッピング領域の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>拡大前での、新しいクリッピング領域の高さを指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>drawLine</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>drawLine</b>(x1,y1,x2,y2)</p>
+<p>直線を描画します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x1</td><td>拡大前での、直線の描画開始点のX座標を指定します。</td></tr>
+<tr><td valign="top">y1</td><td>拡大前での、直線の描画開始点のY座標を指定します。</td></tr>
+<tr><td valign="top">x2</td><td>拡大前での、直線の描画終了点のX座標を指定します。</td></tr>
+<tr><td valign="top">y2</td><td>拡大前での、直線の描画終了点のY座標を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>drawRect</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>drawRect</b>(x,y,width,height)</p>
+<p>矩形を描画します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>拡大前での、矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>拡大前での、矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>拡大前での、矩形の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>拡大前での、矩形の高さを指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>fillRect</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>fillRect</b>(x,y,width,height)</p>
+<p>矩形領域を塗りつぶします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>拡大前での、矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>拡大前での、矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>拡大前での、矩形の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>拡大前での、矩形の高さを指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>drawCircle</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>drawCircle</b>(cx,cy,r)</p>
+<p>円を描画します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">cx</td><td>拡大前での、円の中心のX座標を指定します。</td></tr>
+<tr><td valign="top">cy</td><td>拡大前での、円の中心のY座標を指定します。</td></tr>
+<tr><td valign="top">r</td><td>拡大前での、円の半径を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>drawString</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>drawString</b>(str,x,y)</p>
+<p>文字列を描画します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">str</td><td>描画する文字列を指定します。</td></tr>
+<tr><td valign="top">x</td><td>拡大前でのX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>拡大前でのY座標を指定します。ベースラインの座標を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setFlipMode</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setFlipMode</b>(flip)</p>
+<p>イメージの描画時に反転または回転して描画を行うかどうかを設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">flip</td><td>イメージの描画時の反転または回転方法を指定します。次のいずれかを指定します。<br/>
+<br/>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr><td>_FLIP_NONE</td><td>　反転しないことを表します。</td></tr>
+<tr><td>_FLIP_HORIZONTAL</td><td>　横方向に鏡像反転することを表します。</td></tr>
+<tr><td>_FLIP_VERTICAL</td><td>　縦方向に鏡像反転することを表します。</td></tr>
+<tr><td>_FLIP_ROTATE</td><td>　縦横方向に鏡像反転（180度回転）することを表します。</td></tr>
+</table>
+</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>drawImage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>drawImage</b>(image,x,y)</p>
+<p>イメージを描画します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">image</td><td>&lt;img&gt; 要素または Image オブジェクト</td></tr>
+<tr><td valign="top">x</td><td>拡大前でのX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>拡大前でのY座標を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>drawScaledImage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>drawScaledImage</b>(image,dx,dy,width,height,sx,sy,swidth,sheight)</p>
+<p>イメージを拡大・縮小して描画します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">image</td><td>&lt;img&gt; 要素または Image オブジェクト</td></tr>
+<tr><td valign="top">dx</td><td>拡大前での、描画先の矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">dy</td><td>拡大前での、描画先の矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>拡大前での、描画先の矩形の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>拡大前での、描画先の矩形の高さを指定します。</td></tr>
+<tr><td valign="top">sx</td><td>描画元の矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">sy</td><td>描画元の矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">swidth</td><td>描画元の矩形の幅を指定します。</td></tr>
+<tr><td valign="top">sheight</td><td>描画元の矩形の高さを指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>drawTransImage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>drawTransImage</b>(image,dx,dy,sx,sy,width,height,cx,cy,r360,z128x,z128y)</p>
+<p>イメージを回転・拡大・縮小して描画します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">image</td><td>&lt;img&gt; 要素または Image オブジェクト</td></tr>
+<tr><td valign="top">dx</td><td>拡大前での、描画先のアンカーX座標を指定します。アンカー座標とは、回転・拡大・縮小の基準となる座標です。</td></tr>
+<tr><td valign="top">dy</td><td>拡大前での、描画先のアンカーY座標を指定します。アンカー座標とは、回転・拡大・縮小の基準となる座標です。</td></tr>
+<tr><td valign="top">sx</td><td>描画元の矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">sy</td><td>描画元の矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>描画元の矩形の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>描画元の矩形の高さを指定します。</td></tr>
+<tr><td valign="top">cx</td><td>描画元の矩形の左からの相対X座標を指定します。この座標点とアンカー座標が一致するように描画されます。</td></tr>
+<tr><td valign="top">cy</td><td>描画元の矩形の上からの相対Y座標を指定します。この座標点とアンカー座標が一致するように描画されます。</td></tr>
+<tr><td valign="top">r360</td><td>回転角度を指定します。時計回りで、単位は「度」です。</td></tr>
+<tr><td valign="top">z128x</td><td>X方向の拡大率を指定します。128 で拡大率100%（等倍）です。</td></tr>
+<tr><td valign="top">z128y</td><td>Y方向の拡大率を指定します。128 で拡大率100%（等倍）です。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+本メソッドは setFlipMode() メソッドの設定を見ません。反転は、z128x および z128y の値をマイナス値にすることで行うことができます。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="target-densitydpi=device-dpi, width=600, user-scalable=no" />
+<title></title>
+<script type="text/javascript" src="Main.js"></script>
+<script type="text/javascript">
+
+window.onload = d2js_onload;
+window.onorientationchange = d2js_onorientationchange;
+window.onresize = d2js_onresize;
+
+var AUDIO_SRC = [
+	"",
+	"",
+	"",
+	""
+];
+
+function audioExElement(){
+	var userAgent = window.navigator.userAgent.toLowerCase();
+	if( userAgent.indexOf( "msie" ) >= 0 ){
+		return "bgsound";
+	}
+	return "embed";
+}
+
+function init(){
+	_USE_AUDIOEX = true;
+	_USE_LAYOUTMOUSE = true;
+
+	var userAgent = window.navigator.userAgent;
+	if( ((userAgent.indexOf( "iPhone" ) != -1) && (userAgent.indexOf( "iPad" ) == -1)) || (userAgent.indexOf( "iPod" ) != -1) ){
+		_ANDROID = false;
+		_IPHONE = true;
+	} else if( userAgent.indexOf( "Android" ) != -1 ){
+		_ANDROID = true;
+		_IPHONE = false;
+	}
+	if( _ANDROID || _IPHONE ){
+		_SMARTPHONE = true;
+	} else {
+		_SMARTPHONE = false;
+	}
+}
+
+</script>
+<style type="text/css">
+html, body {
+	margin:0;
+	padding:0;
+}
+</style>
+</head>
+<body>
+<div align="center">
+<canvas id="canvas0" width="600" height="930"></canvas>
+</div>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>プロジェクトの作成</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>アプリごとにプロジェクトフォルダを用意し、アプリ構築に必要なファイル一式を管理します。</p>
+
+<p>「HelloWorld」アプリケーションを実際に作成しながら、プロジェクトの作成の流れを説明していきます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>（1）プロジェクトフォルダを作る</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>まず、任意の位置に任意の名前のフォルダを作ります。プロジェクトトップになります。</p>
+
+<p>次に、そのフォルダの中に、サブフォルダを次のように作ります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>プロジェクトトップ<br/>
+　├ htdocs<br/>
+　│　└ res<br/>
+　└ src</td>
+</tr>
+</table>
+</p>
+
+<p>・「htdocs」フォルダ<br/>
+サーバーへアップロードするファイル一式のフォルダです。</p>
+
+<p>・「htdocs\res」フォルダ<br/>
+リソースファイル類を格納するフォルダです。</p>
+
+<p>・「src」フォルダ<br/>
+ソースファイルを格納するフォルダです。</p>
+
+<p>以降は、このフォルダ構造を前提に説明していきます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>（2）HTMLファイルを「htdocs」フォルダに格納する</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>アプリのメインとなるHTMLファイル「index.html」と、HTML5 Canvas をサポートしていないブラウザの場合に表示させるHTMLファイル「error.html」を以下の内容で作成します。文字コードはUTF-8を使用してください。</p>
+
+<p><div>index.html：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>&lt;!DOCTYPE html&gt;<br/>
+&lt;html&gt;<br/>
+&lt;head&gt;<br/>
+&lt;meta charset="utf-8" /&gt;<br/>
+&lt;title&gt;&lt;/title&gt;<br/>
+&lt;script type="text/javascript" src="HelloWorld.js"&gt;&lt;/script&gt;<br/>
+&lt;script type="text/javascript"&gt;<br/>
+<br/>
+window.onload = d2js_onload;<br/>
+window.onorientationchange = d2js_onorientationchange;<br/>
+window.onresize = d2js_onresize;<br/>
+<br/>
+&lt;/script&gt;<br/>
+&lt;/head&gt;<br/>
+&lt;body&gt;<br/>
+<br/>
+&lt;div align="center"&gt;<br/>
+&lt;canvas id="canvas0" width="640" height="480"&gt;&lt;/canvas&gt;<br/>
+&lt;/div&gt;<br/>
+<br/>
+&lt;/body&gt;<br/>
+&lt;/html&gt;</td>
+</tr>
+</table>
+</div></p>
+
+<p><div>error.html：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>&lt;!DOCTYPE html&gt;<br/>
+&lt;html&gt;<br/>
+&lt;head&gt;<br/>
+&lt;meta charset="utf-8" /&gt;<br/>
+&lt;title&gt;&lt;/title&gt;<br/>
+&lt;/head&gt;<br/>
+&lt;body&gt;<br/>
+&lt;p&gt;このブラウザは非対応です&lt;/p&gt;<br/>
+&lt;/body&gt;<br/>
+&lt;/html&gt;</td>
+</tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>（3）各種リソースファイルを「htdocs\res」フォルダに格納する</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>PNG／JPEGファイルをこのフォルダ内に格納します。</p>
+
+<p>「HelloWorld」アプリケーションでは不要です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>（4）各種ソースファイルを「src」フォルダに格納する</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>アプリのメインとなるソースファイルをこのフォルダ内に格納します。</p>
+
+<p>「HelloWorld」アプリケーションでは、アプリのメインとなるソースファイルとして「HelloWorld.js」を以下の内容で作成します。文字コードはUTF-8を使用してください。</p>
+
+<p><div>HelloWorld.js：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>#include "_Graphics.js"<br/>
+#include "_Main.js"<br/>
+<br/>
+var g;<br/>
+<br/>
+var str;<br/>
+var w, h;<br/>
+var x, y;<br/>
+var dx, dy;<br/>
+<br/>
+function frameTime(){ return 1000 / 30/*フレーム*/; }<br/>
+<br/>
+function init()<br/>
+{<br/>
+}<br/>
+<br/>
+function start()<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;setCurrent( "canvas0" );<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;g = new _Graphics();<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;str = "Hello World !!";<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;g.setFont( 24, "ＭＳ ゴシック" );<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;w = g.stringWidth( str );<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;h = g.fontHeight();<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;x = 0;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;y = h;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;dx = 10;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;dy = 5;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;return true;<br/>
+}<br/>
+<br/>
+function paint()<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;x += dx;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;if( (x &lt;= 0) || (x &gt;= getWidth() - w) )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx = -dx;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;y += dy;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;if( (y &lt;= h) || (y &gt;= getHeight()) )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy = -dy;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;g.setColor( g.getColorOfRGB( 127, 127, 127 ) );<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;g.fillRect( 0, 0, getWidth(), getHeight() );<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;g.setColor( g.getColorOfRGB( 255, 0, 0 ) );<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;g.drawString( str, x, y );<br/>
+}<br/>
+<br/>
+function processEvent( type, param )<br/>
+{<br/>
+}<br/>
+<br/>
+function error()<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;launch( "error.html" );<br/>
+}</td>
+</tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>（5）ビルド用バッチファイルを作る</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>プロジェクトトップの下に、ビルド用バッチファイルを作成します。ここでは、バッチファイル名を「build.bat」とし、内容の例を以下に示します。</p>
+
+<p><div>build.bat：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>set CPP=C:\MinGW\bin\gcc -E -P -x c -IC:\HTML5\d2js\core<br/>
+<br/>
+cd src<br/>
+%CPP% HelloWorld.js &gt; ..\htdocs\HelloWorld.js<br/>
+cd ..<br/>
+<br/>
+pause</td>
+</tr>
+</table>
+</div></p>
+
+<p>実際には、Cプリプロセッサのインストール先、D2JSファイル一式へのパス、ソースファイル名等、環境に合わせて変更する必要があります。バッチファイルの内容を解説していきます。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>set CPP=C:\MinGW\bin\gcc -E -P -x c -IC:\HTML5\d2js\core</td>
+</tr>
+</table>
+</p>
+
+<p>まず、1行目では、Cプリプロセッサの環境を指定しています。</P>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>cd src<br/>
+%CPP% HelloWorld.js &gt; ..\htdocs\HelloWorld.js<br/>
+cd ..</td>
+</tr>
+</table>
+</p>
+
+<p>3～5行目では、ソースをCプリプロセッサにかけて、「htdocs」フォルダへ格納しています。この例では、ソースファイルは「HelloWorld.js」になっています。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>「Closure Compiler」を使用する</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「Closure Compiler」を使用する場合、プロジェクトトップの下のビルド用バッチファイルに、次のような記述を追加します。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>set COMPILE=java -jar "C:\Closure Compiler\compiler.jar"<br/>
+cd htdocs<br/>
+%COMPILE% --js HelloWorld.js --js_output_file HelloWorld.compiled.js<br/>
+cd ..</td>
+</tr>
+</table>
+</p>
+
+<p>実際には、「Closure Compiler」のインストール先に合わせて変更する必要があります。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>「Microsoft Ajax Minifier」を使用する</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「Microsoft Ajax Minifier」を使用する場合、プロジェクトトップの下のビルド用バッチファイルに、次のような記述を追加します。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>call "C:\Microsoft Ajax Minifier\AjaxMinCommandPromptVars"<br/>
+cd htdocs<br/>
+del HelloWorld.min.js<br/>
+AjaxMin -enc:in UTF-8 HelloWorld.js -out HelloWorld.min.js<br/>
+cd ..</td>
+</tr>
+</table>
+</p>
+
+<p>実際には、「Microsoft Ajax Minifier」のインストール先に合わせて変更する必要があります。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>イメージリソースの利用</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>イメージリソースとして、</p>
+<p>・HTML内に埋め込まれた &lt;img&gt; 要素<br/>
+・アップロードされているイメージファイル</p>
+<p>が利用できます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>HTML内にイメージリソースを埋め込む</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>&lt;body&gt; から &lt;/body&gt; の中に以下の記述をします。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>&lt;img id="<i>シンボル</i>" src="<i>イメージファイル</i>" style="display:none" /&gt;</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>HTML内に埋め込まれたイメージリソースを使用する</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>HTML内に埋め込まれたイメージリソースは、</p>
+
+<p><b>・「_Main.js」の getResImage()</b></p>
+
+<p>で取得することができます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>アップロードされているイメージファイルを使用する</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>アップロードされているイメージファイルは、</p>
+
+<p><b>・「_Image.js」の loadImage()</b></p>
+
+<p>で Image オブジェクトを生成して使用することができます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>ツール「image2html」の使用</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>ツール「image2html」を使用すると、イメージファイルの一覧を記述したテキストファイルから、イメージインデックスが定義された js ファイルと、HTML記述を作成することができます。</p>
+
+<hr />
+
+<p>まず、イメージファイルの一覧を記述したテキストファイルを用意します。記述方法は、ファイルを改行で連ねるだけです。例えば、次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>res/a.png<br/>
+res/b.png<br/>
+res/c.png</td>
+</tr>
+</table>
+</p>
+
+<p>なお、改行のみの行を含めることもできます。</p>
+
+<hr />
+
+<p><b>ツール「image2html」使用法：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>image2html &lt;<i>in_list_file</i>&gt; &lt;<i>top_str</i>&gt; &lt;<i>out_js</i>&gt; &lt;<i>out_html</i>&gt;</td>
+</tr>
+</table>
+</p>
+
+<p>・<i>in_list_file</i><br/>
+イメージファイルの一覧を記述したテキストファイルを指定します。</p>
+
+<p>・<i>top_str</i><br/>
+イメージファイルの一覧を記述したテキストファイルを元にイメージインデックス定義を構築する際に、各行の先頭の省略する部分を指定します。例えば、テキストファイルに<br/>
+res/enemy/a.png<br/>
+と記述されていて、このパラメータに "res/" と指定した場合、イメージインデックス定義では<br/>
+RES_IMAGE_ENEMY_A<br/>
+となります。大文字に変換され、"/"は"_"に変換されます。"RES_IMAGE_"は自動的に付加されます。</p>
+
+<p>・<i>out_js</i><br/>
+出力する js ファイル名を指定します。</p>
+
+<p>・<i>out_html</i><br/>
+出力するHTMLファイル名を指定します。</p>
+
+<hr />
+
+<p>なお、本ツールを使用して出力されたHTMLファイルの内容を、&lt;body&gt; から &lt;/body&gt; の中に別途組み込む必要があります。最も簡単な方法は、組み込む箇所の前と後ろとを別ファイルにしておき、「copy /B」を使用して連結する方法です。</p>
+
+<hr />
+
+<p>出力された js ファイルを、アプリのソースファイル内にインクルードし、</p>
+
+<p><b>・「_Main.js」の getResImage()</b></p>
+
+<p>で取得することができます。例えば、次のように記述します。（出力する js ファイル名に「image.js」を指定したものとします。）</p>
+
+<p><div>ソースファイルの頭：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>#include "image.js"<br/>
+<br/>
+var res_img;</td>
+</tr>
+</table>
+</div></p>
+
+<p><div>start() 関数の中：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>res_img = new Array( RES_IMAGE_NUM );<br/>
+for( var i = 0; i &lt; RES_IMAGE_NUM; i++ )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;res_img[i] = getResImage( "RES_IMAGE_" + i );<br/>
+}</td>
+</tr>
+</table>
+</div></p>
+
+<p><div>paint() 関数の中：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>g_drawImage( res_img[RES_IMAGE_A], 0, 0 );</td>
+</tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>ツール「image2js」の使用</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>ツール「image2js」を使用すると、イメージファイルの一覧を記述したテキストファイルから、イメージインデックスが定義された js ファイルと、JavaScript 配列記述を作成することができます。</p>
+
+<hr />
+
+<p>まず、イメージファイルの一覧を記述したテキストファイルを用意します。記述方法は、ファイルを改行で連ねるだけです。例えば、次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>res/a.png<br/>
+res/b.png<br/>
+res/c.png</td>
+</tr>
+</table>
+</p>
+
+<p>なお、改行のみの行を含めることもできます。</p>
+
+<hr />
+
+<p><div><b>ツール「image2js」使用法：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>image2js &lt;<i>in_list_file</i>&gt; &lt;<i>out_id_js</i>&gt; &lt;<i>out_str_js</i>&gt;</td>
+</tr>
+</table>
+</div></p>
+
+<p>・<i>in_list_file</i><br/>
+イメージファイルの一覧を記述したテキストファイルを指定します。</p>
+
+<p>・<i>out_id_js</i><br/>
+出力する js ファイル名を指定します。</p>
+
+<p>・<i>out_str_js</i><br/>
+出力する JavaScript 配列記述ファイル名を指定します。</p>
+
+<hr />
+
+<p>出力された js ファイルと JavaScript 配列記述ファイルを、アプリのソースファイル内にインクルードし、</p>
+
+<p><b>・「_Image.js」の loadImage()</b></p>
+
+<p>で Image オブジェクトを生成して使用することができます。例えば、次のように記述します。（出力する js ファイル名に「image_id.js」を、出力する JavaScript 配列記述ファイル名に「image.js」を指定したものとします。）</p>
+
+<p><div>ソースファイルの頭：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>#include "image_id.js"<br/>
+<br/>
+var res_img;</td>
+</tr>
+</table>
+</div></p>
+
+<p><div>start() 関数の中：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>#include "image.js"<br/>
+res_img = new Array( IMAGE_NUM );<br/>
+for( var i = 0; i &lt; IMAGE_NUM; i++ )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;res_img[i] = loadImage( IMAGE[i] );<br/>
+}</td>
+</tr>
+</table>
+</div></p>
+
+<p><div>paint() 関数の中：<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>g_drawImage( res_img[IMAGE_A], 0, 0 );</td>
+</tr>
+</table>
+</div></p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

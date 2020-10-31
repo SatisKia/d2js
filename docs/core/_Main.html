@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_Main.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>アプリの雛型を提供します。</p>
+
+<p><div>init() 関数内で以下の設定を有効にすることで、機能を付加できます。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"><b>_USE_DRAWSTRINGEX</b></td><td>HTML5 Canvas テキストAPIをサポートしていない場合に &lt;span&gt; 要素を使用します。</td></tr>
+<tr><td valign="top"><b>_USE_EXCANVAS</b></td><td>HTML5 Canvas をサポートしていない場合に「ExplorerCanvas」を使用します。</td></tr>
+<tr><td valign="top"><b>_USE_KEY</b></td><td>キーイベントを検知します。</td></tr>
+<tr><td valign="top"><b>_USE_MOUSE</b></td><td>マウスイベントを検知します。</td></tr>
+<tr><td valign="top"><b>_USE_TOUCH</b></td><td>タッチイベントを検知します。</td></tr>
+<tr><td valign="top"><b>_USE_LAYOUTMOUSE</b></td><td>レイアウト機能を使用します。レイアウトを設定している場合、レイアウトイベントが発生するようになります。<br/>なお、自動的に _USE_MOUSE が有効になります。</td></tr>
+<tr><td valign="top"><b>_USE_LAYOUTTOUCH</b></td><td>レイアウト機能を使用します。レイアウトを設定している場合、レイアウトイベントが発生するようになります。<br/>なお、自動的に _USE_TOUCH が有効になります。</td></tr>
+<tr><td valign="top"><b>_USE_LOCKIMAGE</b></td><td>オフスクリーンイメージ機能を有効にします。</td></tr>
+<tr><td valign="top"><b>_USE_REQUESTANIMATIONFRAME</b></td><td>paint() 関数呼び出しに、setTimeout を使用せずに requestAnimationFrame を使用します。</td></tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>canUseCanvas</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>canUseCanvas</b>()</p>
+<p>HTML5 Canvas をサポートしているかどうかチェックします。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+HTML5 Canvas をサポートしている場合 true、サポートしていない場合 false</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>d2js_onload</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>d2js_onload</b>()</p>
+<p>Webページ読み込み時に本関数を呼び出してください。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+<p><b>例：</b><br/>
+&lt;script type="text/javascript"&gt;<br/>
+window.onload = d2js_onload;<br/>
+&lt;/script&gt;<br/>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>d2js_onorientationchange</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>d2js_onorientationchange</b>()</p>
+<p>画面の向きが変更された時に本関数を呼び出してください。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+<p><b>例：</b><br/>
+&lt;script type="text/javascript"&gt;<br/>
+window.onorientationchange = d2js_onorientationchange;<br/>
+&lt;/script&gt;<br/>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>d2js_onresize</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>d2js_onresize</b>()</p>
+<p>ウィンドウがリサイズされた時に本関数を呼び出してください。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+<p><b>例：</b><br/>
+&lt;script type="text/javascript"&gt;<br/>
+window.onresize = d2js_onresize;<br/>
+&lt;/script&gt;<br/>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setTimer</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setTimer</b>()</p>
+<p>start() 関数の戻り値を false にした場合、本関数を呼び出して、タイマーによる paint() 関数呼び出しを開始することができます。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>killTimer</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>killTimer</b>()</p>
+<p>タイマーによる paint() 関数呼び出しを停止します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>repaint</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>repaint</b>()</p>
+<p>start() 関数の戻り値を false にした場合、本関数を呼び出して、1フレーム分の描画を行います。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setCurrent</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setCurrent</b>(id)</p>
+<p>カレントのキャンバスを設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">id</td><td>&lt;canvas&gt; 要素の id 属性</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getCurrent</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getCurrent</b>()</p>
+<p>カレントのキャンバスを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+カレントのキャンバスを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getCurrentContext</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getCurrentContext</b>()</p>
+<p>カレントの2Dコンテキストを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+カレントの2Dコンテキストを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setCanvasSize</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setCanvasSize</b>(width,height)</p>
+<p>キャンバスの大きさを変更します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">width</td><td>キャンバスの幅</td></tr>
+<tr><td valign="top">height</td><td>キャンバスの高さ</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+本処理を実行すると、<br/>
+・_Graphics／_ScalableGraphics クラスの setStrokeWidth()／setColor()／setAlpha()／setROP()／setFont()／setClip() メソッド<br/>
+の内容が初期化されます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getWidth</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getWidth</b>()</p>
+<p>キャンバスの幅を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+キャンバスの幅を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getHeight</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getHeight</b>()</p>
+<p>キャンバスの高さを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+キャンバスの高さを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getBrowserWidth</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getBrowserWidth</b>()</p>
+<p>ブラウザの画面の幅を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+ブラウザの画面の幅を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getBrowserHeight</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getBrowserHeight</b>()</p>
+<p>ブラウザの画面の高さを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+ブラウザの画面の高さを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getOrientation</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getOrientation</b>()</p>
+<p>画面の向きを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+90度単位の角度を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>readParameter</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>readParameter</b>(text,key)</p>
+<p>URLパラメータ形式の文字列からパラメータを1つ取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">text</td><td>URLパラメータ形式の文字列を指定します。</td></tr>
+<tr><td valign="top">key</td><td>取得するパラメータのキー文字列を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+キーに対応する値を返します。URLデコードは自動的に行われます。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>readParameters</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>readParameters</b>(text)</p>
+<p>URLパラメータ形式の文字列から連想配列を構築します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">text</td><td>URLパラメータ形式の文字列を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+配列のキーが、パラメータのキー文字列になっている連想配列を返します。URLデコードは自動的に行われます。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getParameter</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getParameter</b>(key)</p>
+<p>アプリ起動時のパラメータを取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">key</td><td>取得するパラメータのキー文字列を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+キーに対応する値を返します。URLデコードは自動的に行われます。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getResImage</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getResImage</b>(id)</p>
+<p>&lt;img&gt; 要素を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">id</td><td>&lt;img&gt; 要素の id 属性</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+&lt;img&gt; 要素を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getResString</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getResString</b>(id)</p>
+<p>要素から文字列を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">id</td><td>&lt;span&gt; 要素等の id 属性</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+文字列を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>currentTimeMillis</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>currentTimeMillis</b>()</p>
+<p>ミリ秒で表される現在の時間を返します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+ミリ秒で測定した、現在時刻と協定世界時の UTC 1970 年 1 月 1 日午前 0 時との差</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setKeyArray</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setKeyArray</b>(array)</p>
+<p>keyBit() 関数で判定するキーのリストを設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">array</td><td>キーのリストを Array オブジェクト形式で指定します。キーコード（「_Global.h」で定義されている _KEY_～）を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><div><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_KEY を有効にしている場合にのみ使用できます。</span><br/>
+初期設定は以下のようになっています。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td bgcolor="#cccccc">Array インデックス</td><td bgcolor="#cccccc">キーコード</td><td bgcolor="#cccccc">「_Global.h」での定義</td></tr>
+<tr><td>0</td><td>8</td><td>_KEY_BACKSPACE</td></tr>
+<tr><td>1</td><td>9</td><td>_KEY_TAB</td></tr>
+<tr><td>2</td><td>13</td><td>_KEY_ENTER</td></tr>
+<tr><td>3</td><td>16</td><td>_KEY_SHIFT</td></tr>
+<tr><td>4</td><td>17</td><td>_KEY_CTRL</td></tr>
+<tr><td>5</td><td>32</td><td>_KEY_SPACE</td></tr>
+<tr><td>6</td><td>37</td><td>_KEY_LEFT</td></tr>
+<tr><td>7</td><td>38</td><td>_KEY_UP</td></tr>
+<tr><td>8</td><td>39</td><td>_KEY_RIGHT</td></tr>
+<tr><td>9</td><td>40</td><td>_KEY_DOWN</td></tr>
+<tr><td>10</td><td>48</td><td>_KEY_0</td></tr>
+<tr><td>11</td><td>49</td><td>_KEY_1</td></tr>
+<tr><td>12</td><td>50</td><td>_KEY_2</td></tr>
+<tr><td>13</td><td>51</td><td>_KEY_3</td></tr>
+<tr><td>14</td><td>52</td><td>_KEY_4</td></tr>
+<tr><td>15</td><td>53</td><td>_KEY_5</td></tr>
+<tr><td>16</td><td>54</td><td>_KEY_6</td></tr>
+<tr><td>17</td><td>55</td><td>_KEY_7</td></tr>
+<tr><td>18</td><td>56</td><td>_KEY_8</td></tr>
+<tr><td>19</td><td>57</td><td>_KEY_9</td></tr>
+<tr><td>20</td><td>67</td><td>_KEY_C</td></tr>
+<tr><td>21</td><td>88</td><td>_KEY_X</td></tr>
+<tr><td>22</td><td>90</td><td>_KEY_Z</td></tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>keyBit</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>keyBit</b>(key)</p>
+<p>キーに対応するビットがONのときの値を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">key</td><td>キーを指定します。キーコード（「_Global.h」で定義されている _KEY_～）を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+キーに対応するビットがONのときの値を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_KEY を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getKeypadState</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getKeypadState</b>()</p>
+<p>キーパッド状態を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+キーパッド状態を返します。</p>
+<p><b>補足説明：</b><br/>
+戻り値の各ビットの位置がキーコード（「_Global.h」で定義されている _KEY_～）に対応します。キーに対応するビットがONのときの値は keyBit(<i>キーコード</i>) で取得でき、その値とAND（"&amp;"）をとることで、キーが押されているか判定できます。<br/>
+<span style="color:#ff0000">_USE_KEY を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>clearLayout</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>clearLayout</b>()</p>
+<p>すべてのレイアウト情報を削除します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LAYOUTMOUSE または _USE_LAYOUTTOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>addLayout</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>addLayout</b>(x,y,width,height,id)</p>
+<p>レイアウト情報を追加します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>矩形の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>矩形の高さを指定します。</td></tr>
+<tr><td valign="top">id</td><td>割り当てるレイアウトIDを指定します。0 以上の値を指定します。getLayoutState() でタッチ状態を取得するには、0～31 の値を指定する必要があります。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LAYOUTMOUSE または _USE_LAYOUTTOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>addLayoutArea</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>addLayoutArea</b>(x,y,width,height,id,shape,coords)</p>
+<p>レイアウト情報を追加します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>矩形の左上のX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>矩形の左上のY座標を指定します。</td></tr>
+<tr><td valign="top">width</td><td>矩形の幅を指定します。</td></tr>
+<tr><td valign="top">height</td><td>矩形の高さを指定します。</td></tr>
+<tr><td valign="top">id</td><td>割り当てるレイアウトIDを指定します。0 以上の値を指定します。getLayoutState() でタッチ状態を取得するには、0～31 の値を指定する必要があります。</td></tr>
+<tr><td valign="top">shape</td><td>領域の形</td></tr>
+<tr><td valign="top">coords</td><td>領域の座標</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><div><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LAYOUTMOUSE または _USE_LAYOUTTOUCH を有効にしている場合にのみ使用できます。</span><br/>
+shape と coords には、以下の指定が有効です。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td bgcolor="#cccccc">shape</td><td bgcolor="#cccccc">coords</td></tr>
+<tr><td valign="top">"circle"</td><td>"<i>中心X座標</i>,<i>中心Y座標</i>,<i>半径</i>"</td></tr>
+<tr><td valign="top">"poly"</td><td>"<i>X座標1</i>,<i>Y座標1</i>,<i>X座標2</i>,<i>Y座標2</i>…"</td></tr>
+<tr><td valign="top">"rect"</td><td>"<i>左上X座標</i>,<i>左上Y座標</i>,<i>右下X座標</i>,<i>右下Y座標</i>"</td></tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getLayout</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getLayout</b>(id)</p>
+<p>レイアウト情報を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">id</td><td>取得するレイアウト情報のレイアウトIDを指定します。</td></tr>
+</table>
+</div></p>
+<p><div><b>戻り値：</b><br/>
+レイアウト情報を保持するオブジェクトを返します。指定したレイアウトIDに対応するオブジェクトが無かった場合、null を返します。<br/>
+オブジェクトのプロパティは以下のものです。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>矩形の左上のX座標</td></tr>
+<tr><td valign="top">y</td><td>矩形の左上のY座標</td></tr>
+<tr><td valign="top">width</td><td>矩形の幅</td></tr>
+<tr><td valign="top">height</td><td>矩形の高さ</td></tr>
+<tr><td valign="top">id</td><td>レイアウトID</td></tr>
+<tr><td valign="top">shape</td><td>領域の形の文字列。設定されていない場合 null</td></tr>
+<tr><td valign="top">coords</td><td>領域の座標の配列。設定されていない場合 null</td></tr>
+</table>
+</div></p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LAYOUTMOUSE または _USE_LAYOUTTOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>checkLayout</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>checkLayout</b>(x,y)</p>
+<p>指定した座標がレイアウトの内側かどうかチェックします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>チェックするX座標を指定します。</td></tr>
+<tr><td valign="top">y</td><td>チェックするY座標を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+レイアウトとヒットした場合、ヒットしたレイアウトIDを返します。どのレイアウトにもヒットしていない場合、-1 を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LAYOUTMOUSE または _USE_LAYOUTTOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getLayoutState</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getLayoutState</b>()</p>
+<p>レイアウトのタッチ状態を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+レイアウトのタッチ状態を返します。</p>
+<p><b>補足説明：</b><br/>
+戻り値の各ビットの位置がレイアウトIDに対応します。レイアウトIDに対応するビットがONのときの値は layoutBit(<i>レイアウトID</i>) で取得でき、その値とAND（"&amp;"）をとることで、レイアウトがタッチされているか判定できます。<br/>
+<span style="color:#ff0000">_USE_LAYOUTTOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>layoutBit</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>layoutBit</b>(id)</p>
+<p>キーに対応するビットがONのときの値を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">id</td><td>レイアウトIDを指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+レイアウトIDに対応するビットがONのときの値を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_LAYOUTTOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getMouseX</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getMouseX</b>()</p>
+<p>マウスイベントX座標を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+マウスイベントX座標を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_MOUSE を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getMouseY</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getMouseY</b>()</p>
+<p>マウスイベントY座標を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+マウスイベントY座標を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_MOUSE を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>touchNum</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>touchNum</b>()</p>
+<p>タッチ数を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+タッチ数を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_TOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getTouchX</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getTouchX</b>(index)</p>
+<p>タッチイベントX座標を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">index</td><td>インデックス。0 から (touchNum() - 1) の値を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+タッチイベントX座標を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_TOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getTouchY</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getTouchY</b>(index)</p>
+<p>タッチイベントY座標を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">index</td><td>インデックス。0 から (touchNum() - 1) の値を指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+タッチイベントY座標を返します。</p>
+<p><b>補足説明：</b><br/>
+<span style="color:#ff0000">_USE_TOUCH を有効にしている場合にのみ使用できます。</span></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>launch</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>launch</b>(url)</p>
+<p>他のアプリを起動します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">url</td><td>URLを指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>frameTime</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>frameTime</b>()</p>
+<p>本関数を実装して、1フレームの時間（ミリ秒）を返してください。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>init</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>init</b>()</p>
+<p>アプリケーションが起動する前に呼ばれる関数です。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>start</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>start</b>()</p>
+<p>アプリケーションが起動したら呼ばれる関数です。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+true を返すと、タイマーによる paint() 関数呼び出しが開始されます。<br/>
+false を返すと、タイマーが停止した状態になります。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>paint</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>paint</b>()</p>
+<p>タイマーにより呼び出される関数です。また、repaint() 関数実行時にも呼び出されます。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>processEvent</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>processEvent</b>(type,param)</p>
+<p>各種イベントが通知されたときに呼ばれる関数です。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">type</td><td>イベントのタイプが渡されます。</td></tr>
+<tr><td valign="top">param</td><td>イベントのパラメータが渡されます。パラメータの意味はイベントによって異なります。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><div><b>補足説明：</b><br/>
+イベントのタイプには、次のものがあります。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td valign="top">_KEY_PRESSED_EVENT</td>
+<td>キーが押されると通知されます。パラメータには、キーコード（「_Global.h」で定義されている _KEY_～）が渡されます。</td>
+</tr>
+<tr>
+<td valign="top">_KEY_RELEASED_EVENT</td>
+<td>キーが離されると通知されます。パラメータには、キーコード（「_Global.h」で定義されている _KEY_～）が渡されます。</td>
+</tr>
+<tr>
+<td valign="top">_LAYOUT_DOWN_EVENT</td>
+<td>レイアウト上でマウスボタンが押される、またはタッチが開始されると通知されます。パラメータには、レイアウトIDが渡されます。</td>
+</tr>
+<tr>
+<td valign="top">_LAYOUT_UP_EVENT</td>
+<td>レイアウト上でマウスボタンが離される、またはタッチが終了すると通知されます。パラメータには、レイアウトIDが渡されます。</td>
+</tr>
+<tr>
+<td valign="top">_MOUSE_DOWN_EVENT</td>
+<td>マウスボタンが押されると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_MOUSE_MOVE_EVENT</td>
+<td>マウスポインタが移動すると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_MOUSE_OUT_EVENT</td>
+<td>キャンバスからマウスポインタが出ると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_MOUSE_OVER_EVENT</td>
+<td>キャンバスにマウスポインタが入ると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_MOUSE_UP_EVENT</td>
+<td>マウスボタンが離されると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_ORIENTATIONCHANGE_EVENT</td>
+<td>画面の向きが変更されると通知されます。パラメータには、90度単位の角度が渡されます。</td>
+</tr>
+<tr>
+<td valign="top">_RESIZE_EVENT</td>
+<td>ブラウザの画面サイズが変更されると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_TOUCH_START_EVENT</td>
+<td>タッチが開始されると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_TOUCH_MOVE_EVENT</td>
+<td>タッチムーブすると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_TOUCH_END_EVENT</td>
+<td>タッチが終了すると通知されます。パラメータは常に 0 です。</td>
+</tr>
+<tr>
+<td valign="top">_BUTTON_DOWN_EVENT</td>
+<td>_Button オブジェクトが押されると通知されます。パラメータには、イベントが発生した _Button オブジェクトの要素が渡されます。</td>
+</tr>
+<tr>
+<td valign="top">_BUTTON_OUT_EVENT</td>
+<td>_Button オブジェクトからマウスポインタが出ると通知されます。パラメータには、イベントが発生した _Button オブジェクトの要素が渡されます。</td>
+</tr>
+<tr>
+<td valign="top">_BUTTON_OVER_EVENT</td>
+<td>_Button オブジェクトにマウスポインタが入ると通知されます。パラメータには、イベントが発生した _Button オブジェクトの要素が渡されます。</td>
+</tr>
+<tr>
+<td valign="top">_BUTTON_UP_EVENT</td>
+<td>_Button オブジェクト上でマウスボタンが離されると通知されます。パラメータには、イベントが発生した _Button オブジェクトの要素が渡されます。</td>
+</tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>error</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>error</b>()</p>
+<p>HTML5 Canvas をサポートしていない場合で _USE_EXCANVAS を有効にしていないときに呼ばれる関数です。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><b>補足説明：</b><br/>
+本関数が呼ばれたときは、start() 関数および paint() 関数は呼ばれません。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

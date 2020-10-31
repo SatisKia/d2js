@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>リサイズイベントの処理</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>リサイズイベントが発生すると、<b>processEvent()</b> 関数が呼び出されます。この関数の中で、イベントのタイプを識別してください。processEvent() 関数の記述例は次のようになります。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>function processEvent( type, param )<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;switch( type )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;case _RESIZE_EVENT:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// ブラウザの画面サイズが変更された<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+}</td>
+</tr>
+</table>
+</p>
+
+<p>イベントのタイプは、<b>_RESIZE_EVENT</b> の1種類です。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

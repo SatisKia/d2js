@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>サンプルアプリ _HttpRequest</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>サーバーとの通信デモです。</p>
+
+<p>動作確認するには、PHP（5.2.0以上）の動作するサーバーに「htdocs」フォルダ内一式をアップロードしてください。<br/>
+なお、「test1.php」「test2.php」「test3.php」はアスキー転送モードでアップロードしてください。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>動作</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「index.html」をブラウザで開きますと、キャンバスの下にボタンが12個表示されます。</p>
+
+<p>ボタンを押すと、キャンバス左上にリクエスト内容とレスポンス内容が表示され、通信に成功するとキャンバスに画像が表示されます。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>クロスドメイン通信</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「res」フォルダ、「test1.php」、「test2.php」、「test3.php」を別のサーバーにアップロードし、クロスドメイン通信のテストも行うことができます。</p>
+
+<p>「index.html」の中の変数 SERVER に、通信先サーバーのURLを指定してください。<br/>
+また、ボタン用の &lt;img&gt; 要素の src 属性も書き換えてください。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>

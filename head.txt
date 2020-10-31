@@ -1,0 +1,4 @@
+/*
+ * D2JS
+ * Copyright (C) SatisKia. All rights reserved.
+ */

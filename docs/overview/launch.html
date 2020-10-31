@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>アプリ連携</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>アプリから他のアプリを起動するには「_Main.js」の <b>launch()</b> を使用します。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>アプリから他のアプリを起動</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>「_Main.js」の <b>launch()</b> を実行します。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>launch( "sub.html?user=guest&amp;score=123" );</td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b>起動先アプリ側でのパラメータ取得</b>
+</font></td></tr>
+</table>
+</p>
+
+<p>起動先アプリ側で、パラメータを取得するには「_Main.js」の <b>getParameter()</b> を使用します。</p>
+
+<p>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td>var user = getParameter( "user" );<br/>
+var score = parseInt( getParameter( "score" ) );</td>
+</tr>
+</table>
+</p>
+
+<p>変数 user には文字列 "guest" が格納され、変数 score には値 123 が格納されます。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="6" height="6"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+2">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+-->
+
+</body>
+</html>
