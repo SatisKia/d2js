@@ -1,8 +1,3 @@
-/*
- * D2JS
- * Copyright (C) SatisKia. All rights reserved.
- */
-
 var _json_str;
 
 function jsonInit(){

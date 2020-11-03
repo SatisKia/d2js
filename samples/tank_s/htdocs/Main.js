@@ -5,66 +5,175 @@
 
 
 
+function _Graphics(){
+ this.f = 0;
+}
+
+_Graphics.prototype = {
+ canUseClip : function(){
+  return (!!_context.clip);
+ },
+ canUseText : function(){
+  return (!!_context.fillText);
+ },
+ getColorOfRGB : function( r, g, b ){
+  return "rgb(" + r + "," + g + "," + b + ")";
+ },
+ setStrokeWidth : function( width ){
+  _context.lineWidth = width;
+ },
+ setColor : function( color ){
+  _color = color;
+  _context.fillStyle = _color;
+  _context.strokeStyle = _color;
+ },
+ setAlpha : function( a ){
+  _context.globalAlpha = a / 255.0;
+ },
+ setROP : function( mode ){
+  _context.globalCompositeOperation = mode;
+ },
+ setFont : function( size, family ){
+  setFont( size, family );
+  _context.font = "" + _font_size + "px " + _font_family;
+ },
+ stringWidth : function( str ){
+  return stringWidth( str );
+ },
+ fontHeight : function(){
+  return fontHeight();
+ },
+ clearClip : function(){
+  _context.restore();
+  _context.save();
+ },
+ setClip : function( x, y, width, height ){
+  if( !!_context.clip ){
+   _context.restore();
+   _context.save();
+   _context.beginPath();
+   _context.moveTo( x, y );
+   _context.lineTo( x + width, y );
+   _context.lineTo( x + width, y + height );
+   _context.lineTo( x, y + height );
+   _context.closePath();
+   _context.clip();
+  }
+ },
+ drawLine : function( x1, y1, x2, y2 ){
+  _context.beginPath();
+  _context.moveTo( x1 + 0.5, y1 + 0.5 );
+  _context.lineTo( x2 + 0.5, y2 + 0.5 );
+  _context.stroke();
+  _context.closePath();
+ },
+ drawRect : function( x, y, width, height ){
+  _context.strokeRect( x + 0.5, y + 0.5, width, height );
+ },
+ fillRect : function( x, y, width, height ){
+  _context.fillRect( x, y, width, height );
+ },
+ drawCircle : function( cx, cy, r ){
+  _context.beginPath();
+  _context.arc( cx, cy, r, 0.0, Math.PI * 2.0, false );
+
+  _context.stroke();
+ },
+ drawString : function( str, x, y ){
+  if( !!_context.fillText ){
+   _context.fillText( str, x, y );
+  } else {
+   if( _USE_DRAWSTRINGEX ){
+    _drawStringEx( str, x, y );
+   }
+  }
+ },
+ setFlipMode : function( flip ){
+  this.f = flip;
+ },
+ drawScaledImage : function( image, dx, dy, width, height, sx, sy, swidth, sheight ){
+  if( this.f == 0 ){
+   try {
+    _context.drawImage( image, sx, sy, swidth, sheight, dx, dy, width, height );
+   } catch( e ){}
+  } else {
+   _context.save();
+   _context.setTransform( 1.0, 0.0, 0.0, 1.0, 0.0, 0.0 );
+   switch( this.f ){
+   case 1:
+    _context.translate( dx + width, dy );
+    _context.scale( -1.0, 1.0 );
+    break;
+   case 2:
+    _context.translate( dx, dy + height );
+    _context.scale( 1.0, -1.0 );
+    break;
+   case 3:
+    _context.translate( dx + width, dy + height );
+    _context.scale( -1.0, -1.0 );
+    break;
+   }
+   try {
+    _context.drawImage( image, sx, sy, swidth, sheight, 0, 0, width, height );
+   } catch( e ){}
+   _context.restore();
+  }
+ },
+ drawImage : function( image, x, y ){
+  this.drawScaledImage( image, x, y, image.width, image.height, 0, 0, image.width, image.height );
+ },
+ drawTransImage : function( image, dx, dy, sx, sy, width, height, cx, cy, r360, z128x, z128y ){
+  _context.save();
+  _context.setTransform( 1.0, 0.0, 0.0, 1.0, 0.0, 0.0 );
+  _context.translate( dx, dy );
+  _context.rotate( (Math.PI * r360) / 180 );
+  _context.scale( z128x / 128, z128y / 128 );
+  _context.translate( -cx, -cy );
+  try {
+   _context.drawImage( image, sx, sy, width, height, 0, 0, width, height );
+  } catch( e ){}
+  _context.restore();
+ }
+};
 window._USE_AUDIOEX = false;
 window._USE_DRAWSTRINGEX = false;
 window._USE_EXCANVAS = false;
-
 window._USE_KEY = false;
 window._USE_MOUSE = false;
 window._USE_TOUCH = false;
-
 window._USE_LAYOUTMOUSE = false;
 window._USE_LAYOUTTOUCH = false;
-
 window._USE_REQUESTANIMATIONFRAME = false;
-
 function canUseCanvas(){
  return (!!document.createElement( "canvas" ).getContext);
 }
-
 var _kill_timer = false;
 var _start_time;
 var _end_time;
 var _sleep_time;
-
 var _canvas;
 var _context;
 var _lock;
-
 var _g;
-
-
 var _key = 0;
 var _key_array;
-
-
 var _use_layout = false;
 var _layout = new Array();
-
-
 var _mouse_x;
 var _mouse_y;
-
-
 var _touch_start = false;
 var _touch_x = new Array();
 var _touch_y = new Array();
 var _touch_x0;
 var _touch_y0;
-
-
 var _color;
 var _font_size;
 var _font_family;
 var _stringex = new Array();
 var _stringex_num;
-
-
 var _text;
 var _text_style = "visibility:hidden;position:absolute;left:0;top:0";
-
 function d2js_onload(){
-
  _key_array = new Array();
  _key_array[ 0] = 8;
  _key_array[ 1] = 9;
@@ -89,10 +198,7 @@ function d2js_onload(){
  _key_array[20] = 67;
  _key_array[21] = 88;
  _key_array[22] = 90;
-
-
  init();
-
  if( _USE_EXCANVAS || canUseCanvas() ){
   if( _USE_LAYOUTMOUSE ){
    _use_layout = true;
@@ -102,26 +208,18 @@ function d2js_onload(){
    _use_layout = true;
    _USE_TOUCH = true;
   }
-
-
   if( _USE_KEY ){
    _addEventListener( document, "keydown", _onKeyDown );
    _addEventListener( document, "keyup", _onKeyUp );
   }
-
-
   if( _USE_TOUCH ){
    _addEventListener( document, "touchstart", _onTouchStart );
    _addEventListener( document, "touchmove", _onTouchMove );
    _addEventListener( document, "touchend", _onTouchEnd );
   }
-
-
   _text = document.createElement( "span" );
   _text.style.cssText = _text_style;
   document.body.appendChild( _text );
-
-
   if( start() ){
    setTimer();
   }
@@ -129,41 +227,33 @@ function d2js_onload(){
   error();
  }
 }
-
 function d2js_onorientationchange(){
  processEvent( 13, window.orientation );
 }
-
 function d2js_onresize(){
  processEvent( 14, 0 );
 }
-
 function setTimer(){
  _kill_timer = false;
  _loop();
 }
-
 function killTimer(){
  _kill_timer = true;
 }
-
 function repaint(){
  if( _USE_DRAWSTRINGEX ){
   _stringex_num = 0;
  }
-
  _context.clearRect( 0, 0, getWidth(), getHeight() );
  _context.save();
  paint( _g );
  _context.restore();
-
  if( _USE_DRAWSTRINGEX ){
   for( var i = _stringex_num; i < _stringex.length; i++ ){
    _stringex[i].innerHTML = "";
   }
  }
 }
-
 function _getSleepTime(){
  _sleep_time = frameTime() - (_end_time - _start_time);
  if( _sleep_time < 0 ){
@@ -211,7 +301,6 @@ function _loop(){
   window.setTimeout( _loop, _sleep_time );
  }
 }
-
 function _addEventListener( target, event, func ){
  if( !!target.addEventListener ){
   target.addEventListener( event, func, false );
@@ -230,16 +319,12 @@ function _removeEventListener( target, event, func ){
   target["on" + event] = null;
  }
 }
-
 function setCurrent( id ){
  _canvas = document.getElementById( id );
  _context = _canvas.getContext( "2d" );
  _lock = false;
-
  _context.textAlign = "left";
  _context.textBaseline = "bottom";
-
-
  if( _USE_MOUSE ){
   _addEventListener( _canvas, "mousedown", _onMouseDown );
   _addEventListener( _canvas, "mousemove", _onMouseMove );
@@ -247,13 +332,11 @@ function setCurrent( id ){
   _addEventListener( _canvas, "mouseover", _onMouseOver );
   _addEventListener( _canvas, "mouseup", _onMouseUp );
  }
-
  _g = new _Graphics();
 }
 function setGraphics( g ){
  _g = g;
 }
-
 function getCurrent(){
  return _canvas;
 }
@@ -263,21 +346,18 @@ function getCurrentContext(){
 function getGraphics(){
  return _g;
 }
-
 function setCanvasSize( _width, _height ){
  _canvas.width = _width;
  _canvas.height = _height;
  _context.textAlign = "left";
  _context.textBaseline = "bottom";
 }
-
 function getWidth(){
  return parseInt( _canvas.width );
 }
 function getHeight(){
  return parseInt( _canvas.height );
 }
-
 function _getLeft( e ){
  var left = 0;
  while( e ){
@@ -294,7 +374,6 @@ function _getTop( e ){
  }
  return top;
 }
-
 function getBrowserWidth(){
  if( (!!document.documentElement) && (document.documentElement.clientWidth > 0) ){
   return document.documentElement.clientWidth;
@@ -315,11 +394,9 @@ function getBrowserHeight(){
  }
  return 0;
 }
-
 function getOrientation(){
  return window.orientation;
 }
-
 function readParameter( text, key ){
  var ret = "";
  var start = text.indexOf( "?" + key + "=" );
@@ -345,11 +422,9 @@ function readParameters( text ){
  }
  return key;
 }
-
 function getParameter( key ){
  return readParameter( location.href, key );
 }
-
 function getResImage( id ){
  return document.getElementById( id );
 }
@@ -359,11 +434,9 @@ function getResString( id ){
  str = str.replace( new RegExp( "&gt;", "igm" ), ">" );
  return str;
 }
-
 function currentTimeMillis(){
  return (new Date()).getTime();
 }
-
 function setKeyArray( array ){
  var len = array.length;
  _key_array = new Array();
@@ -394,11 +467,9 @@ function _onKeyUp( e ){
  }
  processEvent( 5, e.keyCode );
 }
-
 function getKeypadState(){
  return _key;
 }
-
 function __MainLayout( x, y, width, height, id ){
  this.x = x;
  this.y = y;
@@ -483,7 +554,6 @@ function checkLayout( x, y ){
  }
  return -1;
 }
-
 function getLayoutState(){
  var ret = 0;
  var id;
@@ -498,7 +568,6 @@ function getLayoutState(){
 function layoutBit( id ){
  return (1 << id);
 }
-
 function _getMouse( e ){
  _mouse_x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - _getLeft( _canvas );
  _mouse_y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop - _getTop( _canvas );
@@ -541,14 +610,12 @@ function _onMouseUp( e ){
  }
  processEvent( 12, 0 );
 }
-
 function getMouseX(){
  return _mouse_x;
 }
 function getMouseY(){
  return _mouse_y;
 }
-
 function _getTouch( e ){
  _touch_x = new Array();
  _touch_y = new Array();
@@ -604,7 +671,6 @@ function _onTouchEnd( e ){
   e.preventDefault();
  }
 }
-
 function touchNum(){
  return _touch_x.length;
 }
@@ -614,11 +680,9 @@ function getTouchX( index ){
 function getTouchY( index ){
  return ((index < _touch_y.length) ? _touch_y[index] : _touch_y0);
 }
-
 function launch( url ){
  location.replace( url );
 }
-
 function setFont( size, family ){
  _font_size = size;
  _font_family = (family.indexOf( " " ) >= 0) ? "'" + family + "'" : family;
@@ -635,7 +699,6 @@ function stringWidth( str ){
 function fontHeight(){
  return _font_size;
 }
-
 function _drawStringEx( str, x, y ){
  if( _lock ){
   return;
@@ -644,8 +707,6 @@ function _drawStringEx( str, x, y ){
   _stringex[_stringex_num] = document.createElement( "span" );
   _stringex[_stringex_num].style.cssText = "position:absolute";
   document.body.appendChild( _stringex[_stringex_num] );
-
-
   if( _USE_MOUSE ){
    _addEventListener( _stringex[_stringex_num], "mousedown", _onMouseDown );
    _addEventListener( _stringex[_stringex_num], "mousemove", _onMouseMove );

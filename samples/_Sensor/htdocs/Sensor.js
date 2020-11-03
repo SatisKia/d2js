@@ -1,8 +1,3 @@
-/*
- * D2JS
- * Copyright (C) SatisKia. All rights reserved.
- */
-
 function canUseDeviceMotion(){
 	return window.DeviceMotionEvent;
 }

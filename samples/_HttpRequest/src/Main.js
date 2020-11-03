@@ -1,6 +1,5 @@
 #include "_Graphics.js"
 #include "_Image.js"
-#include "_Json.js"
 #include "_Main.js"
 
 var img;

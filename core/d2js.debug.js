@@ -1037,90 +1037,6 @@ function removeButton( button ){
 		document.body.removeChild( button.e );
 	}
 }
-function canUseGeolocation(){
-	return ("geolocation" in navigator);
-}
-var _geolocation_watch = false;
-var _geolocation_id = 0;
-var _geolocation_latitude = 0.0;
-var _geolocation_longitude = 0.0;
-var _geolocation_accuracy = 0.0;
-var _geolocation_altitude = 0.0;
-var _geolocation_altitude_accuracy = 0.0;
-var _geolocation_heading = 0.0;
-var _geolocation_speed = 0.0;
-var _geolocation_timestamp = 0;
-function _geolocationSuccess( position ){
-	var coords = position.coords;
-	_geolocation_latitude = coords.latitude;
-	_geolocation_longitude = coords.longitude;
-	_geolocation_accuracy = coords.accuracy;
-	_geolocation_altitude = coords.altitude;
-	_geolocation_altitude_accuracy = coords.altitudeAccuracy;
-	_geolocation_heading = coords.heading;
-	_geolocation_speed = coords.speed;
-	_geolocation_timestamp = position.timestamp;
-	onGeolocation( 4, "" );
-}
-function _geolocationError( error ){
-	onGeolocation( error.code, error.message );
-}
-function _Geolocation(){
-	this._enable_high_accuracy = false;
-	this._maximum_age = 0;
-	this._timeout = Number.POSITIVE_INFINITY;
-}
-_Geolocation.prototype = {
-	setEnableHighAccuracy : function( enableHighAccuracy ){
-		this._enable_high_accuracy = enableHighAccuracy;
-	},
-	setMaximumAgeSeconds : function( maximumAge ){
-		this._maximum_age = maximumAge * 1000;
-	},
-	setTimeoutSeconds : function( timeout ){
-		this._timeout = timeout * 1000;
-	},
-	stop : function(){
-		if( _geolocation_watch ){
-			_geolocation_watch = false;
-			navigator.geolocation.clearWatch( _geolocation_id );
-		}
-	},
-	start : function(){
-		this.stop();
-		var options = {
-			'enableHighAccuracy' : this._enable_high_accuracy,
-			'maximumAge' : this._maximum_age,
-			'timeout' : this._timeout
-		};
-		_geolocation_id = navigator.geolocation.watchPosition( _geolocationSuccess, _geolocationError, options );
-		_geolocation_watch = true;
-	},
-	latitude : function(){
-		return _geolocation_latitude;
-	},
-	longitude : function(){
-		return _geolocation_longitude;
-	},
-	accuracy : function(){
-		return _geolocation_accuracy;
-	},
-	altitude : function(){
-		return _geolocation_altitude;
-	},
-	altitudeAccuracy : function(){
-		return _geolocation_altitude_accuracy;
-	},
-	heading : function(){
-		return _geolocation_heading;
-	},
-	speed : function(){
-		return _geolocation_speed;
-	},
-	timestamp : function(){
-		return _geolocation_timestamp;
-	}
-};
 function _Graphics(){
 	this.f = 0;
 }
@@ -1434,83 +1350,6 @@ _Image.prototype = {
 		return this.image;
 	}
 };
-var _json_str;
-function jsonInit(){
-	_json_str = "";
-}
-function jsonAdd( key, value ){
-	if( _json_str.length > 0 ){
-		_json_str += ",";
-	}
-	_json_str += "\"" + key + "\":" + value;
-}
-function jsonAddString( key, value, encode ){
-	if( encode == undefined ){
-		encode = true;
-	}
-	if( encode ){
-		value = encodeURIComponent( value );
-	}
-	if( _json_str.length > 0 ){
-		_json_str += ",";
-	}
-	_json_str += "\"" + key + "\":\"" + value + "\"";
-}
-function jsonOut(){
-	return "{" + _json_str + "}";
-}
-var _json_array;
-function jsonArrayInit(){
-	_json_array = "";
-}
-function jsonArrayAdd( json ){
-	if( _json_array.length > 0 ){
-		_json_array += ",";
-	}
-	_json_array += json;
-}
-function jsonArrayOut(){
-	return "[" + _json_array + "]";
-}
-var _json_response;
-function jsonResponse( data ){
-	_json_response = eval( "(" + data + ")" );
-	return _json_response;
-}
-function jsonGetSize(){
-	if( _json_response.length != undefined ){
-		return _json_response.length;
-	}
-	return 0;
-}
-function jsonGetKeys( index ){
-	if( _json_response.length != undefined ){
-		return Object.keys( _json_response[index] );
-	}
-	return Object.keys( _json_response );
-}
-function jsonGetObject( index, key ){
-	if( _json_response.length != undefined ){
-		return (key in _json_response[index]) ? _json_response[index][key] : null;
-	}
-	return (key in _json_response) ? _json_response[key] : null;
-}
-function jsonGetString( index, key, defString, decode ){
-	var value = jsonGetObject( index, key );
-	if( value == null ){
-		value = defString;
-	}
-	if( decode == undefined ){
-		decode = true;
-	}
-	if( decode ){
-		return decodeURIComponent( value );
-	}
-	return value;
-}
-function jsonGetInteger( index, key, defInteger ){
-	return parseInt( jsonGetString( index, key, "" + defInteger ) );
-}
 function _Layout( src ){
 	this.s = src;
 	this.o = new Array();
@@ -1622,104 +1461,6 @@ _Random.prototype = {
 		return Math.floor( Math.random() * 0x80000000 );
 	}
 };
-function canUseDeviceMotion(){
-	return window.DeviceMotionEvent;
-}
-function canUseDeviceOrientation(){
-	return window.DeviceOrientationEvent;
-}
-var _sensor_accel_x = 0.0;
-var _sensor_accel_y = 0.0;
-var _sensor_accel_z = 0.0;
-var _sensor_gravity_x = 0.0;
-var _sensor_gravity_y = 0.0;
-var _sensor_gravity_z = 0.0;
-var _sensor_linear_accel_x = 0.0;
-var _sensor_linear_accel_y = 0.0;
-var _sensor_linear_accel_z = 0.0;
-var _sensor_azimuth = 0.0;
-var _sensor_pitch = 0.0;
-var _sensor_roll = 0.0;
-function sensorStart(){
-	_sensor_accel_x = 0.0;
-	_sensor_accel_y = 0.0;
-	_sensor_accel_z = 0.0;
-	_sensor_gravity_x = 0.0;
-	_sensor_gravity_y = 0.0;
-	_sensor_gravity_z = 0.0;
-	_sensor_linear_accel_x = 0.0;
-	_sensor_linear_accel_y = 0.0;
-	_sensor_linear_accel_z = 0.0;
-	_sensor_azimuth = 0.0;
-	_sensor_pitch = 0.0;
-	_sensor_roll = 0.0;
-	if( window.DeviceMotionEvent ){
-		_addEventListener( window, "devicemotion", _onDeviceMotion );
-	}
-	if( window.DeviceOrientationEvent ){
-		_addEventListener( window, "deviceorientation", _onDeviceOrientation );
-	}
-}
-function sensorStop(){
-	if( window.DeviceMotionEvent ){
-		_removeEventListener( window, "devicemotion", _onDeviceMotion );
-	}
-	if( window.DeviceOrientationEvent ){
-		_removeEventListener( window, "deviceorientation", _onDeviceOrientation );
-	}
-}
-function _onDeviceMotion( e ){
-	_sensor_accel_x = e.accelerationIncludingGravity.x;
-	_sensor_accel_y = e.accelerationIncludingGravity.y;
-	_sensor_accel_z = e.accelerationIncludingGravity.z;
-	_sensor_gravity_x = 0.8 * _sensor_gravity_x + 0.2 * _sensor_accel_x;
-	_sensor_gravity_y = 0.8 * _sensor_gravity_y + 0.2 * _sensor_accel_y;
-	_sensor_gravity_z = 0.8 * _sensor_gravity_z + 0.2 * _sensor_accel_z;
-	_sensor_linear_accel_x = _sensor_accel_x - _sensor_gravity_x;
-	_sensor_linear_accel_y = _sensor_accel_y - _sensor_gravity_y;
-	_sensor_linear_accel_z = _sensor_accel_z - _sensor_gravity_z;
-}
-function _onDeviceOrientation( e ){
-	_sensor_azimuth = e.alpha
-	_sensor_pitch = e.beta;
-	_sensor_roll = e.gamma;
-}
-function getAccelX(){
-	return _sensor_accel_x;
-}
-function getAccelY(){
-	return _sensor_accel_y;
-}
-function getAccelZ(){
-	return _sensor_accel_z;
-}
-function getGravityX(){
-	return _sensor_gravity_x;
-}
-function getGravityY(){
-	return _sensor_gravity_y;
-}
-function getGravityZ(){
-	return _sensor_gravity_z;
-}
-function getLinearAccelX(){
-	return _sensor_linear_accel_x;
-}
-function getLinearAccelY(){
-	return _sensor_linear_accel_y;
-}
-function getLinearAccelZ(){
-	return _sensor_linear_accel_z;
-}
-function getAzimuth(){
-	return _sensor_azimuth;
-}
-function getPitch(){
-	return _sensor_pitch;
-}
-function getRoll(){
-	return _sensor_roll;
-}
 var _System = {
 	arraycopy : function( src, src_pos, dst, dst_pos, length ){
 		for( var i = 0; i < length; i++ ){
@@ -1777,25 +1518,6 @@ _Vector.prototype = {
 		this.n = 0;
 	}
 };
-function canUseVibration(){
-	navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
-	return !!navigator.vibrate;
-}
-function startVibrate(){
-	if( navigator.vibrate || canUseVibration() ){
-		navigator.vibrate( 99999 );
-	}
-}
-function stopVibrate(){
-	if( navigator.vibrate || canUseVibration() ){
-		navigator.vibrate( 0 );
-	}
-}
-function vibrate( time ){
-	if( navigator.vibrate || canUseVibration() ){
-		navigator.vibrate( time );
-	}
-}
 window.canUseCanvas = canUseCanvas;
 window.d2js_onload = d2js_onload;
 window.d2js_onorientationchange = d2js_onorientationchange;
@@ -1880,53 +1602,18 @@ window.createButtonArea = createButtonArea;
 window.attachButton = attachButton;
 window.attachButtonArea = attachButtonArea;
 window.removeButton = removeButton;
-window.canUseGeolocation = canUseGeolocation;
-window._Geolocation = _Geolocation;
 window._Graphics = _Graphics;
 window._ScalableGraphics = _ScalableGraphics;
 window.loadImage = loadImage;
 window.isImageBusy = isImageBusy;
 window._Image = _Image;
-window.jsonInit = jsonInit;
-window.jsonAdd = jsonAdd;
-window.jsonAddString = jsonAddString;
-window.jsonOut = jsonOut;
-window.jsonArrayInit = jsonArrayInit;
-window.jsonArrayAdd = jsonArrayAdd;
-window.jsonArrayOut = jsonArrayOut;
-window.jsonResponse = jsonResponse;
-window.jsonGetSize = jsonGetSize;
-window.jsonGetKeys = jsonGetKeys;
-window.jsonGetObject = jsonGetObject;
-window.jsonGetString = jsonGetString;
-window.jsonGetInteger = jsonGetInteger;
 window._Layout = _Layout;
 window._Math = _Math;
 window._DIV = _DIV;
 window._MOD = _MOD;
 window._Random = _Random;
-window.canUseDeviceMotion = canUseDeviceMotion;
-window.canUseDeviceOrientation = canUseDeviceOrientation;
-window.sensorStart = sensorStart;
-window.sensorStop = sensorStop;
-window.getAccelX = getAccelX;
-window.getAccelY = getAccelY;
-window.getAccelZ = getAccelZ;
-window.getGravityX = getGravityX;
-window.getGravityY = getGravityY;
-window.getGravityZ = getGravityZ;
-window.getLinearAccelX = getLinearAccelX;
-window.getLinearAccelY = getLinearAccelY;
-window.getLinearAccelZ = getLinearAccelZ;
-window.getAzimuth = getAzimuth;
-window.getPitch = getPitch;
-window.getRoll = getRoll;
 window._System = _System;
 window._Vector = _Vector;
-window.canUseVibration = canUseVibration;
-window.startVibrate = startVibrate;
-window.stopVibrate = stopVibrate;
-window.vibrate = vibrate;
 window._KEY_BACKSPACE = 8;
 window._KEY_TAB = 9;
 window._KEY_ENTER = 13;
@@ -1998,9 +1685,4 @@ window._RESIZE_EVENT = 14;
 window._TOUCH_START_EVENT = 15;
 window._TOUCH_MOVE_EVENT = 16;
 window._TOUCH_END_EVENT = 17;
-window._GEOLOCATION_ERROR = 0;
-window._GEOLOCATION_PERMISSION_DENIED = 1;
-window._GEOLOCATION_POSITION_UNAVAILABLE = 2;
-window._GEOLOCATION_TIMEOUT = 3;
-window._GEOLOCATION_SUCCESS = 4;
 })( window );

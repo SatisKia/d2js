@@ -1,4 +1,5 @@
 #include "_Audio.js"
+#include "_Graphics.js"
 #include "_Image.js"
 #include "_Main.js"
 #include "_Math.js"

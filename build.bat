@@ -5,7 +5,7 @@ set CPP=C:\MinGW\bin\gcc -E -P -x c
 md tmp
 
 cd core
-%CPP% _Main.js _Audio.js _Button.js _Geolocation.js _Graphics.js _ScalableGraphics.js _Image.js _Json.js _Layout.js _Math.js _Random.js _Sensor.js _System.js _Vector.js _Vibrator.js > ..\tmp\tmp1.js
+%CPP% _Main.js _Audio.js _Button.js _Graphics.js _ScalableGraphics.js _Image.js _Layout.js _Math.js _Random.js _System.js _Vector.js > ..\tmp\tmp1.js
 cd ..
 
 function tmp\tmp1.js tmp\function.js

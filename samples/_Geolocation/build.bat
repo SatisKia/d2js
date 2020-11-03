@@ -1,6 +1,7 @@
 @echo off
 
 set CPP=C:\MinGW\bin\gcc -E -P -x c -I..\..\..\core
+set COMMON_PATH=C:\HTML5\common
 
 cd src
 %CPP% Main.js > ..\htdocs\Main.js
@@ -11,5 +12,7 @@ cd htdocs
 del Main.min.js
 AjaxMin -enc:in UTF-8 Main.js -out Main.min.js
 cd ..
+
+copy %COMMON_PATH%\_Geolocation.js htdocs\Geolocation.js
 
 pause

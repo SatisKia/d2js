@@ -1,6 +1,5 @@
 #include "_Graphics.js"
 #include "_Main.js"
-#include "_Sensor.js"
 
 var h;
 var o;
