@@ -48,8 +48,7 @@ save[1] = 45;<br/>
 save[2] = 67;<br/>
 <br/>
 beginCookieWrite();<br/>
-for( var i = 0; i &lt; 3; i++ )<br/>
-{<br/>
+for( var i = 0; i &lt; 3; i++ ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;cookieWrite( "" + save[i] );<br/>
 }<br/>
 endCookieWrite( "save1" );</td>
@@ -59,8 +58,7 @@ save[1] = 45;<br/>
 save[2] = 67;<br/>
 <br/>
 beginStorageWrite();<br/>
-for( var i = 0; i &lt; 3; i++ )<br/>
-{<br/>
+for( var i = 0; i &lt; 3; i++ ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;storageWrite( "" + save[i] );<br/>
 }<br/>
 endStorageWrite( "save1" );</td>
@@ -80,16 +78,14 @@ endStorageWrite( "save1" );</td>
 <td>var save = new Array( 3 );<br/>
 <br/>
 beginCookieRead( "save1" );<br/>
-for( var i = 0; i &lt; 3; i++ )<br/>
-{<br/>
+for( var i = 0; i &lt; 3; i++ ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;save[i] = parseInt( cookieRead() );<br/>
 }<br/>
 endCookieRead();</td>
 <td>var save = new Array( 3 );<br/>
 <br/>
 beginStorageRead( "save1" );<br/>
-for( var i = 0; i &lt; 3; i++ )<br/>
-{<br/>
+for( var i = 0; i &lt; 3; i++ ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;save[i] = parseInt( storageRead() );<br/>
 }<br/>
 endStorageRead();</td>

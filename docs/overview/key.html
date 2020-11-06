@@ -21,21 +21,17 @@
 <p>
 <table border="1" cellpadding="3" cellspacing="0">
 <tr>
-<td>function processEvent( type, param )<br/>
-{<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;switch( type )<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+<td>function processEvent( type, param ){<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;switch( type ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;case _KEY_PRESSED_EVENT:<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch( param )<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch( param ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case _KEY_Z:<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 「Z」キーが押された<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;case _KEY_RELEASED_EVENT:<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch( param )<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch( param ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case _KEY_Z:<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 「Z」キーが離された<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br/>
@@ -65,8 +61,7 @@
 <tr>
 <td>var key = getKeypadState();<br/>
 <br/>
-if( (key &amp; keyBit( _KEY_Z )) != 0 )<br/>
-{<br/>
+if( (key &amp; keyBit( _KEY_Z )) != 0 ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;// 「Z」キーが押されている<br/>
 }</td>
 </tr>

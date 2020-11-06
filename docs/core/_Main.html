@@ -277,6 +277,30 @@ window.onresize = d2js_onresize;<br/>
 <table border="0" width="100%" cellpadding="0" cellspacing="0">
 <tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
 <tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getGraphics</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getGraphics</b>()</p>
+<p>カレントの _Graphics オブジェクトを取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+カレントの _Graphics オブジェクトを返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
 <b>setCanvasSize</b>
 </font></td></tr>
 </table>
@@ -1030,14 +1054,14 @@ false を返すと、タイマーが停止した状態になります。</p>
 </font></td></tr>
 </table>
 </p>
-<p><b>paint</b>()</p>
+<p><b>paint</b>(g)</p>
 <p>タイマーにより呼び出される関数です。また、repaint() 関数実行時にも呼び出されます。</p>
-<!--
 <p><div><b>パラメータ：</b><br/>
 <table border="1" cellpadding="3" cellspacing="0">
-<tr><td valign="top"></td><td></td></tr>
+<tr><td valign="top">g</td><td>カレントの _Graphics オブジェクトが渡されます。</td></tr>
 </table>
 </div></p>
+<!--
 <p><b>戻り値：</b><br/>
 </p>
 <p><b>補足説明：</b><br/>

@@ -144,8 +144,6 @@ window.onresize = d2js_onresize;<br/>
 <td>#include "_Graphics.js"<br/>
 #include "_Main.js"<br/>
 <br/>
-var g;<br/>
-<br/>
 var str;<br/>
 var w, h;<br/>
 var x, y;<br/>
@@ -153,18 +151,15 @@ var dx, dy;<br/>
 <br/>
 function frameTime(){ return 1000 / 30/*フレーム*/; }<br/>
 <br/>
-function init()<br/>
-{<br/>
+function init(){<br/>
 }<br/>
 <br/>
-function start()<br/>
-{<br/>
+function start(){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;setCurrent( "canvas0" );<br/>
-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;g = new _Graphics();<br/>
 <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;str = "Hello World !!";<br/>
 <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;var g = getGraphics();<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;g.setFont( 24, "ＭＳ ゴシック" );<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;w = g.stringWidth( str );<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;h = g.fontHeight();<br/>
@@ -176,16 +171,13 @@ function start()<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;return true;<br/>
 }<br/>
 <br/>
-function paint()<br/>
-{<br/>
+function paint( g ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;x += dx;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;if( (x &lt;= 0) || (x &gt;= getWidth() - w) )<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;if( (x &lt;= 0) || (x &gt;= getWidth() - w) ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dx = -dx;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;y += dy;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;if( (y &lt;= h) || (y &gt;= getHeight()) )<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;if( (y &lt;= h) || (y &gt;= getHeight()) ){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dy = -dy;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
 <br/>
@@ -196,12 +188,10 @@ function paint()<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;g.drawString( str, x, y );<br/>
 }<br/>
 <br/>
-function processEvent( type, param )<br/>
-{<br/>
+function processEvent( type, param ){<br/>
 }<br/>
 <br/>
-function error()<br/>
-{<br/>
+function error(){<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;launch( "error.html" );<br/>
 }</td>
 </tr>
@@ -222,7 +212,7 @@ function error()<br/>
 <p><div>build.bat：<br/>
 <table border="1" cellpadding="3" cellspacing="0">
 <tr>
-<td>set CPP=C:\MinGW\bin\gcc -E -P -x c -IC:\HTML5\d2js\core<br/>
+<td>set CPP=gcc -E -P -x c -IC:\git\SatisKia\d2js\core<br/>
 <br/>
 cd src<br/>
 %CPP% HelloWorld.js &gt; ..\htdocs\HelloWorld.js<br/>
@@ -233,12 +223,12 @@ pause</td>
 </table>
 </div></p>
 
-<p>実際には、Cプリプロセッサのインストール先、D2JSファイル一式へのパス、ソースファイル名等、環境に合わせて変更する必要があります。バッチファイルの内容を解説していきます。</p>
+<p>実際には、D2JSファイル一式へのパス、ソースファイル名等、環境に合わせて変更する必要があります。バッチファイルの内容を解説していきます。</p>
 
 <p>
 <table border="1" cellpadding="3" cellspacing="0">
 <tr>
-<td>set CPP=C:\MinGW\bin\gcc -E -P -x c -IC:\HTML5\d2js\core</td>
+<td>set CPP=gcc -E -P -x c -IC:\git\SatisKia\d2js\core</td>
 </tr>
 </table>
 </p>

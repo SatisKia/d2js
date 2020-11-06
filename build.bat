@@ -1,6 +1,7 @@
 @echo off
 
-set CPP=C:\MinGW\bin\gcc -E -P -x c
+set CPP=gcc -E -P -x c
+rem set AJAXMINPATH=C:\Microsoft Ajax Minifier
 
 md tmp
 
@@ -12,15 +13,13 @@ function tmp\tmp1.js tmp\function.js
 
 define core\_Global.h tmp\define.js
 
-cd tmp
-..\string tmp1.js string.js strrep.bat ..\strrep 1 1
-call strrep.bat > tmp2.js
-cd ..
+string tmp\tmp1.js tmp\string.js tmp\strrep.bat strrep 1 1
+call tmp\strrep.bat > tmp\tmp2.js
 
 %CPP% d2js.js | format > tmp\d2js.debug.js
 %CPP% -DMINIFIED d2js.js | format > tmp\tmp3.js
 
-call "C:\HTML5\Microsoft Ajax Minifier\AjaxMinCommandPromptVars"
+call "%AJAXMINPATH%\AjaxMinCommandPromptVars"
 cd tmp
 del d2js.js
 AjaxMin -enc:in UTF-8 tmp3.js -out d2js.js
