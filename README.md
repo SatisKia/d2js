@@ -1,5 +1,7 @@
 # D2JS
 
+[English version is here](./README_E.md)
+
 「D2JS」は、DoJa風のアプリの流れ、イベント処理、グラフィック処理で「HTML5 Canvas + JavaScript」アプリを作成できるフレームワークです。
 
 ## core/d2js.js, core/d2js.debug.js
