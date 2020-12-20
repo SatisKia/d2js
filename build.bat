@@ -2,6 +2,7 @@
 
 set CPP=gcc -E -P -x c
 rem set AJAXMINPATH=C:\Microsoft Ajax Minifier
+if "%AJAXMINPATH%"=="" goto error
 
 md tmp
 
@@ -28,4 +29,10 @@ cd ..
 copy /B head.txt+tmp\d2js.debug.js core\d2js.debug.js
 copy /B head.txt+tmp\d2js.js       core\d2js.js
 
+goto end
+
+:error
+echo 環境変数"AJAXMINPATH"が設定されていません
+
+:end
 pause
