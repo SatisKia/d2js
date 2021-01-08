@@ -4,6 +4,8 @@
 
 「D2JS」は、DoJa風のアプリの流れ、イベント処理、グラフィック処理で「HTML5 Canvas + JavaScript」アプリを作成できるフレームワークです。
 
+----------
+
 ## core/d2js.js, core/d2js.debug.js
 
 core/extrasフォルダを除く全てのソース内容が含まれています。
@@ -23,6 +25,8 @@ UTF-8対応Cプリプロセッサとして使用します。
 ### Microsoft Ajax Minifier
 
 JavaScriptコードの圧縮・難読化ツールです。
+
+----------
 
 ## core/extrasフォルダ
 
