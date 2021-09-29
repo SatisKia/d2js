@@ -850,8 +850,8 @@ function start(){
  touch = false;
  _elapse = 0;
  _time = currentTimeMillis();
- window.native_request = new NativeRequest();
- window.native_request2 = new NativeRequest();
+ window.native_request = new _NativeRequest();
+ window.native_request2 = new _NativeRequest();
  window.native_request2.setScheme( "native" );
  return true;
 }
