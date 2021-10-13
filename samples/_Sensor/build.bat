@@ -8,7 +8,8 @@ cd src
 %CPP% Main.js > ..\htdocs\Main.js
 cd ..
 
-copy %SKCOMMONPATH%\_Sensor.js htdocs\Sensor.js
+rem copy %SKCOMMONPATH%\_Sensor.js htdocs\Sensor.js
+copy ..\..\core\_Sensor.js htdocs\Sensor.js
 
 goto end
 

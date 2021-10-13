@@ -16,7 +16,8 @@ del Main.min.js
 AjaxMin -enc:in UTF-8 Main.js -out Main.min.js
 cd ..
 
-copy %SKCOMMONPATH%\_Geolocation.js htdocs\Geolocation.js
+rem copy %SKCOMMONPATH%\_Geolocation.js htdocs\Geolocation.js
+copy ..\..\core\_Geolocation.js htdocs\Geolocation.js
 
 goto end
 

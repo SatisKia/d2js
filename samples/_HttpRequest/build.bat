@@ -9,8 +9,8 @@ cd src
 cd ..
 
 copy %SKCOMMONPATH%\_HttpRequest.js htdocs\HttpRequest.js
-copy %SKCOMMONPATH%\_Json.js htdocs\Json.js
-copy %SKCOMMONPATH%\_json.php htdocs\json.php
+copy ..\..\core\_Json.js htdocs\Json.js
+copy ..\..\core\_json.php htdocs\json.php
 
 goto end
 
