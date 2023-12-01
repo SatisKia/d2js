@@ -131,14 +131,14 @@ function paint( g ){
 	g.fillRect( 0, 0, getWidth(), getHeight() );
 	for( i = 0; i < object.size(); i++ ){
 		tmp = object.elementAt( i );
-		tmp.draw();
+		tmp.draw( g );
 	}
 
 	// キャンバスにオフスクリーンイメージを描画
 	g.drawImage( off_img.getImage(), x2, y2 );
 
 	// オフスクリーンに描画
-	off_paint();
+	off_paint( g );
 
 	if( touch ){
 		g.setColor( g.getColorOfRGB( 255, 0, 255 ) );

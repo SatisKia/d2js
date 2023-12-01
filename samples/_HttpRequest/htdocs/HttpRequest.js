@@ -89,6 +89,6 @@ function httpPost( url, data, type, header ){
 	return request;
 }
 
-//function onHttpSetRequestHeader( header, value ){}
-//function onHttpResponse( request, data ){}
-//function onHttpError( request, status ){}
+//window.onHttpSetRequestHeader = function( header, value ){};
+//window.onHttpResponse = function( request, data ){};
+//window.onHttpError = function( request, status ){};

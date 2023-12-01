@@ -19,6 +19,9 @@ _Graphics.prototype = {
  getColorOfRGB : function( r, g, b ){
   return "rgb(" + r + "," + g + "," + b + ")";
  },
+ getColorOfRGBA : function( r, g, b, a ){
+  return "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
+ },
  setStrokeWidth : function( width ){
   _context.lineWidth = width;
  },
@@ -151,7 +154,7 @@ var _kill_timer = false;
 var _start_time;
 var _end_time;
 var _sleep_time;
-var _canvas;
+var _canvas = null;
 var _context;
 var _lock;
 var _g;
@@ -325,6 +328,7 @@ function setCurrent( id ){
  _lock = false;
  _context.textAlign = "left";
  _context.textBaseline = "bottom";
+ _g = new _Graphics();
  if( _USE_MOUSE ){
   _addEventListener( _canvas, "mousedown", _onMouseDown );
   _addEventListener( _canvas, "mousemove", _onMouseMove );
@@ -332,7 +336,6 @@ function setCurrent( id ){
   _addEventListener( _canvas, "mouseover", _onMouseOver );
   _addEventListener( _canvas, "mouseup", _onMouseUp );
  }
- _g = new _Graphics();
 }
 function setGraphics( g ){
  _g = g;
@@ -790,7 +793,7 @@ function MainObject( x, y, dx, dy ){
  this.y = y;
  this.dx = dx;
  this.dy = dy;
- this.col = g.getColorOfRGB(
+ this.col = getGraphics().getColorOfRGB(
   Math.abs( rand.next( 256 ) ),
   Math.abs( rand.next( 256 ) ),
   Math.abs( rand.next( 256 ) )
@@ -806,7 +809,7 @@ MainObject.prototype.update = function(){
   this.dy = -this.dy;
  }
 };
-MainObject.prototype.draw = function(){
+MainObject.prototype.draw = function( g ){
  g.setColor( this.col );
  g.fillRect( this.x - 5, this.y - 5, 10, 10 );
 };
@@ -866,7 +869,7 @@ function paint( g ){
  g.fillRect( 0, 0, getWidth(), getHeight() );
  for( i = 0; i < object.size(); i++ ){
   tmp = object.elementAt( i );
-  tmp.draw();
+  tmp.draw( g );
  }
  if( mouse ){
   g.setColor( g.getColorOfRGB( 255, 0, 255 ) );

@@ -1,4 +1,4 @@
-function NativeRequest(){
+function _NativeRequest(){
 	this.e = document.createElement( "iframe" );
 	this.e.setAttribute( "width", 0 );
 	this.e.setAttribute( "height", 0 );
@@ -11,7 +11,7 @@ function NativeRequest(){
 	this.s = "";
 }
 
-NativeRequest.prototype = {
+_NativeRequest.prototype = {
 	setScheme : function( scheme ){
 		this.s = scheme;
 	},

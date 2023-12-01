@@ -4,6 +4,12 @@
  */
 
 var _Math = {
+	int : function( x ){
+		if( x < 0 ){
+			return Math.ceil( x );
+		}
+		return Math.floor( x );
+	},
 	div : function( a, b ){
 		if( a < 0 ){
 			return Math.ceil( a / b );
@@ -19,6 +25,9 @@ var _Math = {
 	}
 };
 
+function _INT( x ){
+	return _Math.int( x );
+}
 function _DIV( a, b ){
 	return _Math.div( a, b );
 }

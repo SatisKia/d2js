@@ -9,7 +9,9 @@ function loadImage( src ){
 	_image_load++;
 	var image = new Image();
 	image.onload = function(){
-		_image_load--;
+//		window.setTimeout( function(){
+			_image_load--;
+//		}, 100 );
 	};
 	image.src = src;
 	return image;

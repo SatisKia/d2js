@@ -3,7 +3,7 @@
 function MainObject( x0, y0, x1, y1, clockwise, dist ){
 	this.m = new _LockonMove( x0, y0, x1, y1, 16, clockwise );
 	this.d = dist;
-	this.col = g.getColorOfRGB(
+	this.col = getGraphics().getColorOfRGB(
 		Math.abs( rand.next( 256 ) ),
 		Math.abs( rand.next( 256 ) ),
 		Math.abs( rand.next( 256 ) )
@@ -27,7 +27,7 @@ MainObject.prototype.update = function( tx, ty, step ){
 	return true;
 };
 
-MainObject.prototype.draw = function(){
+MainObject.prototype.draw = function( g ){
 	g.setColor( this.col );
 	if( this.e < 150 ){
 		g.fillRect( this.m.getX() - 5, this.m.getY() - 5, 10, 10 );

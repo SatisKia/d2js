@@ -19,6 +19,9 @@ _Graphics.prototype = {
 	getColorOfRGB : function( r, g, b ){
 		return "rgb(" + r + "," + g + "," + b + ")";
 	},
+	getColorOfRGBA : function( r, g, b, a ){
+		return "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
+	},
 	setStrokeWidth : function( width ){
 		_context.lineWidth = width;
 	},

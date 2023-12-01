@@ -27,7 +27,7 @@ var _start_time;
 var _end_time;
 var _sleep_time;
 
-var _canvas;
+var _canvas = null;
 var _context;
 var _lock;
 
@@ -239,6 +239,8 @@ function setCurrent( id ){
 	_context.textAlign = "left";
 	_context.textBaseline = "bottom";
 
+	_g = new _Graphics();
+
 	// マウスイベント
 	if( _USE_MOUSE ){
 		_addEventListener( _canvas, "mousedown", _onMouseDown );
@@ -247,8 +249,6 @@ function setCurrent( id ){
 		_addEventListener( _canvas, "mouseover", _onMouseOver );
 		_addEventListener( _canvas, "mouseup", _onMouseUp );
 	}
-
-	_g = new _Graphics();
 }
 function setGraphics( g ){
 	_g = g;

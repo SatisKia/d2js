@@ -3,7 +3,7 @@ function MainObject( x, y, dx, dy ){
 	this.y = y;
 	this.dx = dx;
 	this.dy = dy;
-	this.col = g.getColorOfRGB(
+	this.col = getGraphics().getColorOfRGB(
 		Math.abs( rand.next( 256 ) ),
 		Math.abs( rand.next( 256 ) ),
 		Math.abs( rand.next( 256 ) )
@@ -23,7 +23,7 @@ MainObject.prototype.update = function(){
 	}
 };
 
-MainObject.prototype.draw = function(){
+MainObject.prototype.draw = function( g ){
 	g.setColor( this.col );
 	g.fillRect( this.x - 5, this.y - 5, 10, 10 );
 };

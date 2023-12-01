@@ -345,6 +345,9 @@ _Graphics.prototype = {
  getColorOfRGB : function( r, g, b ){
   return "rgb(" + r + "," + g + "," + b + ")";
  },
+ getColorOfRGBA : function( r, g, b, a ){
+  return "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
+ },
  setStrokeWidth : function( width ){
   _context.lineWidth = width;
  },
@@ -465,7 +468,7 @@ function loadImage( src ){
  _image_load++;
  var image = new Image();
  image.onload = function(){
-  _image_load--;
+   _image_load--;
  };
  image.src = src;
  return image;
@@ -526,7 +529,7 @@ var _kill_timer = false;
 var _start_time;
 var _end_time;
 var _sleep_time;
-var _canvas;
+var _canvas = null;
 var _context;
 var _lock;
 var _g;
@@ -700,6 +703,7 @@ function setCurrent( id ){
  _lock = false;
  _context.textAlign = "left";
  _context.textBaseline = "bottom";
+ _g = new _Graphics();
  if( _USE_MOUSE ){
   _addEventListener( _canvas, "mousedown", _onMouseDown );
   _addEventListener( _canvas, "mousemove", _onMouseMove );
@@ -707,7 +711,6 @@ function setCurrent( id ){
   _addEventListener( _canvas, "mouseover", _onMouseOver );
   _addEventListener( _canvas, "mouseup", _onMouseUp );
  }
- _g = new _Graphics();
 }
 function setGraphics( g ){
  _g = g;
@@ -1095,6 +1098,12 @@ function _drawStringEx( str, x, y ){
  _stringex_num++;
 }
 var _Math = {
+ int : function( x ){
+  if( x < 0 ){
+   return Math.ceil( x );
+  }
+  return Math.floor( x );
+ },
  div : function( a, b ){
   if( a < 0 ){
    return Math.ceil( a / b );
@@ -1109,6 +1118,9 @@ var _Math = {
   return a - Math.floor( a / b ) * b;
  }
 };
+function _INT( x ){
+ return _Math.int( x );
+}
 function _DIV( a, b ){
  return _Math.div( a, b );
 }

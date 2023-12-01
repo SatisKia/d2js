@@ -120,7 +120,7 @@ function paint( g ){
 	g.fillRect( 0, 0, getWidth(), getHeight() );
 	for( i = 0; i < object.size(); i++ ){
 		tmp = object.elementAt( i );
-		tmp.draw();
+		tmp.draw( g );
 	}
 
 	// キャンバスにオフスクリーンイメージを描画
