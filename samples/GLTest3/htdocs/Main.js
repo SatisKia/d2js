@@ -1,6 +1,14 @@
+
+
+
+
+
+
+
 function _Graphics(){
  this.f = 0;
 }
+
 _Graphics.prototype = {
  canUseClip : function(){
   return (!!_context.clip);
@@ -71,6 +79,7 @@ _Graphics.prototype = {
  drawCircle : function( cx, cy, r ){
   _context.beginPath();
   _context.arc( cx, cy, r, 0.0, Math.PI * 2.0, false );
+
   _context.stroke();
  },
  drawString : function( str, x, y ){
@@ -740,13 +749,13 @@ _GLDrawPrimitive.prototype = {
 function _GLDraw( proj_mat, look_mat ){
  var i;
  this._proj_mat = new Array( 16 );
- if( proj_mat != undefined ){
+ if( proj_mat != null ){
   for( i = 0; i < 16; i++ ){
    this._proj_mat[i] = proj_mat[i];
   }
  }
  this._look_mat = new Array( 16 );
- if( look_mat != undefined ){
+ if( look_mat != null ){
   for( i = 0; i < 16; i++ ){
    this._look_mat[i] = look_mat[i];
   }
@@ -3515,7 +3524,7 @@ function paint3D( gl, glu ){
   gl.uniform3fv(uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
  }
  var i;
- var gld = new _GLDraw();
+ var gld = new _GLDraw( null, null );
  for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
   gld.add( model_sphere[0], i, -1, modelViewMatrix, -1 );
  }
