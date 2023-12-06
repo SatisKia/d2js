@@ -10,16 +10,22 @@ window.onload = d2js_onload;
 window.onorientationchange = d2js_onorientationchange;
 window.onresize = d2js_onresize;
 
-var use_texture = true;
 var use_lighting = true;
-var set_transparency = false;
 
 // ライティング
-var ambientLightColor = [0.6, 0.6, 0.6];
+var ambientLightColor = [0.3, 0.3, 0.3];
 var directionalLightColor = [0.5, 0.5, 0.5];
 var directionalLightPosition = [0.85, 0.8, 0.75];
-
-var disp_img = false;
+var specularLightColor = [
+	[0.5, 0.5, 0.5],
+	[0.0, 0.5, 0.5],
+	[0.5, 0.0, 0.5],
+];
+var shininess = [
+	10.0,
+	50.0,
+	200.0,
+];
 
 </script>
 </head>

@@ -1,14 +1,6 @@
-
-
-
-
-
-
-
 function _Graphics(){
  this.f = 0;
 }
-
 _Graphics.prototype = {
  canUseClip : function(){
   return (!!_context.clip);
@@ -79,7 +71,6 @@ _Graphics.prototype = {
  drawCircle : function( cx, cy, r ){
   _context.beginPath();
   _context.arc( cx, cy, r, 0.0, Math.PI * 2.0, false );
-
   _context.stroke();
  },
  drawString : function( str, x, y ){

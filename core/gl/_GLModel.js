@@ -3,12 +3,13 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
-function _GLModel( depth, lighting ){
+function _GLModel( id, depth, lighting ){
 	this._glp = new _GLPrimitive();
 	this._glp.setType( _GLPRIMITIVE_TYPE_MODEL );
 	this._glp.setDepth( depth );
 
-	this._lighting = (lighting == undefined) ? false : lighting;
+	this._id = id;
+	this._lighting = lighting;
 
 	// マテリアル
 	this._material_num = 0;
@@ -157,7 +158,7 @@ _GLModel.prototype = {
 			this._position_buffer = gl.createBuffer();
 			gl.bindBuffer( gl.ARRAY_BUFFER, this._position_buffer );
 			gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( this._coord[this._strip_coord[index]] ), gl.STATIC_DRAW );
-			glModelBindPositionBuffer( gl );
+			glModelBindPositionBuffer( gl, this._id, this._lighting );
 			gl.bindBuffer( gl.ARRAY_BUFFER, null );
 		}
 
@@ -165,7 +166,7 @@ _GLModel.prototype = {
 			this._normal_buffer = gl.createBuffer();
 			gl.bindBuffer( gl.ARRAY_BUFFER, this._normal_buffer );
 			gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( this._normal[this._strip_normal[index]] ), gl.STATIC_DRAW );
-			glModelBindNormalBuffer( gl );
+			glModelBindNormalBuffer( gl, this._id, this._lighting );
 			gl.bindBuffer( gl.ARRAY_BUFFER, null );
 		}
 
@@ -173,21 +174,21 @@ _GLModel.prototype = {
 			this._color_buffer = gl.createBuffer();
 			gl.bindBuffer( gl.ARRAY_BUFFER, this._color_buffer );
 			gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( this._color[this._strip_color[index]] ), gl.STATIC_DRAW );
-			glModelBindColorBuffer( gl );
+			glModelBindColorBuffer( gl, this._id, this._lighting );
 			gl.bindBuffer( gl.ARRAY_BUFFER, null );
 		}
 
 		if( tex_index < 0 ){
 			tex_index = this.textureIndex( index );
 		}
-		if( !glModelSetTexture( gl, glt, index, tex_index ) ){
+		if( !glModelSetTexture( gl, glt, index, tex_index, this._id, this._lighting ) ){
 			if( (this._map != null) && (this._strip_map[index] >= 0) && (tex_index >= 0) ){
 				gl.activeTexture( gl.TEXTURE0 );
 				glt.bindTexture( gl.TEXTURE_2D, glt.id( tex_index ) );
 				this._texture_coord_buffer = gl.createBuffer();
 				gl.bindBuffer( gl.ARRAY_BUFFER, this._texture_coord_buffer );
 				gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( this._map[this._strip_map[index]] ), gl.STATIC_DRAW );
-				glModelBindTextureCoordBuffer( gl );
+				glModelBindTextureCoordBuffer( gl, this._id, this._lighting );
 				gl.bindBuffer( gl.ARRAY_BUFFER, null );
 //				gl.texEnvf( gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, this._texture_env_mode_flag ? this._texture_env_mode : gl.MODULATE );
 			}
@@ -249,7 +250,7 @@ _GLModel.prototype = {
 //			gl.disable( gl.LIGHTING );
 //		}
 
-		if( glModelBeginDraw( gl, glt, index, tex_index, this._lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ) ){
+		if( glModelBeginDraw( gl, glt, index, tex_index, this._id, this._lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ) ){
 			this._strip_buffer = gl.createBuffer();
 			gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, this._strip_buffer );
 			gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( this._strip[index] ), gl.STATIC_DRAW );
@@ -257,7 +258,7 @@ _GLModel.prototype = {
 			gl.drawElements( gl.TRIANGLE_STRIP, count, gl.UNSIGNED_SHORT, 0 );
 			gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, null );
 
-			glModelEndDraw( gl, glt, index, tex_index );
+			glModelEndDraw( gl, glt, index, tex_index, this._id, this._lighting );
 		}
 
 //		if( glt.alpha( tex_index ) ){
@@ -271,10 +272,10 @@ _GLModel.prototype = {
 
 };
 
-//function glModelBindPositionBuffer( gl ){}
-//function glModelBindNormalBuffer( gl ){}
-//function glModelBindColorBuffer( gl ){}
-//function glModelBindTextureCoordBuffer( gl ){}
-//function glModelSetTexture( gl, glt/*_GLTexture*/, index, tex_index ){ return false; }
-//function glModelBeginDraw( gl, glt/*_GLTexture*/, index, tex_index, lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ){ return true; }
-//function glModelEndDraw( gl, glt/*_GLTexture*/, index, tex_index ){}
+//function glModelBindPositionBuffer( gl, id, lighting ){}
+//function glModelBindNormalBuffer( gl, id, lighting ){}
+//function glModelBindColorBuffer( gl, id, lighting ){}
+//function glModelBindTextureCoordBuffer( gl, id, lighting ){}
+//function glModelSetTexture( gl, glt/*_GLTexture*/, index, tex_index, id, lighting ){ return false; }
+//function glModelBeginDraw( gl, glt/*_GLTexture*/, index, tex_index, id, lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ){ return true; }
+//function glModelEndDraw( gl, glt/*_GLTexture*/, index, tex_index, id, lighting ){}

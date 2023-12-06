@@ -28,7 +28,20 @@ _GLDrawPrimitive.prototype = {
 	}
 };
 
-function _GLDraw(){
+function _GLDraw( proj_mat, look_mat ){
+	var i;
+	this._proj_mat = new Array( 16 );
+	if( proj_mat != null ){
+		for( i = 0; i < 16; i++ ){
+			this._proj_mat[i] = proj_mat[i];
+		}
+	}
+	this._look_mat = new Array( 16 );
+	if( look_mat != null ){
+		for( i = 0; i < 16; i++ ){
+			this._look_mat[i] = look_mat[i];
+		}
+	}
 	this._draw = new Array();
 }
 
@@ -55,6 +68,9 @@ _GLDraw.prototype = {
 		// まず、アルファ情報のない物体を描画する
 		for( i = 0; i < count; i++ ){
 			tmp = this._draw[i];
+			glDrawUseProgram( gl, tmp._p, tmp._index );
+			glDrawSetProjectionMatrix( gl, this._proj_mat, tmp._p, tmp._index );
+			glDrawSetLookMatrix( gl, this._look_mat, tmp._p, tmp._index );
 			glDrawSetModelViewMatrix( gl, tmp._mat, tmp._p, tmp._index );
 			tmp.draw( gl, glt, false );
 		}
@@ -62,6 +78,9 @@ _GLDraw.prototype = {
 		// 次に、アルファ情報のある物体を描画する
 		for( i = 0; i < count; i++ ){
 			tmp = this._draw[i];
+			glDrawUseProgram( gl, tmp._p, tmp._index );
+			glDrawSetProjectionMatrix( gl, this._proj_mat, tmp._p, tmp._index );
+			glDrawSetLookMatrix( gl, this._look_mat, tmp._p, tmp._index );
 			glDrawSetModelViewMatrix( gl, tmp._mat, tmp._p, tmp._index );
 			tmp.draw( gl, glt, true );
 		}
@@ -69,4 +88,7 @@ _GLDraw.prototype = {
 
 };
 
+//function glDrawUseProgram( gl, p, index ){}
+//function glDrawSetProjectionMatrix( gl, mat, p, index ){}
+//function glDrawSetLookMatrix( gl, mat, p, index ){}
 //function glDrawSetModelViewMatrix( gl, mat, p, index ){}

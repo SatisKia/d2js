@@ -1,14 +1,6 @@
-
-
-
-
-
-
-
 function _Graphics(){
  this.f = 0;
 }
-
 _Graphics.prototype = {
  canUseClip : function(){
   return (!!_context.clip);
@@ -79,7 +71,6 @@ _Graphics.prototype = {
  drawCircle : function( cx, cy, r ){
   _context.beginPath();
   _context.arc( cx, cy, r, 0.0, Math.PI * 2.0, false );
-
   _context.stroke();
  },
  drawString : function( str, x, y ){
@@ -1834,9 +1825,9 @@ var aTextureCoord = null;
 var uProjectionMatrix;
 var uModelViewMatrix;
 var uNormalMatrix = null;
-var uAmbientLight;
+var uAmbientLightColor;
 var uDirectionalLightColor;
-var uDirectionalVector;
+var uDirectionalLightPosition;
 var uSampler;
 var positionBuffer;
 var colorBuffer;
@@ -1850,13 +1841,13 @@ function init3D( gl, glu ){
   glt.use( 0, set_transparency );
  }
  const vsSource = `
-  attribute vec4 aVertexPosition;
+  attribute vec3 aVertexPosition;
   attribute vec4 aVertexColor;
   uniform mat4 uProjectionMatrix;
   uniform mat4 uModelViewMatrix;
   varying lowp vec4 vColor;
   void main(void) {
-   gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+   gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
    vColor = aVertexColor;
   }
  `;
@@ -1878,18 +1869,20 @@ function init3D( gl, glu ){
   uniform mat4 uProjectionMatrix;
   uniform mat4 uModelViewMatrix;
   uniform mat4 uNormalMatrix;
-  uniform vec3 uAmbientLight;
+  uniform vec3 uAmbientLightColor;
   uniform vec3 uDirectionalLightColor;
-  uniform vec3 uDirectionalVector;
+  uniform vec3 uDirectionalLightPosition;
   varying highp vec2 vTextureCoord;
-  varying highp vec3 vLighting;
+  varying lowp vec3 vAmbient;
+  varying highp vec3 vDiffuse;
   void main(void) {
    gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
    vTextureCoord = aTextureCoord;
-   highp vec3 directionalVector = normalize(uDirectionalVector);
+   vAmbient = uAmbientLightColor;
+   highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
    highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-   highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
-   vLighting = uAmbientLight + (uDirectionalLightColor * directional);
+   highp float diffuse = max(dot(transformedNormal.xyz, directionalLightPosition), 0.0);
+   vDiffuse = uDirectionalLightColor * diffuse;
   }
  `;
  const fsSource = `
@@ -1908,10 +1901,11 @@ function init3D( gl, glu ){
  const fsSourceLighting = `
   uniform sampler2D uSampler;
   varying highp vec2 vTextureCoord;
-  varying highp vec3 vLighting;
+  varying lowp vec3 vAmbient;
+  varying highp vec3 vDiffuse;
   void main(void) {
    highp vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-   gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+   gl_FragColor = vec4(texelColor.rgb * (vAmbient + vDiffuse), texelColor.a);
   }
  `;
  if( use_texture ){
@@ -1929,9 +1923,9 @@ function init3D( gl, glu ){
   uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
   if( use_lighting ){
    uNormalMatrix = gl.getUniformLocation( shaderProgram, "uNormalMatrix" );
-   uAmbientLight = gl.getUniformLocation( shaderProgram, "uAmbientLight" );
+   uAmbientLightColor = gl.getUniformLocation( shaderProgram, "uAmbientLightColor" );
    uDirectionalLightColor = gl.getUniformLocation( shaderProgram, "uDirectionalLightColor" );
-   uDirectionalVector = gl.getUniformLocation( shaderProgram, "uDirectionalVector" );
+   uDirectionalLightPosition = gl.getUniformLocation( shaderProgram, "uDirectionalLightPosition" );
   }
   uSampler = gl.getUniformLocation( shaderProgram, "uSampler" );
   gl.uniform1i( uSampler, 0 );
@@ -2059,9 +2053,9 @@ function paint3D( gl, glu ){
   glu.invert();
   glu.transpose();
   gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
-  gl.uniform3fv(uAmbientLight, ambientLight);
+  gl.uniform3fv(uAmbientLightColor, ambientLightColor);
   gl.uniform3fv(uDirectionalLightColor, directionalLightColor);
-  gl.uniform3fv(uDirectionalVector, directionalVector);
+  gl.uniform3fv(uDirectionalLightPosition, directionalLightPosition);
  }
  if( use_texture ){
   gl.enable( gl.BLEND );
