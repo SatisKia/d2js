@@ -50,7 +50,7 @@ function setCurrent3D( id, id2D ){
 		_addEventListener( _canvas, "mouseup", _onMouseUp );
 	}
 
-	_glu = new _GLUtility( _gl );
+	_glu = new _GLUtility();
 
 	init3D( _gl, _glu );
 	if( _3d != null ){
@@ -79,6 +79,42 @@ function getCurrentContext3D(){
 function setCanvas3DSize( _width, _height ){
 	getCurrent3D().width = _width;
 	getCurrent3D().height = _height;
+}
+
+// シェーダーの作成
+function _loadShader( type, source ){
+	var shader = _gl.createShader( type );
+
+	// シェーダーオブジェクトにソースを送信
+	_gl.shaderSource( shader, source );
+
+	// シェーダープログラムをコンパイル
+	_gl.compileShader( shader );
+
+	// コンパイルが成功したか確認する
+	if( !_gl.getShaderParameter( shader, _gl.COMPILE_STATUS ) ){
+		_gl.deleteShader( shader );
+		return null;
+	}
+
+	return shader;
+}
+function createShaderProgram( vsSource, fsSource ){
+	var vertexShader = _loadShader( _gl.VERTEX_SHADER, vsSource );
+	var fragmentShader = _loadShader( _gl.FRAGMENT_SHADER, fsSource );
+
+	// シェーダーの作成
+	var shaderProgram = _gl.createProgram();
+	_gl.attachShader( shaderProgram, vertexShader );
+	_gl.attachShader( shaderProgram, fragmentShader );
+	_gl.linkProgram( shaderProgram );
+
+	// シェーダーの作成に失敗した場合、アラートを出す
+	if( !_gl.getProgramParameter( shaderProgram, _gl.LINK_STATUS ) ){
+		return null;
+	}
+
+	return shaderProgram;
 }
 
 //function init3D( gl, glu ){}

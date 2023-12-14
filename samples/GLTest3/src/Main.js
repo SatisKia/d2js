@@ -1,6 +1,7 @@
 #include "_Graphics.js"
 //#include "_Image.js"
 #include "_Main.js"
+#include "_Math.js"
 
 #include "gl\_GLDraw.js"
 #include "gl\_GLMain.js"
@@ -35,58 +36,36 @@ function paint( g ){
 
 	document.getElementById( "div0" ).style.display = "none";
 	document.getElementById( "div1" ).style.display = "block";
-	setCurrent3D( "canvas1" );
-}
-
-// シェーダープログラムの作成
-function _loadShader( gl, type, source ){
-	var shader = gl.createShader( type );
-
-	// シェーダーオブジェクトにソースを送信
-	gl.shaderSource( shader, source );
-
-	// シェーダープログラムをコンパイル
-	gl.compileShader( shader );
-
-	// コンパイルが成功したか確認する
-	if( !gl.getShaderParameter( shader, gl.COMPILE_STATUS ) ){
-		gl.deleteShader( shader );
-		return null;
-	}
-
-	return shader;
-}
-function createShaderProgram( gl, vsSource, fsSource ){
-	var vertexShader = _loadShader( gl, gl.VERTEX_SHADER, vsSource );
-	var fragmentShader = _loadShader( gl, gl.FRAGMENT_SHADER, fsSource );
-
-	// シェーダープログラムの作成
-	var shaderProgram = gl.createProgram();
-	gl.attachShader( shaderProgram, vertexShader );
-	gl.attachShader( shaderProgram, fragmentShader );
-	gl.linkProgram( shaderProgram );
-
-	// シェーダープログラムの作成に失敗した場合、アラートを出す
-	if( !gl.getProgramParameter( shaderProgram, gl.LINK_STATUS ) ){
-		return null;
-	}
-
-	return shaderProgram;
+	setCurrent3D( "canvas1", "canvas2" );
 }
 
 var shaderProgram;
+
 var aVertexPosition;
 var aVertexColor = null;
 var aVertexNormal = null;
 var uProjectionMatrix;
 var uModelViewMatrix;
+
+// ライティング
 var uNormalMatrix = null;
+
+// ambient（環境光）
 var uAmbientLightColor;
+
+// diffuse（平行光源による拡散光）
 var uDirectionalLightColor;
 var uDirectionalLightPosition;
+
+// specular（鏡面光）
 var uEyeDirection;
 var uSpecularLightColor;
-var uShininess;
+
+// マテリアル
+var uAmbient;	// 環境反射成分
+var uDiffuse;	// 拡散反射成分（物体の色）
+var uSpecular;	// 鏡面反射成分（きらめきの色）
+var uShininess;	// 鏡面係数（きらめきの度合い）
 
 // カメラを回転させる
 var rotation = 0.0;
@@ -100,11 +79,15 @@ function init3D( gl, glu ){
 	const vsSource = `
 		attribute vec3 aVertexPosition;
 		attribute vec4 aVertexColor;
+
 		uniform mat4 uProjectionMatrix;
 		uniform mat4 uModelViewMatrix;
+
 		varying lowp vec4 vColor;
+
 		void main(void) {
 			gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+
 			vColor = aVertexColor;
 		}
 	`;
@@ -114,36 +97,52 @@ function init3D( gl, glu ){
 		attribute vec3 aVertexPosition;
 		attribute vec3 aVertexNormal;
 		attribute vec4 aVertexColor;
+
 		uniform mat4 uProjectionMatrix;
 		uniform mat4 uModelViewMatrix;
+
 		uniform mat4 uNormalMatrix;
+
 		uniform vec3 uAmbientLightColor;
+
 		uniform vec3 uDirectionalLightColor;
 		uniform vec3 uDirectionalLightPosition;
+
 		uniform vec3 uEyeDirection;
 		uniform vec3 uSpecularLightColor;
+
+		uniform vec3 uAmbient;
+		uniform vec3 uDiffuse;
+		uniform vec3 uSpecular;
 		uniform float uShininess;
+
 		varying lowp vec4 vColor;
 		varying lowp vec3 vAmbient;
 		varying highp vec3 vDiffuse;
 		varying highp vec3 vSpecular;
+
 		void main(void) {
 			gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+
 			vColor = aVertexColor;
-			vAmbient = uAmbientLightColor;
+
+			vAmbient = uAmbientLightColor * uAmbient;
+
 			highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
 			highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-			highp float diffuse = clamp(dot(transformedNormal.xyz, directionalLightPosition), 0.0, 1.0);
+			highp float diffuse = clamp(dot(transformedNormal.xyz, directionalLightPosition), 0.0, 1.0);	// ベクトルの内積
+			vDiffuse = (uDirectionalLightColor * uDiffuse) * diffuse;
+
 			highp vec3 eyeDirection = normalize(uEyeDirection);
-			highp float specular = pow(clamp(dot(aVertexNormal, eyeDirection), 0.0, 1.0), uShininess);
-			vDiffuse = uDirectionalLightColor * diffuse;
-			vSpecular = uSpecularLightColor * specular;
+			highp float specular = pow(clamp(dot(aVertexNormal, eyeDirection), 0.0, 1.0), uShininess);	// 内積によって得られた結果をべき乗によって収束させる
+			vSpecular = (uSpecularLightColor * uSpecular) * specular;
 		}
 	`;
 
 	// フラグメントシェーダーのプログラム
 	const fsSource = `
 		varying lowp vec4 vColor;
+
 		void main(void) {
 			gl_FragColor = vColor;
 		}
@@ -155,15 +154,16 @@ function init3D( gl, glu ){
 		varying lowp vec3 vAmbient;
 		varying highp vec3 vDiffuse;
 		varying highp vec3 vSpecular;
+
 		void main(void) {
 			gl_FragColor = vec4(vColor.rgb * (vAmbient + vDiffuse + vSpecular), vColor.a);
 		}
 	`;
 
 	if( use_lighting ){
-		shaderProgram = createShaderProgram( gl, vsSourceLighting, fsSourceLighting );
+		shaderProgram = createShaderProgram( vsSourceLighting, fsSourceLighting );
 	} else {
-		shaderProgram = createShaderProgram( gl, vsSource, fsSource );
+		shaderProgram = createShaderProgram( vsSource, fsSource );
 	}
 	gl.useProgram( shaderProgram );
 
@@ -182,23 +182,26 @@ function init3D( gl, glu ){
 		uDirectionalLightPosition = gl.getUniformLocation( shaderProgram, "uDirectionalLightPosition" );
 		uEyeDirection = gl.getUniformLocation( shaderProgram, "uEyeDirection" );
 		uSpecularLightColor = gl.getUniformLocation( shaderProgram, "uSpecularLightColor" );
+		uAmbient = gl.getUniformLocation( shaderProgram, "uAmbient" );
+		uDiffuse = gl.getUniformLocation( shaderProgram, "uDiffuse" );
+		uSpecular = gl.getUniformLocation( shaderProgram, "uSpecular" );
 		uShininess = gl.getUniformLocation( shaderProgram, "uShininess" );
 	}
 
 	model_sphere = new Array( 3 );
-	model_sphere[0] = createModel( glu, MODEL_SPHERE, 0.015, 0, true );
-	model_sphere[1] = createModel( glu, MODEL_SPHERE, 0.015, 1, true );
-	model_sphere[2] = createModel( glu, MODEL_SPHERE, 0.015, 2, true );
+	model_sphere[0] = createGLModel( MODEL_SPHERE, 0.015, 0, true, use_lighting );
+	model_sphere[1] = createGLModel( MODEL_SPHERE, 0.015, 1, true, use_lighting );
+	model_sphere[2] = createGLModel( MODEL_SPHERE, 0.015, 2, true, use_lighting );
 }
 
 function paint3D( gl, glu ){
 	gl.clearColor( 0.0, 0.0, 0.0, 1.0 );	// 黒でクリア、完全に不透明
 	gl.clearDepth( 1.0 );	// 全てをクリア
 
+//	gl.enable( gl.CULL_FACE );	// 裏面を表示しない
+
 	gl.enable( gl.DEPTH_TEST );	// 深度テストを有効化
 	gl.depthFunc( gl.LEQUAL );	// 奥にあるものは隠れるようにする
-
-//	gl.enable( gl.CULL_FACE );	// 裏面を表示しない
 //	gl.depthMask( true );
 
 //	gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
@@ -222,25 +225,26 @@ function paint3D( gl, glu ){
 	rotation += 0.03;
 	rotate( glu );
 	glu.translate( 0.0, -1.0, 15.0 );
-	var projectionMatrix = glu.glMatrix();
+	var projectionMatrix = glu.glMatrix();	// プロジェクション座標変換行列
 	gl.uniformMatrix4fv( uProjectionMatrix, false, projectionMatrix );
 
 	glu.setIdentity();
 	glu.translate( 0.0, 1.0, -15.0 );
-	var modelViewMatrix = glu.glMatrix();
+	var modelViewMatrix = glu.glMatrix();	// モデル座標変換行列
 	gl.uniformMatrix4fv( uModelViewMatrix, false, modelViewMatrix );
 
 	if( use_lighting ){
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
-		glu.invert();
-		glu.transpose();
+		glu.invert();	// モデル座標変換行列の逆行列
+		glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 		gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
 		glu.pop();
 
 		gl.uniform3fv(uAmbientLightColor, ambientLightColor);
 		gl.uniform3fv(uDirectionalLightColor, directionalLightColor);
 		gl.uniform3fv(uDirectionalLightPosition, directionalLightPosition);
+		gl.uniform3fv(uSpecularLightColor, specularLightColor);
 
 /*
 		glu.push();
@@ -250,6 +254,16 @@ function paint3D( gl, glu ){
 		glu.pop();
 		gl.uniform3fv(uEyeDirection, [matrix[2], matrix[6], matrix[10]]);
 */
+		/*
+		 * OpenGL用行列の配列データ
+		 * [m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15]
+		 * の並びは次のようになっている
+		 * | m0 m4 m8  m12 |
+		 * | m1 m5 m9  m13 |
+		 * | m2 m6 m10 m14 |
+		 * | m3 m7 m11 m15 |
+		 * 視線ベクトルは(-m2,-m6,-m10)
+		 */
 		gl.uniform3fv(uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
 	}
 
@@ -272,7 +286,20 @@ function paint3D( gl, glu ){
 		gld.add( model_sphere[2], i, -1, glu.glMatrix(), -1 );
 	}
 	glu.pop();
-	gld.draw( gl );
+	gld.draw();
+}
+
+function init2D(){
+}
+
+function paint2D( g ){
+	g.setColor( g.getColorOfRGBA( 0, 0, 0, 0 ) );
+	g.fillRect( 0, 0, getWidth(), getHeight() );
+
+	g.setFont( 24, "ＭＳ ゴシック" );
+
+	g.setColor( g.getColorOfRGB( 0, 0, 255 ) );
+	g.drawString( "rotation " + _MOD(_INT(rotation * 180 / Math.PI), 360), 10, 30 );
 }
 
 // _GLModel用
@@ -299,7 +326,9 @@ function glModelSetTexture( gl, glt/*_GLTexture*/, index, tex_index ){
 }
 function glModelBeginDraw( gl, glt/*_GLTexture*/, index, tex_index, id, lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ){
 	if( lighting ){
-		gl.uniform3fv(uSpecularLightColor, specularLightColor[id]);
+		gl.uniform3fv(uAmbient, ambient[id]);
+		gl.uniform3fv(uDiffuse, diffuse[id]);
+		gl.uniform3fv(uSpecular, specular[id]);
 		gl.uniform1f(uShininess, shininess[id]);
 	} else {
 	}
@@ -346,199 +375,4 @@ function processEvent( type, param ){
 
 function error(){
 	launch( "error.html" );
-}
-
-function createModel( glu, data, scale, id, depth ){
-	var model = new _GLModel( id, depth, use_lighting );
-
-	var cur = 0;
-	var i, j, k;
-	var coord_count;
-	var normal_count;
-	var color_count;
-	var map_count;
-
-	// テクスチャ
-	var texture_num = data[cur++];
-//if ( texture_num > 0 ) {
-	var texture_index = new Array(texture_num);
-	var material_dif = new Array(texture_num * 4);
-	var material_amb = new Array(texture_num * 4);
-	var material_emi = new Array(texture_num * 4);
-	var material_spc = new Array(texture_num * 4);
-	var material_power = new Array(texture_num);
-	for ( i = 0; i < texture_num; i++ ) {
-		texture_index[i] = data[cur++];
-		material_dif[i * 4] = data[cur++];
-		material_dif[i * 4 + 1] = material_dif[i * 4];
-		material_dif[i * 4 + 2] = material_dif[i * 4];
-		material_dif[i * 4 + 3] = 1.0;
-		material_amb[i * 4] = data[cur++];
-		material_amb[i * 4 + 1] = material_amb[i * 4];
-		material_amb[i * 4 + 2] = material_amb[i * 4];
-		material_amb[i * 4 + 3] = 1.0;
-		material_emi[i * 4] = data[cur++];
-		material_emi[i * 4 + 1] = material_emi[i * 4];
-		material_emi[i * 4 + 2] = material_emi[i * 4];
-		material_emi[i * 4 + 3] = 1.0;
-		material_spc[i * 4] = data[cur++];
-		material_spc[i * 4 + 1] = material_spc[i * 4];
-		material_spc[i * 4 + 2] = material_spc[i * 4];
-		material_spc[i * 4 + 3] = 1.0;
-		material_power[i] = data[cur++] * 128.0 / 100.0;
-	}
-//	model.setMaterial(texture_num, texture_index, material_dif, material_amb, material_emi, material_spc, material_power);
-	model.setMaterial(texture_num, texture_index, null, null, null, null, null);
-//}
-
-	// グループ
-	var group_tx = data[cur++] * scale;
-	var group_ty = data[cur++] * scale;
-	var group_tz = data[cur++] * scale;
-	var group_or = data[cur++];
-	var group_ox = data[cur++];
-	var group_oy = data[cur++];
-	var group_oz = data[cur++];
-	glu.setIdentity();
-	glu.translate(group_tx, group_ty, group_tz);
-	glu.rotate(group_ox, group_oy, group_oz, group_or);
-
-	var x, y, z;
-
-	// coord
-	var coord_num = data[cur++];
-	coord_count = null;
-	var coord = null;
-	if ( coord_num > 0 ) {
-		coord_count = new Array(coord_num);
-		coord = new Array(coord_num);
-		for ( j = 0; j < coord_num; j++ ) {
-			coord_count[j] = data[cur++];
-			if ( coord_count[j] <= 0 ) {
-				coord[j] = null;
-			} else {
-				coord[j] = new Array(coord_count[j] * 3);
-				for ( i = 0; i < coord_count[j]; i++ ) {
-					x = data[cur++] * scale;
-					y = data[cur++] * scale;
-					z = data[cur++] * scale;
-					glu.transVector(x, y, z);
-					coord[j][i * 3    ] = glu.transX();
-					coord[j][i * 3 + 1] = glu.transY();
-					coord[j][i * 3 + 2] = glu.transZ();
-				}
-			}
-		}
-	}
-
-	// normal
-	var num = data[cur++];
-	normal_count = null;
-	var normal = null;
-	if ( num > 0 ) {
-		normal_count = new Array(coord_num);
-		normal = new Array(coord_num);
-		for ( j = 0; j < coord_num; j++ ) {
-			normal_count[j] = data[cur++];
-			if ( normal_count[j] <= 0 ) {
-				normal[j] = null;
-			} else {
-				normal[j] = new Array(normal_count[j] * 3);
-				for ( i = 0; i < normal_count[j]; i++ ) {
-					x = data[cur++];
-					y = data[cur++];
-					z = data[cur++];
-					glu.transVector(x, y, z);
-					normal[j][i * 3    ] = glu.transX();
-					normal[j][i * 3 + 1] = glu.transY();
-					normal[j][i * 3 + 2] = glu.transZ();
-				}
-			}
-		}
-	}
-
-	// color
-	num = data[cur++];
-	color_count = null;
-	var color = null;
-	if ( num > 0 ) {
-		color_count = new Array(coord_num);
-		color = new Array(coord_num);
-		for ( j = 0; j < coord_num; j++ ) {
-			color_count[j] = data[cur++];
-			if ( color_count[j] <= 0 ) {
-				color[j] = null;
-			} else {
-				color[j] = new Array(color_count[j] * 4);
-				for ( i = 0; i < color_count[j]; i++ ) {
-					color[j][i * 4    ] = data[cur++];
-					color[j][i * 4 + 1] = data[cur++];
-					color[j][i * 4 + 2] = data[cur++];
-					color[j][i * 4 + 3] = 1.0;
-				}
-			}
-		}
-	}
-
-	// map
-	num = data[cur++];
-	map_count = null;
-	var map = null;
-	if ( num > 0 ) {
-		map_count = new Array(coord_num);
-		map = new Array(coord_num);
-		for ( j = 0; j < coord_num; j++ ) {
-			map_count[j] = data[cur++];
-			if ( map_count[j] <= 0 ) {
-				map[j] = null;
-			} else {
-				map[j] = new Array(map_count[j] * 2);
-				for ( i = 0; i < map_count[j]; i++ ) {
-					map[j][i * 2    ] = data[cur++];
-					map[j][i * 2 + 1] = data[cur++];
-				}
-			}
-		}
-	}
-
-	model.setObject(coord_num, coord, normal, color, map);
-
-	// 三角形ストリップ
-	var strip_num = data[cur++];
-	var strip_tx = new Array(strip_num);	// translation
-	var strip_ty = new Array(strip_num);
-	var strip_tz = new Array(strip_num);
-	var strip_or = new Array(strip_num);	// orientation
-	var strip_ox = new Array(strip_num);
-	var strip_oy = new Array(strip_num);
-	var strip_oz = new Array(strip_num);
-	var strip_texture = new Array(strip_num);
-	var strip_coord = new Array(strip_num);
-	var strip_normal = new Array(strip_num);
-	var strip_color = new Array(strip_num);
-	var strip_map = new Array(strip_num);
-	var strip_len = new Array(strip_num);
-	var strip = new Array(strip_num);
-	for ( j = 0; j < strip_num; j++ ) {
-		strip_tx[j] = data[cur++] * scale;
-		strip_ty[j] = data[cur++] * scale;
-		strip_tz[j] = data[cur++] * scale;
-		strip_or[j] = data[cur++];
-		strip_ox[j] = data[cur++];
-		strip_oy[j] = data[cur++];
-		strip_oz[j] = data[cur++];
-		strip_texture[j] = data[cur++];
-		strip_coord[j] = data[cur++];
-		strip_normal[j] = data[cur++];
-		strip_color[j] = data[cur++];
-		strip_map[j] = data[cur++];
-		strip_len[j] = data[cur++];
-		strip[j] = new Array(strip_len[j]);
-		for ( k = 0; k < strip_len[j]; k++ ) {
-			strip[j][k] = data[cur++];
-		}
-	}
-	model.setStrip(strip_num, strip_texture, strip_coord, strip_normal, strip_color, strip_map, strip_len, strip);
-
-	return model;
 }

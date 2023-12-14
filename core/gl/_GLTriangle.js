@@ -3,13 +3,13 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
-function _GLTriangle( glu/*_GLUtility*/, model/*_GLModel*/, index ){
+function _GLTriangle( model/*_GLModel*/, index ){
 	var i, j;
 
 	// 三角形の数を取得する
 	this._num = 0;
-	glu.beginGetTriangle();
-	while( glu.getTriangle( model, index, false ) ){
+	_glu.beginGetTriangle();
+	while( _glu.getTriangle( model, index, false ) ){
 		this._num++;
 	}
 
@@ -39,22 +39,22 @@ function _GLTriangle( glu/*_GLUtility*/, model/*_GLModel*/, index ){
 		this._center_z = new Array( this._num );
 
 		j = 0;
-		glu.beginGetTriangle();
-		while( glu.getTriangle( model, index, false ) ){
+		_glu.beginGetTriangle();
+		while( _glu.getTriangle( model, index, false ) ){
 			for( i = 0; i < 3; i++ ){
-				this._coord_x[j][i] = glu.coordX( i );
-				this._coord_y[j][i] = glu.coordY( i );
-				this._coord_z[j][i] = glu.coordZ( i );
+				this._coord_x[j][i] = _glu.coordX( i );
+				this._coord_y[j][i] = _glu.coordY( i );
+				this._coord_z[j][i] = _glu.coordZ( i );
 			}
 
-			glu.getTriangleNormal( model, index, false );
-			this._normal_x[j] = glu.normalX();
-			this._normal_y[j] = glu.normalY();
-			this._normal_z[j] = glu.normalZ();
+			_glu.getTriangleNormal( model, index, false );
+			this._normal_x[j] = _glu.normalX();
+			this._normal_y[j] = _glu.normalY();
+			this._normal_z[j] = _glu.normalZ();
 
-			this._center_x[j] = glu.centerX();
-			this._center_y[j] = glu.centerY();
-			this._center_z[j] = glu.centerZ();
+			this._center_x[j] = _glu.centerX();
+			this._center_y[j] = _glu.centerY();
+			this._center_z[j] = _glu.centerZ();
 
 			j++;
 		}
@@ -105,7 +105,7 @@ _GLTriangle.prototype = {
 		return false;
 	},
 
-	hitCheck : function( glu/*_GLUtility*/, px, py, pz, qx, qy, qz, r ){
+	hitCheck : function( px, py, pz, qx, qy, qz, r ){
 		var i;
 		for( i = 0; i < this._num; i++ ){
 			if(
@@ -113,7 +113,7 @@ _GLTriangle.prototype = {
 				(this._center_y[i] >= py - r) && (this._center_y[i] <= py + r) &&
 				(this._center_z[i] >= pz - r) && (this._center_z[i] <= pz + r)
 			){
-				if( glu.hitCheck( px, py, pz, qx, qy, qz, this._coord_x[i], this._coord_y[i], this._coord_z[i] ) ){
+				if( _glu.hitCheck( px, py, pz, qx, qy, qz, this._coord_x[i], this._coord_y[i], this._coord_z[i] ) ){
 					return i;
 				}
 			}

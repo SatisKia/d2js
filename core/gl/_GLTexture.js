@@ -3,18 +3,16 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
-function _GLTexture( gl, glu/*_GLUtility*/, img_array, gen_num ){
+function _GLTexture( img_array, gen_num ){
 	var i;
 
-	this._gl = gl;
-	this._glu = glu;
 	this._img_array = img_array;
 
 	this._num = img_array.length;
 	this._gen_num = gen_num;
 
 	this._id = new Array( this._gen_num );
-	this._glu.genTextures( this._gen_num, this._id );
+	_glu.genTextures( this._gen_num, this._id );
 	this._gen = true;
 
 	this._use_id = new Array( this._gen_num );
@@ -56,8 +54,15 @@ function _GLTexture( gl, glu/*_GLUtility*/, img_array, gen_num ){
 
 _GLTexture.prototype = {
 
+	_SHIFTL : function( a ){
+		return a * 0x1000000;
+	},
+	_SHIFTR : function( a ){
+		return _DIV( a, 0x1000000 );
+	},
+
 	bindTexture : function( target, texture ){
-		this._glu.bindTexture( target, texture );
+		_glu.bindTexture( target, texture );
 	},
 
 	dispose : function(){
@@ -66,7 +71,7 @@ _GLTexture.prototype = {
 		}
 
 		if( this._gen ){
-			this._glu.deleteTextures( this._gen_num, this._id );
+			_glu.deleteTextures( this._gen_num, this._id );
 			this._gen = false;
 		}
 	},
@@ -90,7 +95,8 @@ _GLTexture.prototype = {
 			yy = y * width;
 			for( x = 0; x < width; x++ ){
 				tmp = pixels[yy + x];
-				r = (tmp >> 24) & 0xff;
+//				r = (tmp >> 24) & 0xff;
+				r = this._SHIFTR(tmp) & 0xff;
 				g = (tmp >> 16) & 0xff;
 				b = (tmp >>  8) & 0xff;
 				a =  tmp        & 0xff;
@@ -142,24 +148,25 @@ _GLTexture.prototype = {
 			this._t_a[index] = new Array( len );
 			var data = this._image_data[index].data;
 			for( i = 0; i < len; i++ ){
-				this._t_rgba[index][i] = (data[i * 4] << 24) | (data[i * 4 + 1] << 16) | (data[i * 4 + 2] << 8) | data[i * 4 + 3];
+//				this._t_rgba[index][i] = (data[i * 4] << 24) | (data[i * 4 + 1] << 16) | (data[i * 4 + 2] << 8) | data[i * 4 + 3];
+				this._t_rgba[index][i] = this._SHIFTL(data[i * 4]) + (data[i * 4 + 1] << 16) + (data[i * 4 + 2] << 8) + data[i * 4 + 3];
 				this._t_a[index][i] = data[i * 4 + 3];	// アルファ値を保持
 			}
 		}
 
-		this._t_trans[index] = 255;
+		this._t_trans[index] = 1.0;
 		this._t_alpha[index] = glTextureAlphaFlag( index );
 
 		// テクスチャを構築する
-		this._gl.pixelStorei( this._gl.UNPACK_ALIGNMENT, 1 );
-		this._glu.bindTexture( /*this._gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
-		this._gl.pixelStorei( this._gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
-		this._glu.texImage2D( /*this._gl.TEXTURE_2D,*/ this._image_data[index] );
+		_glu.bindTexture( /*_gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
+		_gl.pixelStorei( _gl.UNPACK_ALIGNMENT, 1 );
+		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
+		_glu.texImage2D( /*_gl.TEXTURE_2D,*/ this._image_data[index] );
 
-		this._gl.texParameteri( this._gl.TEXTURE_2D, this._gl.TEXTURE_MAG_FILTER, glTextureFilter( this._gl, index ) );
-		this._gl.texParameteri( this._gl.TEXTURE_2D, this._gl.TEXTURE_MIN_FILTER, glTextureFilter( this._gl, index ) );
-		this._gl.texParameteri( this._gl.TEXTURE_2D, this._gl.TEXTURE_WRAP_S, glTextureWrap( this._gl, index ) );
-		this._gl.texParameteri( this._gl.TEXTURE_2D, this._gl.TEXTURE_WRAP_T, glTextureWrap( this._gl, index ) );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, glTextureFilter( _gl, index ) );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, glTextureFilter( _gl, index ) );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, glTextureWrap( _gl, index ) );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, glTextureWrap( _gl, index ) );
 	},
 
 	unuse : function( index ){
@@ -179,8 +186,8 @@ _GLTexture.prototype = {
 			this.unuse( i );
 		}
 
-		this._glu.deleteTextures( this._gen_num, this._id );
-		this._glu.genTextures( this._gen_num, this._id );
+		_glu.deleteTextures( this._gen_num, this._id );
+		_glu.genTextures( this._gen_num, this._id );
 	},
 
 	update : function( index, pixels, length ){
@@ -196,14 +203,14 @@ _GLTexture.prototype = {
 					}
 				}
 
-				this._t_trans[index] = 255;
+				this._t_trans[index] = 1.0;
 				this._t_alpha[index] = glTextureAlphaFlag( index );
 
 				// テクスチャを再構築する
-				this._gl.pixelStorei( this._gl.UNPACK_ALIGNMENT, 1 );
-				this._glu.bindTexture( /*this._gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
-				this._gl.pixelStorei( this._gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
-				this._glu.texImage2D( /*this._gl.TEXTURE_2D,*/ this._image_data[index] );
+				_gl.pixelStorei( _gl.UNPACK_ALIGNMENT, 1 );
+				_glu.bindTexture( /*_gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
+				_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
+				_glu.texImage2D( /*_gl.TEXTURE_2D,*/ this._image_data[index] );
 			}
 		}
 	},
@@ -224,23 +231,28 @@ _GLTexture.prototype = {
 		var len = this._width[index] * this._height[index];
 		var r, g, b, a;
 		for( var i = 0; i < len; i++ ){
-			r = (this._t_rgba[index][i] >> 24) & 0xff;
+//			r = (this._t_rgba[index][i] >> 24) & 0xff;
+			r = this._SHIFTR(this._t_rgba[index][i]) & 0xff;
 			g = (this._t_rgba[index][i] >> 16) & 0xff;
 			b = (this._t_rgba[index][i] >>  8) & 0xff;
-			a = this._t_a[index][i] * this._t_trans[index] / 255;
-			this._t_rgba[index][i] = (r << 24) | (g << 16) | (b << 8) | a;
+			a = _INT( this._t_a[index][i] * this._t_trans[index] );
+//			this._t_rgba[index][i] = (r << 24) | (g << 16) | (b << 8) | a;
+			this._t_rgba[index][i] = this._SHIFTL(r) + (g << 16) + (b << 8) + a;
 		}
 		this._image_data[index] = this.imageDataFromPixels( this._t_rgba[index], this._width[index], this._height[index] );
 
-		this._t_alpha[index] = (this._t_trans[index] == 255) ? glTextureAlphaFlag( index ) : true;
+		this._t_alpha[index] = (this._t_trans[index] == 1.0) ? glTextureAlphaFlag( index ) : true;
 
 		// テクスチャを再構築する
-		this._gl.pixelStorei( this._gl.UNPACK_ALIGNMENT, 1 );
-		this._glu.bindTexture( /*this._gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
-		this._gl.pixelStorei( this._gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
-		this._glu.texImage2D( /*this._gl.TEXTURE_2D,*/ this._image_data[index] );
+		_gl.pixelStorei( _gl.UNPACK_ALIGNMENT, 1 );
+		_glu.bindTexture( /*_gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
+		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
+		_glu.texImage2D( /*_gl.TEXTURE_2D,*/ this._image_data[index] );
 	},
 
+	/*
+	 * glTranslatef
+	 */
 	translate : function( index, x, y ){
 		this.use( index );
 
@@ -251,7 +263,7 @@ _GLTexture.prototype = {
 		this._ty[index] = y * height;
 		var dx = this._apply_tx[index] - _INT( this._tx[index] );
 		var dy = this._apply_ty[index] - _INT( this._ty[index] );
-		var repeat = (glTextureWrap( this._gl, index ) == this._gl.REPEAT);
+		var repeat = (glTextureWrap( _gl, index ) == _gl.REPEAT);
 
 		var i, j, k;
 
@@ -332,27 +344,30 @@ _GLTexture.prototype = {
 				var len = width * height;
 				var data = this._image_data[index].data;
 				for( i = 0; i < len; i++ ){
-					this._t_rgba[index][i] = (data[i * 4] << 24) | (data[i * 4 + 1] << 16) | (data[i * 4 + 2] << 8) | data[i * 4 + 3];
+//					this._t_rgba[index][i] = (data[i * 4] << 24) | (data[i * 4 + 1] << 16) | (data[i * 4 + 2] << 8) | data[i * 4 + 3];
+					this._t_rgba[index][i] = this._SHIFTL(data[i * 4]) + (data[i * 4 + 1] << 16) + (data[i * 4 + 2] << 8) + data[i * 4 + 3];
 					this._t_a[index][i] = data[i * 4 + 3];	// アルファ値を保持
 				}
 
 				// アルファ値を操作する
 				var r, g, b, a;
 				for( i = 0; i < len; i++ ){
-					r = (this._t_rgba[index][i] >> 24) & 0xff;
+//					r = (this._t_rgba[index][i] >> 24) & 0xff;
+					r = this._SHIFTR(this._t_rgba[index][i]) & 0xff;
 					g = (this._t_rgba[index][i] >> 16) & 0xff;
 					b = (this._t_rgba[index][i] >>  8) & 0xff;
-					a = this._t_a[index][i] * this._t_trans[index] / 255;
-					this._t_rgba[index][i] = (r << 24) | (g << 16) | (b << 8) | a;
+					a = _INT( this._t_a[index][i] * this._t_trans[index] );
+//					this._t_rgba[index][i] = (r << 24) | (g << 16) | (b << 8) | a;
+					this._t_rgba[index][i] = this._SHIFTL(r) + (g << 16) + (b << 8) + a;
 				}
 				this._image_data[index] = this.imageDataFromPixels( this._t_rgba[index], width, height );
 			}
 
 			// テクスチャを再構築する
-			this._gl.pixelStorei( this._gl.UNPACK_ALIGNMENT, 1 );
-			this._glu.bindTexture( /*this._gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
-			this._gl.pixelStorei( this._gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
-			this._glu.texImage2D( /*this._gl.TEXTURE_2D,*/ this._image_data[index] );
+			_gl.pixelStorei( _gl.UNPACK_ALIGNMENT, 1 );
+			_glu.bindTexture( /*_gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
+			_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
+			_glu.texImage2D( /*_gl.TEXTURE_2D,*/ this._image_data[index] );
 		}
 	},
 

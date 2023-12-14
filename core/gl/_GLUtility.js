@@ -6,9 +6,7 @@
 window._GLUTILITY_TOLERANCE_M = -1.0;
 window._GLUTILITY_TOLERANCE   =  1.0;
 
-function _GLUtility( gl ){
-	this._gl = gl;
-
+function _GLUtility(){
 	// 各種行列演算用
 	this.util_mat = new Array( 16 );
 	this.tmp_mat = new Array( 16 );
@@ -76,18 +74,18 @@ function _GLUtility( gl ){
 	this.hit_y = 0.0;
 	this.hit_z = 0.0;
 
-	// gluLookAt
+	// lookAt用
 	this.look_side = new Array( 3 );
 	this.look_mat = new Array( 16 );
 	this.model_mat = new Array( 16 );
 
-	// glFrustum
+	// frustum用
 	this.proj_mat = new Array( 16 );
 
-	// glViewport
+	// viewport用
 	this.view_mat = new Array( 4 );
 
-	// gluProject
+	// project用
 	this.project_in = new Array( 4 );
 	this.project_out = new Array( 4 );
 	this.project_x = 0.0;
@@ -102,7 +100,7 @@ _GLUtility.prototype = {
 	 */
 	genTextures : function( n, textures ){
 		for( var i = 0; i < n; i++ ){
-			textures[i] = this._gl.createTexture();
+			textures[i] = _gl.createTexture();
 		}
 	},
 
@@ -111,7 +109,7 @@ _GLUtility.prototype = {
 	 */
 	deleteTextures : function( n, textures ){
 		for( var i = 0; i < n; i++ ){
-			this._gl.deleteTexture( textures[i] );
+			_gl.deleteTexture( textures[i] );
 		}
 	},
 
@@ -121,9 +119,9 @@ _GLUtility.prototype = {
 	bindTexture : function( target, texture ){
 		if( texture == undefined ){	// パラメータが1つの場合
 			texture = target;
-			target = this._gl.TEXTURE_2D;
+			target = _gl.TEXTURE_2D;
 		}
-		this._gl.bindTexture( target, texture );
+		_gl.bindTexture( target, texture );
 	},
 
 	/*
@@ -132,13 +130,13 @@ _GLUtility.prototype = {
 	texImage2D : function( target, image/*ImageData*/ ){
 		if( image == undefined ){	// パラメータが1つの場合
 			image = target;
-			target = this._gl.TEXTURE_2D;
+			target = _gl.TEXTURE_2D;
 		}
 		var level = 0;
-		var internalformat = this._gl.RGBA;
-		var format = this._gl.RGBA;
-		var type = this._gl.UNSIGNED_BYTE;
-		this._gl.texImage2D( target, level, internalformat, format, type, image );
+		var internalformat = _gl.RGBA;
+		var format = _gl.RGBA;
+		var type = _gl.UNSIGNED_BYTE;
+		_gl.texImage2D( target, level, internalformat, format, type, image );
 	},
 
 	deg2rad : function( angle ){
@@ -670,7 +668,7 @@ _GLUtility.prototype = {
 	 * glViewport
 	 */
 	viewport : function( x, y, width, height ){
-		this._gl.viewport( x, y, width, height );
+		_gl.viewport( x, y, width, height );
 
 		// ビューポート行列を取得
 		this.view_mat[0] = x;

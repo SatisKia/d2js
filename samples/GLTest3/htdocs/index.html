@@ -13,18 +13,29 @@ window.onresize = d2js_onresize;
 var use_lighting = true;
 
 // ライティング
-var ambientLightColor = [0.25, 0.25, 0.25];
-var directionalLightColor = [0.75, 0.75, 0.75];
-var directionalLightPosition = [1.0, 1.0, 1.0];
-var specularLightColor = [
-	[0.75, 0.75, 0.75],
-	[0.75, 0.75, 0.75],
-	[0.75, 0.75, 0.75],
+var ambientLightColor = [1.0, 1.0, 1.0];
+var directionalLightColor = [1.0, 1.0, 1.0];
+var directionalLightPosition = [0.85, 0.8, 0.75];
+var specularLightColor = [1.0, 1.0, 1.0];
+var ambient = [
+	[0.5, 0.5, 0.5],
+	[0.1, 0.1, 0.1],
+	[0.25, 0.2, 0.075],
+];
+var diffuse = [
+	[0.5, 0.5, 0.5],
+	[0.8, 0.8, 0.8],
+	[0.75, 0.6, 0.2],
+];
+var specular = [
+	[0.5, 0.5, 0.5],
+	[1.0, 1.0, 1.0],
+	[0.6, 0.5, 0.3],
 ];
 var shininess = [
 	99999.0,
-	10.0,
 	50.0,
+	10.0,
 ];
 
 </script>
@@ -41,7 +52,10 @@ var shininess = [
 <canvas id="canvas0" width="640" height="480"></canvas>
 </div>
 <div id="div1" style="display:none">
-<canvas id="canvas1" width="640" height="480"></canvas>
+<div style="position:relative">
+<canvas id="canvas1" style="position:absolute; left:50%; transform:translate(-50%, 0)" width="640" height="480"></canvas>
+<canvas id="canvas2" style="position:absolute; left:50%; transform:translate(-50%, 0)"></canvas>
+</div>
 </div>
 </div>
 

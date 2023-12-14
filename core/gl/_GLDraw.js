@@ -11,18 +11,18 @@ function _GLDrawPrimitive( p, index, tex_index, mat, trans ){
 	for( var i = 0; i < 16; i++ ){
 		this._mat[i] = mat[i];
 	}
-	this._trans = (trans >= 0) ? trans : p._glp.transparency();
+	this._trans = (trans >= 0) ? trans : p.transparency();
 }
 _GLDrawPrimitive.prototype = {
-	draw : function( gl, glt/*_GLTexture*/, alpha ){
-		switch( this._p._glp.type() ){
+	draw : function( glt/*_GLTexture*/, alpha ){
+		switch( this._p.type() ){
 		case _GLPRIMITIVE_TYPE_MODEL:
-			this._p._glp.setTransparency( this._trans );
-			this._p.draw( gl, glt, this._index, this._tex_index, alpha );
+			this._p.setTransparency( this._trans );
+			this._p.draw( glt, this._index, this._tex_index, alpha );
 			break;
 		case _GLPRIMITIVE_TYPE_SPRITE:
-			this._p._glp.setTransparency( this._trans );
-			this._p.draw( gl, glt, this._tex_index, alpha );
+			this._p.setTransparency( this._trans );
+			this._p.draw( glt, this._tex_index, alpha );
 			break;
 		}
 	}
@@ -55,11 +55,11 @@ _GLDraw.prototype = {
 		this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans );
 	},
 
-	addSprite : function( glu/*_GLUtility*/, p, tex_index, x, y, z, trans ){
-		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, glu.spriteMatrix( x, y, z ), trans );
+	addSprite : function( p, tex_index, x, y, z, trans ){
+		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans );
 	},
 
-	draw : function( gl, glt/*_GLTexture*/ ){
+	draw : function( glt/*_GLTexture*/ ){
 		var i;
 		var tmp;
 
@@ -68,21 +68,21 @@ _GLDraw.prototype = {
 		// まず、アルファ情報のない物体を描画する
 		for( i = 0; i < count; i++ ){
 			tmp = this._draw[i];
-			glDrawUseProgram( gl, tmp._p, tmp._index );
-			glDrawSetProjectionMatrix( gl, this._proj_mat, tmp._p, tmp._index );
-			glDrawSetLookMatrix( gl, this._look_mat, tmp._p, tmp._index );
-			glDrawSetModelViewMatrix( gl, tmp._mat, tmp._p, tmp._index );
-			tmp.draw( gl, glt, false );
+			glDrawUseProgram( _gl, tmp._p, tmp._index );
+			glDrawSetProjectionMatrix( _gl, this._proj_mat, tmp._p, tmp._index );
+			glDrawSetLookMatrix( _gl, this._look_mat, tmp._p, tmp._index );
+			glDrawSetModelViewMatrix( _gl, tmp._mat, tmp._p, tmp._index );
+			tmp.draw( glt, false );
 		}
 
 		// 次に、アルファ情報のある物体を描画する
 		for( i = 0; i < count; i++ ){
 			tmp = this._draw[i];
-			glDrawUseProgram( gl, tmp._p, tmp._index );
-			glDrawSetProjectionMatrix( gl, this._proj_mat, tmp._p, tmp._index );
-			glDrawSetLookMatrix( gl, this._look_mat, tmp._p, tmp._index );
-			glDrawSetModelViewMatrix( gl, tmp._mat, tmp._p, tmp._index );
-			tmp.draw( gl, glt, true );
+			glDrawUseProgram( _gl, tmp._p, tmp._index );
+			glDrawSetProjectionMatrix( _gl, this._proj_mat, tmp._p, tmp._index );
+			glDrawSetLookMatrix( _gl, this._look_mat, tmp._p, tmp._index );
+			glDrawSetModelViewMatrix( _gl, tmp._mat, tmp._p, tmp._index );
+			tmp.draw( glt, true );
 		}
 	}
 

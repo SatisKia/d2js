@@ -1,6 +1,7 @@
 #include "_Graphics.js"
 #include "_Image.js"
 #include "_Main.js"
+#include "_Math.js"
 
 //#include "gl\_GLDraw.js"
 #include "gl\_GLMain.js"
@@ -18,6 +19,9 @@ var img_array = new Array();
 var img_src = [
 #include "data.txt"
 ];
+
+var imageData;
+var textureId;
 
 function frameTime(){ return (disp_img || img_loaded) ? (1000 / 30/*フレーム*/) : 0; }
 
@@ -81,49 +85,13 @@ function paint( g ){
 	}
 }
 
-// シェーダープログラムの作成
-function _loadShader( gl, type, source ){
-	var shader = gl.createShader( type );
-
-	// シェーダーオブジェクトにソースを送信
-	gl.shaderSource( shader, source );
-
-	// シェーダープログラムをコンパイル
-	gl.compileShader( shader );
-
-	// コンパイルが成功したか確認する
-	if( !gl.getShaderParameter( shader, gl.COMPILE_STATUS ) ){
-		gl.deleteShader( shader );
-		return null;
-	}
-
-	return shader;
-}
-function createShaderProgram( gl, vsSource, fsSource ){
-	var vertexShader = _loadShader( gl, gl.VERTEX_SHADER, vsSource );
-	var fragmentShader = _loadShader( gl, gl.FRAGMENT_SHADER, fsSource );
-
-	// シェーダープログラムの作成
-	var shaderProgram = gl.createProgram();
-	gl.attachShader( shaderProgram, vertexShader );
-	gl.attachShader( shaderProgram, fragmentShader );
-	gl.linkProgram( shaderProgram );
-
-	// シェーダープログラムの作成に失敗した場合、アラートを出す
-	if( !gl.getProgramParameter( shaderProgram, gl.LINK_STATUS ) ){
-		return null;
-	}
-
-	return shaderProgram;
-}
-
 var shaderProgram;
 var aVertexPosition;
 var aVertexColor = null;
 var aTextureCoord = null;
 var uProjectionMatrix;
 var uModelViewMatrix;
-var uSampler;
+var uSampler = null;
 
 var positionBuffer;
 var colorBuffer;
@@ -134,20 +102,46 @@ var squareRotation = 0.0;
 
 function init3D( gl, glu ){
 	if( use_texture ){
-		glt = new _GLTexture( gl, glu, img_array, img_array.length );
+		if( use_glt || set_transparency ){
+			glt = new _GLTexture( img_array, img_array.length );
 
-		glt.use( 0, set_transparency );
+			glt.use( 0, set_transparency );
+		} else {
+			imageData = imageDataFromImage( img_array[0] );
+
+			textureId = gl.createTexture();
+			gl.bindTexture( gl.TEXTURE_2D, textureId );
+			gl.pixelStorei( gl.UNPACK_ALIGNMENT, 1 );
+			gl.pixelStorei( gl.UNPACK_FLIP_Y_WEBGL, false );
+			var level = 0;
+			var internalformat = gl.RGBA;
+			var format = gl.RGBA;
+			var type = gl.UNSIGNED_BYTE;
+			gl.texImage2D( gl.TEXTURE_2D, level, internalformat, format, type, imageData );
+
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
+
+			gl.activeTexture( gl.TEXTURE0 );
+			gl.bindTexture( gl.TEXTURE_2D, textureId );
+		}
 	}
 
 	// 頂点シェーダーのプログラム
 	const vsSource = `
 		attribute vec4 aVertexPosition;
 		attribute vec4 aVertexColor;
+
 		uniform mat4 uProjectionMatrix;
 		uniform mat4 uModelViewMatrix;
+
 		varying lowp vec4 vColor;
+
 		void main(void) {
 			gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+
 			vColor = aVertexColor;
 		}
 	`;
@@ -156,11 +150,15 @@ function init3D( gl, glu ){
 	const vsSourceTexture = `
 		attribute vec3 aVertexPosition;
 		attribute vec2 aTextureCoord;
+
 		uniform mat4 uProjectionMatrix;
 		uniform mat4 uModelViewMatrix;
+
 		varying highp vec2 vTextureCoord;
+
 		void main(void) {
 			gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+
 			vTextureCoord = aTextureCoord;
 		}
 	`;
@@ -168,6 +166,7 @@ function init3D( gl, glu ){
 	// フラグメントシェーダーのプログラム
 	const fsSource = `
 		varying lowp vec4 vColor;
+
 		void main(void) {
 			gl_FragColor = vColor;
 		}
@@ -176,7 +175,9 @@ function init3D( gl, glu ){
 	// フラグメントシェーダーのプログラム（テクスチャ使用の場合）
 	const fsSourceTexture = `
 		uniform sampler2D uSampler;
+
 		varying highp vec2 vTextureCoord;
+
 		void main(void) {
 			gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
 		}
@@ -185,7 +186,7 @@ function init3D( gl, glu ){
 	// シェーダープログラムを初期化する
 	// （ここで頂点へのライティングなどがすべて確立される）
 	if( use_texture ){
-		shaderProgram = createShaderProgram( gl, vsSourceTexture, fsSourceTexture );
+		shaderProgram = createShaderProgram( vsSourceTexture, fsSourceTexture );
 
 		aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
 		aTextureCoord = gl.getAttribLocation( shaderProgram, "aTextureCoord" );
@@ -194,9 +195,8 @@ function init3D( gl, glu ){
 		uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
 
 		uSampler = gl.getUniformLocation( shaderProgram, "uSampler" );
-		gl.uniform1i( uSampler, 0 );
 	} else {
-		shaderProgram = createShaderProgram( gl, vsSource, fsSource );
+		shaderProgram = createShaderProgram( vsSource, fsSource );
 
 		aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
 		aVertexColor = gl.getAttribLocation( shaderProgram, "aVertexColor" );
@@ -207,6 +207,10 @@ function init3D( gl, glu ){
 
 	// WebGLに、描写に使用するプログラムを伝える
 	gl.useProgram( shaderProgram );
+
+	if( uSampler != null ){
+		gl.uniform1i( uSampler, 0 );
+	}
 
 	const positions = [
 		-1.0, -1.0, 0.0,	// 左下
@@ -254,10 +258,10 @@ function paint3D( gl, glu ){
 	gl.clearColor( 0.0, 0.0, 0.0, 1.0 );	// 黒でクリア、完全に不透明
 	gl.clearDepth( 1.0 );	// 全てをクリア
 
+	gl.enable( gl.CULL_FACE );	// 裏面を表示しない
+
 	gl.enable( gl.DEPTH_TEST );	// 深度テストを有効化
 	gl.depthFunc( gl.LEQUAL );	// 奥にあるものは隠れるようにする
-
-	gl.enable( gl.CULL_FACE );	// 裏面を表示しない
 	gl.depthMask( true );
 
 //	gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
@@ -290,9 +294,10 @@ function paint3D( gl, glu ){
 
 		if( set_transparency ){
 			gl.disable( gl.CULL_FACE );
+
 			gl.depthMask( false );
 
-			glt.setTransparency( 0, 127 );
+			glt.setTransparency( 0, 0.5 );
 		}
 	}
 
@@ -333,4 +338,13 @@ function processEvent( type, param ){
 
 function error(){
 	launch( "error.html" );
+}
+
+function imageDataFromImage( image ){
+	var canvas = document.createElement( "canvas" );
+	var context = canvas.getContext( "2d" );
+	canvas.width = image.width;
+	canvas.height = image.height;
+	context.drawImage( image, 0, 0 );
+	return context.getImageData( 0, 0, canvas.width, canvas.height );
 }
