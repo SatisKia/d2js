@@ -3,8 +3,8 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
-window._GLUTILITY_TOLERANCE_M = -1.0;
-window._GLUTILITY_TOLERANCE   =  1.0;
+#define _GLUTILITY_TOLERANCE_M	-1.0
+#define _GLUTILITY_TOLERANCE	1.0
 
 function _GLUtility(){
 	// 各種行列演算用

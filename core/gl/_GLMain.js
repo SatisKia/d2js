@@ -16,39 +16,27 @@ var _3d = null;
 
 function setCurrent3D( id, id2D ){
 	// マウスイベント
-	if( _USE_MOUSE && (_canvas != null) ){
-		_removeEventListener( _canvas, "mousedown", _onMouseDown );
-		_removeEventListener( _canvas, "mousemove", _onMouseMove );
-		_removeEventListener( _canvas, "mouseout", _onMouseOut );
-		_removeEventListener( _canvas, "mouseover", _onMouseOver );
-		_removeEventListener( _canvas, "mouseup", _onMouseUp );
-	}
+	removeMouseEvent();
 
-	_canvas = document.getElementById( id );
+	var _canvas = setCanvas( document.getElementById( id ) );
 	_gl = _canvas.getContext( "webgl" );
-	_lock = false;
+	initLock();
 
 	if( id2D != undefined ){
 		_3d = _canvas;
-		_canvas = document.getElementById( id2D );
-		_context = _canvas.getContext( "2d" );
+		_canvas = setCanvas( document.getElementById( id2D ) );
+		var _context = setContext( _canvas.getContext( "2d" ) );
 
 		_canvas.width = _3d.width;
 		_canvas.height = _3d.height;
 		_context.textAlign = "left";
 		_context.textBaseline = "bottom";
 
-		_g = new _Graphics();
+		setGraphics( new _Graphics() );
 	}
 
 	// マウスイベント
-	if( _USE_MOUSE ){
-		_addEventListener( _canvas, "mousedown", _onMouseDown );
-		_addEventListener( _canvas, "mousemove", _onMouseMove );
-		_addEventListener( _canvas, "mouseout", _onMouseOut );
-		_addEventListener( _canvas, "mouseover", _onMouseOver );
-		_addEventListener( _canvas, "mouseup", _onMouseUp );
-	}
+	addMouseEvent();
 
 	_glu = new _GLUtility();
 
@@ -56,20 +44,22 @@ function setCurrent3D( id, id2D ){
 	if( _3d != null ){
 		init2D();
 	}
-	window.repaint = function(){
-		paint3D( _gl, _glu );
-
-		if( _3d != null ){
-			_context.clearRect( 0, 0, getWidth(), getHeight() );
-			_context.save();
-			paint2D( _g );
-			_context.restore();
-		}
-	};
+	setRepaintFunc( repaint3D );
 }
 
+var repaint3D = function(){
+	paint3D( _gl, _glu );
+
+	if( _3d != null ){
+		getCurrentContext().clearRect( 0, 0, getWidth(), getHeight() );
+		getCurrentContext().save();
+		paint2D( getGraphics() );
+		getCurrentContext().restore();
+	}
+};
+
 function getCurrent3D(){
-	return (_3d == null) ? _canvas : _3d;
+	return (_3d == null) ? getCurrent() : _3d;
 }
 
 function getCurrentContext3D(){

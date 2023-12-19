@@ -3,6 +3,8 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
+#include "_GLPrimitive.h"
+
 function _GLModel( id, depth, lighting ){
 	this._glp = new _GLPrimitive();
 	this._glp.setType( _GLPRIMITIVE_TYPE_MODEL );

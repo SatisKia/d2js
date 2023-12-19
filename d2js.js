@@ -5,13 +5,13 @@ var location = window.location;
 var navigator = window.navigator;
 
 #ifdef MINIFIED
-#include "tmp\string.js"
-#include "tmp\tmp2.js"
+#include "tmp\core\string.js"
+#include "tmp\core\tmp2.js"
 #else
-#include "tmp\tmp1.js"
+#include "tmp\core\tmp1.js"
 #endif // MINIFIED
 
-#include "tmp\function.js"
-#include "tmp\define.js"
+#include "tmp\core\function.js"
+#include "tmp\core\define.js"
 
 })( window );

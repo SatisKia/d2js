@@ -147,7 +147,7 @@ function killTimer(){
 	_kill_timer = true;
 }
 
-function repaint(){
+var repaint = function(){
 	if( _USE_DRAWSTRINGEX ){
 		_stringex_num = 0;
 	}
@@ -162,6 +162,9 @@ function repaint(){
 			_stringex[i].innerHTML = "";
 		}
 	}
+};
+function setRepaintFunc( func ){
+	repaint = func;
 }
 
 function _getSleepTime(){
@@ -231,17 +234,16 @@ function _removeEventListener( target, event, func ){
 	}
 }
 
-function setCurrent( id ){
-	_canvas = document.getElementById( id );
-	_context = _canvas.getContext( "2d" );
-	_lock = false;
-
-	_context.textAlign = "left";
-	_context.textBaseline = "bottom";
-
-	_g = new _Graphics();
-
-	// マウスイベント
+function removeMouseEvent(){
+	if( _USE_MOUSE && (_canvas != null) ){
+		_removeEventListener( _canvas, "mousedown", _onMouseDown );
+		_removeEventListener( _canvas, "mousemove", _onMouseMove );
+		_removeEventListener( _canvas, "mouseout", _onMouseOut );
+		_removeEventListener( _canvas, "mouseover", _onMouseOver );
+		_removeEventListener( _canvas, "mouseup", _onMouseUp );
+	}
+}
+function addMouseEvent(){
 	if( _USE_MOUSE ){
 		_addEventListener( _canvas, "mousedown", _onMouseDown );
 		_addEventListener( _canvas, "mousemove", _onMouseMove );
@@ -249,6 +251,20 @@ function setCurrent( id ){
 		_addEventListener( _canvas, "mouseover", _onMouseOver );
 		_addEventListener( _canvas, "mouseup", _onMouseUp );
 	}
+}
+
+function setCurrent( id ){
+	_canvas = document.getElementById( id );
+	_context = _canvas.getContext( "2d" );
+	initLock();
+
+	_context.textAlign = "left";
+	_context.textBaseline = "bottom";
+
+	_g = new _Graphics();
+
+	// マウスイベント
+	addMouseEvent();
 }
 function setGraphics( g ){
 	_g = g;
@@ -262,6 +278,18 @@ function getCurrentContext(){
 }
 function getGraphics(){
 	return _g;
+}
+
+function setCanvas( canvas ){
+	_canvas = canvas;
+	return _canvas;
+}
+function setContext( context ){
+	_context = context;
+	return _context;
+}
+function initLock(){
+	_lock = false;
 }
 
 function setCanvasSize( _width, _height ){

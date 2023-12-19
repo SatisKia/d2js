@@ -1,17 +1,3 @@
-#include "_Graphics.js"
-//#include "_Image.js"
-#include "_Main.js"
-#include "_Math.js"
-
-#include "gl\_GLDraw.js"
-#include "gl\_GLMain.js"
-#include "gl\_GLModel.js"
-#include "gl\_GLPrimitive.js"
-#include "gl\_GLSprite.js"
-//#include "gl\_GLTexture.js"
-//#include "gl\_GLTriangle.js"
-#include "gl\_GLUtility.js"
-
 #include "model.js"
 
 var model_sphere;
@@ -34,9 +20,7 @@ function paint( g ){
 
 	g.setFont( 24, "ＭＳ ゴシック" );
 
-	document.getElementById( "div0" ).style.display = "none";
-	document.getElementById( "div1" ).style.display = "block";
-	setCurrent3D( "canvas1", "canvas2" );
+	setCurrent3D( "canvas1", "canvas0" );
 }
 
 var shaderProgram;

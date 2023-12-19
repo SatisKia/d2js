@@ -3,8 +3,7 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
-window._GLPRIMITIVE_TYPE_MODEL  = 0;
-window._GLPRIMITIVE_TYPE_SPRITE = 1;
+#include "_GLPrimitive.h"
 
 function _GLPrimitive(){
 	this._type = _GLPRIMITIVE_TYPE_MODEL;

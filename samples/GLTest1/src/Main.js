@@ -1,17 +1,3 @@
-#include "_Graphics.js"
-#include "_Image.js"
-#include "_Main.js"
-#include "_Math.js"
-
-//#include "gl\_GLDraw.js"
-#include "gl\_GLMain.js"
-//#include "gl\_GLModel.js"
-//#include "gl\_GLPrimitive.js"
-//#include "gl\_GLSprite.js"
-#include "gl\_GLTexture.js"
-//#include "gl\_GLTriangle.js"
-#include "gl\_GLUtility.js"
-
 var glt;
 
 var img_loaded = false;

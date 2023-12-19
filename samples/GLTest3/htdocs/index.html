@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <title></title>
+<script type="text/javascript" src="../../../core/d2js.js"></script>
+<script type="text/javascript" src="../../../core/gl/d2js_gl.js"></script>
 <script type="text/javascript" src="Main.js"></script>
 <script type="text/javascript">
 
@@ -48,14 +50,9 @@ var shininess = [
 <br/>
 
 <div align="center">
-<div id="div0">
-<canvas id="canvas0" width="640" height="480"></canvas>
-</div>
-<div id="div1" style="display:none">
 <div style="position:relative">
-<canvas id="canvas1" style="position:absolute; left:50%; transform:translate(-50%, 0)" width="640" height="480"></canvas>
-<canvas id="canvas2" style="position:absolute; left:50%; transform:translate(-50%, 0)"></canvas>
-</div>
+<canvas id="canvas0" style="z-index:1; position:absolute; left:50%; transform:translate(-50%, 0)" width="640" height="480"></canvas>
+<canvas id="canvas1" style="z-index:0; position:absolute; left:50%; transform:translate(-50%, 0)" width="640" height="480"></canvas>
 </div>
 </div>
 

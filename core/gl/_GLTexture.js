@@ -395,6 +395,6 @@ _GLTexture.prototype = {
 
 //function glTextureAlphaFlag( index ){ return true; }
 //function glTextureDepthFlag( index ){ return true; }
-//function glTextureFlipY( index ){ return true; }
+//function glTextureFlipY( index ){ return false; }
 //function glTextureFilter( gl, index ){ return gl.LINEAR; }
 //function glTextureWrap( gl, index ){ return gl.CLAMP_TO_EDGE; }

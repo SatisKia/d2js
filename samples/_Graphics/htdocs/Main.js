@@ -1,14 +1,6 @@
-
-
-
-
-
-
-
 function _Graphics(){
  this.f = 0;
 }
-
 _Graphics.prototype = {
  canUseClip : function(){
   return (!!_context.clip);
@@ -79,7 +71,6 @@ _Graphics.prototype = {
  drawCircle : function( cx, cy, r ){
   _context.beginPath();
   _context.arc( cx, cy, r, 0.0, Math.PI * 2.0, false );
-
   _context.stroke();
  },
  drawString : function( str, x, y ){
@@ -428,7 +419,7 @@ function setTimer(){
 function killTimer(){
  _kill_timer = true;
 }
-function repaint(){
+window.repaint = function(){
  if( _USE_DRAWSTRINGEX ){
   _stringex_num = 0;
  }
@@ -441,7 +432,7 @@ function repaint(){
    _stringex[i].innerHTML = "";
   }
  }
-}
+};
 function _getSleepTime(){
  _sleep_time = frameTime() - (_end_time - _start_time);
  if( _sleep_time < 0 ){
@@ -462,7 +453,7 @@ function _loop(){
   return;
  }
  _start_time = currentTimeMillis();
- repaint();
+ window.repaint();
  _end_time = currentTimeMillis();
  if( _USE_REQUESTANIMATIONFRAME ){
   if( !!window.requestAnimationFrame ){
@@ -507,13 +498,16 @@ function _removeEventListener( target, event, func ){
   target["on" + event] = null;
  }
 }
-function setCurrent( id ){
- _canvas = document.getElementById( id );
- _context = _canvas.getContext( "2d" );
- _lock = false;
- _context.textAlign = "left";
- _context.textBaseline = "bottom";
- _g = new _Graphics();
+function removeMouseEvent(){
+ if( _USE_MOUSE && (_canvas != null) ){
+  _removeEventListener( _canvas, "mousedown", _onMouseDown );
+  _removeEventListener( _canvas, "mousemove", _onMouseMove );
+  _removeEventListener( _canvas, "mouseout", _onMouseOut );
+  _removeEventListener( _canvas, "mouseover", _onMouseOver );
+  _removeEventListener( _canvas, "mouseup", _onMouseUp );
+ }
+}
+function addMouseEvent(){
  if( _USE_MOUSE ){
   _addEventListener( _canvas, "mousedown", _onMouseDown );
   _addEventListener( _canvas, "mousemove", _onMouseMove );
@@ -521,6 +515,15 @@ function setCurrent( id ){
   _addEventListener( _canvas, "mouseover", _onMouseOver );
   _addEventListener( _canvas, "mouseup", _onMouseUp );
  }
+}
+function setCurrent( id ){
+ _canvas = document.getElementById( id );
+ _context = _canvas.getContext( "2d" );
+ initLock();
+ _context.textAlign = "left";
+ _context.textBaseline = "bottom";
+ _g = new _Graphics();
+ addMouseEvent();
 }
 function setGraphics( g ){
  _g = g;
@@ -533,6 +536,17 @@ function getCurrentContext(){
 }
 function getGraphics(){
  return _g;
+}
+function setCanvas( canvas ){
+ _canvas = canvas;
+ return _canvas;
+}
+function setContext( context ){
+ _context = context;
+ return _context;
+}
+function initLock(){
+ _lock = false;
 }
 function setCanvasSize( _width, _height ){
  _canvas.width = _width;
