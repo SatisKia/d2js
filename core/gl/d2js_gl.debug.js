@@ -9,10 +9,12 @@ function _GLDrawPrimitive( p, index, tex_index, mat, trans ){
 	this._index = index;
 	this._tex_index = tex_index;
 	this._mat = new Array( 16 );
-	for( var i = 0; i < 16; i++ ){
-		this._mat[i] = mat[i];
+	if( mat != null ){
+		for( var i = 0; i < 16; i++ ){
+			this._mat[i] = mat[i];
+		}
 	}
-	this._trans = (trans >= 0) ? trans : p.transparency();
+	this._trans = (trans >= 0.0) ? trans : p.transparency();
 }
 _GLDrawPrimitive.prototype = {
 	draw : function( glt , alpha ){
@@ -49,7 +51,13 @@ _GLDraw.prototype = {
 		this._draw = new Array();
 	},
 	add : function( p, index, tex_index, mat, trans ){
-		this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans );
+		if( (p.type() == 0) && (index < 0) ){
+			for( var i = p.stripNum() - 1; i >= 0; i-- ){
+				this._draw[this._draw.length] = new _GLDrawPrimitive( p, i, tex_index, mat, trans );
+			}
+		} else {
+			this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans );
+		}
 	},
 	addSprite : function( p, tex_index, x, y, z, trans ){
 		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans );
@@ -270,7 +278,7 @@ _GLModel.prototype = {
 	},
 	draw : function( glt , index, tex_index, alpha ){
 		var alpha2 = this.textureAlpha( glt, index, tex_index );
-		if( this.transparency() != 255 ){
+		if( this.transparency() != 1.0 ){
 			alpha2 = true;
 		}
 		if( alpha2 != alpha ){
@@ -542,7 +550,7 @@ function createGLModel( data, scale, id, depth, lighting ){
 function _GLPrimitive(){
 	this._type = 0;
 	this._depth = false;
-	this._trans = 255;
+	this._trans = 1.0;
 }
 _GLPrimitive.prototype = {
 	setType : function( type ){
@@ -623,7 +631,7 @@ _GLSprite.prototype = {
 	},
 	draw : function( glt , tex_index, alpha ){
 		var alpha2 = this.textureAlpha( glt, tex_index );
-		if( this.transparency() != 255 ){
+		if( this.transparency() != 1.0 ){
 			alpha2 = true;
 		}
 		if( alpha2 != alpha ){

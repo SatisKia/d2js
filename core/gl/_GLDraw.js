@@ -10,10 +10,12 @@ function _GLDrawPrimitive( p, index, tex_index, mat, trans ){
 	this._index = index;
 	this._tex_index = tex_index;
 	this._mat = new Array( 16 );
-	for( var i = 0; i < 16; i++ ){
-		this._mat[i] = mat[i];
+	if( mat != null ){
+		for( var i = 0; i < 16; i++ ){
+			this._mat[i] = mat[i];
+		}
 	}
-	this._trans = (trans >= 0) ? trans : p.transparency();
+	this._trans = (trans >= 0.0) ? trans : p.transparency();
 }
 _GLDrawPrimitive.prototype = {
 	draw : function( glt/*_GLTexture*/, alpha ){
@@ -54,7 +56,13 @@ _GLDraw.prototype = {
 	},
 
 	add : function( p, index, tex_index, mat, trans ){
-		this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans );
+		if( (p.type() == _GLPRIMITIVE_TYPE_MODEL) && (index < 0) ){
+			for( var i = p.stripNum() - 1; i >= 0; i-- ){
+				this._draw[this._draw.length] = new _GLDrawPrimitive( p, i, tex_index, mat, trans );
+			}
+		} else {
+			this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans );
+		}
 	},
 
 	addSprite : function( p, tex_index, x, y, z, trans ){

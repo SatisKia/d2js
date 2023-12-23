@@ -75,7 +75,7 @@ _GLSprite.prototype = {
 
 	draw : function( glt/*_GLTexture*/, tex_index, alpha ){
 		var alpha2 = this.textureAlpha( glt, tex_index );
-		if( this.transparency() != 255 ){
+		if( this.transparency() != 1.0 ){
 			alpha2 = true;
 		}
 		if( alpha2 != alpha ){

@@ -229,7 +229,10 @@ function init3D( gl, glu ){
 	if( aTextureCoord != null ){
 		var tmp = 240.0 / 256.0;
 		const textureCoordinates = [
-			0.0, tmp, tmp, tmp, 0.0, 0.0, tmp, 0.0,
+			0.0, tmp,	// 左下
+			tmp, tmp,	// 右下
+			0.0, 0.0,	// 左上
+			tmp, 0.0,	// 右上
 		];
 		textureCoordBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, textureCoordBuffer );

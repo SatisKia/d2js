@@ -144,7 +144,7 @@ function init3D( gl, glu ){
 		}
 	`;
 
-	if( use_lighting ){
+	if( useLighting ){
 		shaderProgram = createShaderProgram( vsSourceLighting, fsSourceLighting );
 	} else {
 		shaderProgram = createShaderProgram( vsSource, fsSource );
@@ -152,14 +152,14 @@ function init3D( gl, glu ){
 	gl.useProgram( shaderProgram );
 
 	aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
-	if( use_lighting ){
+	if( useLighting ){
 		aVertexNormal = gl.getAttribLocation( shaderProgram, "aVertexNormal" );
 	}
 	aVertexColor = gl.getAttribLocation( shaderProgram, "aVertexColor" );
 
 	uProjectionMatrix = gl.getUniformLocation( shaderProgram, "uProjectionMatrix" );
 	uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
-	if( use_lighting ){
+	if( useLighting ){
 		uNormalMatrix = gl.getUniformLocation( shaderProgram, "uNormalMatrix" );
 		uAmbientLightColor = gl.getUniformLocation( shaderProgram, "uAmbientLightColor" );
 		uDirectionalLightColor = gl.getUniformLocation( shaderProgram, "uDirectionalLightColor" );
@@ -173,9 +173,9 @@ function init3D( gl, glu ){
 	}
 
 	model_sphere = new Array( 3 );
-	model_sphere[0] = createGLModel( MODEL_SPHERE, 0.015, 0, true, use_lighting );
-	model_sphere[1] = createGLModel( MODEL_SPHERE, 0.015, 1, true, use_lighting );
-	model_sphere[2] = createGLModel( MODEL_SPHERE, 0.015, 2, true, use_lighting );
+	model_sphere[0] = createGLModel( MODEL_SPHERE, 0.015, 0, true, useLighting );
+	model_sphere[1] = createGLModel( MODEL_SPHERE, 0.015, 1, true, useLighting );
+	model_sphere[2] = createGLModel( MODEL_SPHERE, 0.015, 2, true, useLighting );
 }
 
 function paint3D( gl, glu ){
@@ -215,9 +215,8 @@ function paint3D( gl, glu ){
 	glu.setIdentity();
 	glu.translate( 0.0, 1.0, -15.0 );
 	var modelViewMatrix = glu.glMatrix();	// モデル座標変換行列
-	gl.uniformMatrix4fv( uModelViewMatrix, false, modelViewMatrix );
 
-	if( use_lighting ){
+	if( useLighting ){
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.invert();	// モデル座標変換行列の逆行列
@@ -252,25 +251,48 @@ function paint3D( gl, glu ){
 	}
 
 	var i;
-	var gld = new _GLDraw( null, null );
-	for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
-		gld.add( model_sphere[0], i, -1, modelViewMatrix, -1 );
+	if( useGLDraw ){
+		var gld = new _GLDraw( null, null );
+		for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
+			gld.add( model_sphere[0], i, -1, modelViewMatrix, -1 );
+		}
+		glu.push();
+		glu.set( glu.utMatrix( modelViewMatrix ) );
+		glu.translate( -5.0, 0.0, 0.0 );
+		for ( i = model_sphere[1].stripNum() - 1; i >= 0; i-- ) {
+			gld.add( model_sphere[1], i, -1, glu.glMatrix(), -1 );
+		}
+		glu.pop();
+		glu.push();
+		glu.set( glu.utMatrix( modelViewMatrix ) );
+		glu.translate( 5.0, 0.0, 0.0 );
+		for ( i = model_sphere[2].stripNum() - 1; i >= 0; i-- ) {
+			gld.add( model_sphere[2], i, -1, glu.glMatrix(), -1 );
+		}
+		glu.pop();
+		gld.draw();
+	} else {
+		gl.uniformMatrix4fv( uModelViewMatrix, false, modelViewMatrix );
+		for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
+			model_sphere[0].draw( null, i, -1, false );
+		}
+		glu.push();
+		glu.set( glu.utMatrix( modelViewMatrix ) );
+		glu.translate( -5.0, 0.0, 0.0 );
+		gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+		for ( i = model_sphere[1].stripNum() - 1; i >= 0; i-- ) {
+			model_sphere[1].draw( null, i, -1, false );
+		}
+		glu.pop();
+		glu.push();
+		glu.set( glu.utMatrix( modelViewMatrix ) );
+		glu.translate( 5.0, 0.0, 0.0 );
+		gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+		for ( i = model_sphere[2].stripNum() - 1; i >= 0; i-- ) {
+			model_sphere[2].draw( null, i, -1, false );
+		}
+		glu.pop();
 	}
-	glu.push();
-	glu.set( glu.utMatrix( modelViewMatrix ) );
-	glu.translate( -5.0, 0.0, 0.0 );
-	for ( i = model_sphere[1].stripNum() - 1; i >= 0; i-- ) {
-		gld.add( model_sphere[1], i, -1, glu.glMatrix(), -1 );
-	}
-	glu.pop();
-	glu.push();
-	glu.set( glu.utMatrix( modelViewMatrix ) );
-	glu.translate( 5.0, 0.0, 0.0 );
-	for ( i = model_sphere[2].stripNum() - 1; i >= 0; i-- ) {
-		gld.add( model_sphere[2], i, -1, glu.glMatrix(), -1 );
-	}
-	glu.pop();
-	gld.draw();
 }
 
 function init2D(){

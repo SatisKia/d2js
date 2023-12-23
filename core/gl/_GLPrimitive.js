@@ -8,7 +8,7 @@
 function _GLPrimitive(){
 	this._type = _GLPRIMITIVE_TYPE_MODEL;
 	this._depth = false;
-	this._trans = 255;
+	this._trans = 1.0;
 }
 
 _GLPrimitive.prototype = {
