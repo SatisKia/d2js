@@ -5,7 +5,7 @@
 
 #include "_GLPrimitive.h"
 
-function _GLDrawPrimitive( p, index, tex_index, mat, trans ){
+function _GLDrawPrimitive( p, index, tex_index, mat, trans, sort, x, y, z ){
 	this._p = p;
 	this._index = index;
 	this._tex_index = tex_index;
@@ -16,6 +16,13 @@ function _GLDrawPrimitive( p, index, tex_index, mat, trans ){
 		}
 	}
 	this._trans = (trans >= 0.0) ? trans : p.transparency();
+	this._distance = 0.0;
+	if( sort ){
+		var dx = x - _glu.positionX();
+		var dy = y - _glu.positionY();
+		var dz = z - _glu.positionZ();
+		this._distance = _glu.distance( dx, dy, dz );
+	}
 }
 _GLDrawPrimitive.prototype = {
 	draw : function( glt/*_GLTexture*/, alpha ){
@@ -32,18 +39,12 @@ _GLDrawPrimitive.prototype = {
 	}
 };
 
-function _GLDraw( proj_mat, look_mat ){
+function _GLDraw( proj_mat ){
 	var i;
 	this._proj_mat = new Array( 16 );
 	if( proj_mat != null ){
 		for( i = 0; i < 16; i++ ){
 			this._proj_mat[i] = proj_mat[i];
-		}
-	}
-	this._look_mat = new Array( 16 );
-	if( look_mat != null ){
-		for( i = 0; i < 16; i++ ){
-			this._look_mat[i] = look_mat[i];
 		}
 	}
 	this._draw = new Array();
@@ -58,39 +59,60 @@ _GLDraw.prototype = {
 	add : function( p, index, tex_index, mat, trans ){
 		if( (p.type() == _GLPRIMITIVE_TYPE_MODEL) && (index < 0) ){
 			for( var i = p.stripNum() - 1; i >= 0; i-- ){
-				this._draw[this._draw.length] = new _GLDrawPrimitive( p, i, tex_index, mat, trans );
+				this._draw[this._draw.length] = new _GLDrawPrimitive( p, i, tex_index, mat, trans, false );
 			}
 		} else {
-			this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans );
+			this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans, false );
 		}
 	},
 
 	addSprite : function( p, tex_index, x, y, z, trans ){
-		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans );
+		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
 	},
 
 	draw : function( glt/*_GLTexture*/ ){
-		var i;
+		var i, j;
+		var distance;
 		var tmp;
 
 		var count = this._draw.length;
 
+		// ソート
+		var draw = new Array();
+		var k = 0;
+		for( i = 0; i < count; i++ ){
+			if( this._draw[i]._distance == 0.0 ){
+				this._draw[i]._distance = -1.0;
+				draw[k++] = this._draw[i];
+			}
+		}
+		for( ; k < count; k++ ){
+			distance = 0.0;
+			j = 0;
+			for( i = 0; i < count; i++ ){
+				if( this._draw[i]._distance >= distance ){
+					distance = this._draw[i]._distance;
+					j = i;
+				}
+			}
+			this._draw[j]._distance = -1.0;
+			draw[k] = this._draw[j];
+		}
+
 		// まず、アルファ情報のない物体を描画する
 		for( i = 0; i < count; i++ ){
-			tmp = this._draw[i];
+			tmp = draw[i];
 			glDrawUseProgram( _gl, tmp._p, tmp._index );
 			glDrawSetProjectionMatrix( _gl, this._proj_mat, tmp._p, tmp._index );
-			glDrawSetLookMatrix( _gl, this._look_mat, tmp._p, tmp._index );
 			glDrawSetModelViewMatrix( _gl, tmp._mat, tmp._p, tmp._index );
 			tmp.draw( glt, false );
 		}
 
 		// 次に、アルファ情報のある物体を描画する
 		for( i = 0; i < count; i++ ){
-			tmp = this._draw[i];
+			tmp = draw[i];
 			glDrawUseProgram( _gl, tmp._p, tmp._index );
 			glDrawSetProjectionMatrix( _gl, this._proj_mat, tmp._p, tmp._index );
-			glDrawSetLookMatrix( _gl, this._look_mat, tmp._p, tmp._index );
 			glDrawSetModelViewMatrix( _gl, tmp._mat, tmp._p, tmp._index );
 			tmp.draw( glt, true );
 		}
@@ -100,5 +122,4 @@ _GLDraw.prototype = {
 
 //function glDrawUseProgram( gl, p, index ){}
 //function glDrawSetProjectionMatrix( gl, mat, p, index ){}
-//function glDrawSetLookMatrix( gl, mat, p, index ){}
 //function glDrawSetModelViewMatrix( gl, mat, p, index ){}

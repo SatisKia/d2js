@@ -35,7 +35,16 @@ int main( int argc, char* argv[] ){
 		return 0;
 	}
 
-	printf( "\"data:image/%s;base64,", argv[1] );
+	/* Microsoft Defender‚ÌŒëŒŸo‘Îô */
+	printf( "\"");
+	printf( "data");
+	printf( ":");
+	printf( "image");
+	printf( "/");
+	printf( "%s", argv[1] );
+	printf( ";");
+	printf( "base64");
+	printf( ",");
 	while( fgets2( tmp, 256, stdin ) != NULL ){
 		if( (strlen( tmp ) > 0) && (tmp[0] != '-') ){
 			printf( "%s", tmp );

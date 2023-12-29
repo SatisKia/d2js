@@ -75,6 +75,9 @@ function _GLUtility(){
 	this.hit_z = 0.0;
 
 	// lookAt用
+	this.position_x = 0.0;
+	this.position_y = 0.0;
+	this.position_z = 0.0;
 	this.look_side = new Array( 3 );
 	this.look_mat = new Array( 16 );
 	this.model_mat = new Array( 16 );
@@ -567,9 +570,12 @@ _GLUtility.prototype = {
 	lookAt : function( position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z ){
 		var d;
 
-		look_x -= position_x;
-		look_y -= position_y;
-		look_z -= position_z;
+		this.position_x = position_x;
+		this.position_y = position_y;
+		this.position_z = position_z;
+		look_x -= this.position_x;
+		look_y -= this.position_y;
+		look_z -= this.position_z;
 		d = Math.sqrt( look_x * look_x + look_y * look_y + look_z * look_z );
 		if( d != 0.0 ){
 			look_x /= d;
@@ -606,7 +612,7 @@ _GLUtility.prototype = {
 			}
 		}
 		this.set( this.model_mat );
-		this.translate( -position_x, -position_y, -position_z );
+		this.translate( -this.position_x, -this.position_y, -this.position_z );
 		for( i = 0; i < 16; i++ ){
 			this.model_mat[i] = this.util_mat[i];
 		}
@@ -615,7 +621,7 @@ _GLUtility.prototype = {
 		return this.look_mat;
 	},
 	spriteMatrix : function( x, y, z ){
-		this.setIdentity();
+		this.set( this.model_mat );
 		this.translate( x, y, z );
 		this.multiply( this.look_mat );
 		return this.glMatrix();
@@ -799,6 +805,15 @@ _GLUtility.prototype = {
 	},
 	hitZ : function(){
 		return this.hit_z;
+	},
+	positionX : function(){
+		return this.position_x;
+	},
+	positionY : function(){
+		return this.position_y;
+	},
+	positionZ : function(){
+		return this.position_z;
 	},
 	projectX : function(){
 		return this.project_x;

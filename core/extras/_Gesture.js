@@ -3,6 +3,7 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
+//TODOメモ
 // pinch in：ピンチ・イン（→ ←）
 // pinch out：ピンチ・アウト（← →）
 // rotate：angle（ラジアン）を返す。時計回りがプラス値

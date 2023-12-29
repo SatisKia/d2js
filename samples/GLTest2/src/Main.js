@@ -180,8 +180,8 @@ function init3D( gl, glu ){
 
 			vAmbient = uAmbientLightColor;
 
-			highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
 			highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+			highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
 			highp float diffuse = clamp(dot(transformedNormal.xyz, directionalLightPosition), 0.0, 1.0);	// ベクトルの内積
 			vDiffuse = uDirectionalLightColor * diffuse;
 		}

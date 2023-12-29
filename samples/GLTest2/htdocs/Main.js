@@ -142,8 +142,8 @@ function init3D( gl, glu ){
    gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
    vTextureCoord = aTextureCoord;
    vAmbient = uAmbientLightColor;
-   highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
    highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+   highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
    highp float diffuse = clamp(dot(transformedNormal.xyz, directionalLightPosition), 0.0, 1.0);
    vDiffuse = uDirectionalLightColor * diffuse;
   }
@@ -208,7 +208,7 @@ function init3D( gl, glu ){
   -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0,
   -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0,
    1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0,
-  -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0,-1.0, 1.0, 1.0,
+  -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0,
  ];
  positionBuffer = gl.createBuffer();
  gl.bindBuffer( gl.ARRAY_BUFFER, positionBuffer );

@@ -178,7 +178,10 @@ function init3D( gl, glu ){
  if( aTextureCoord != null ){
   var tmp = 240.0 / 256.0;
   const textureCoordinates = [
-   0.0, tmp, tmp, tmp, 0.0, 0.0, tmp, 0.0,
+   0.0, tmp,
+   tmp, tmp,
+   0.0, 0.0,
+   tmp, 0.0,
   ];
   textureCoordBuffer = gl.createBuffer();
   gl.bindBuffer( gl.ARRAY_BUFFER, textureCoordBuffer );

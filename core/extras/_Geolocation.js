@@ -1,3 +1,8 @@
+/*
+ * D2JS
+ * Copyright (C) SatisKia. All rights reserved.
+ */
+
 window._GEOLOCATION_ERROR                = 0;
 window._GEOLOCATION_PERMISSION_DENIED    = 1;
 window._GEOLOCATION_POSITION_UNAVAILABLE = 2;

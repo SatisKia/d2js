@@ -4,7 +4,7 @@
  */
 (function( window, undefined ){
 var document = window.document;
-function _GLDrawPrimitive( p, index, tex_index, mat, trans ){
+function _GLDrawPrimitive( p, index, tex_index, mat, trans, sort, x, y, z ){
 	this._p = p;
 	this._index = index;
 	this._tex_index = tex_index;
@@ -15,6 +15,13 @@ function _GLDrawPrimitive( p, index, tex_index, mat, trans ){
 		}
 	}
 	this._trans = (trans >= 0.0) ? trans : p.transparency();
+	this._distance = 0.0;
+	if( sort ){
+		var dx = x - _glu.positionX();
+		var dy = y - _glu.positionY();
+		var dz = z - _glu.positionZ();
+		this._distance = _glu.distance( dx, dy, dz );
+	}
 }
 _GLDrawPrimitive.prototype = {
 	draw : function( glt , alpha ){
@@ -30,18 +37,12 @@ _GLDrawPrimitive.prototype = {
 		}
 	}
 };
-function _GLDraw( proj_mat, look_mat ){
+function _GLDraw( proj_mat ){
 	var i;
 	this._proj_mat = new Array( 16 );
 	if( proj_mat != null ){
 		for( i = 0; i < 16; i++ ){
 			this._proj_mat[i] = proj_mat[i];
-		}
-	}
-	this._look_mat = new Array( 16 );
-	if( look_mat != null ){
-		for( i = 0; i < 16; i++ ){
-			this._look_mat[i] = look_mat[i];
 		}
 	}
 	this._draw = new Array();
@@ -53,32 +54,51 @@ _GLDraw.prototype = {
 	add : function( p, index, tex_index, mat, trans ){
 		if( (p.type() == 0) && (index < 0) ){
 			for( var i = p.stripNum() - 1; i >= 0; i-- ){
-				this._draw[this._draw.length] = new _GLDrawPrimitive( p, i, tex_index, mat, trans );
+				this._draw[this._draw.length] = new _GLDrawPrimitive( p, i, tex_index, mat, trans, false );
 			}
 		} else {
-			this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans );
+			this._draw[this._draw.length] = new _GLDrawPrimitive( p, index, tex_index, mat, trans, false );
 		}
 	},
 	addSprite : function( p, tex_index, x, y, z, trans ){
-		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans );
+		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
 	},
 	draw : function( glt ){
-		var i;
+		var i, j;
+		var distance;
 		var tmp;
 		var count = this._draw.length;
+		var draw = new Array();
+		var k = 0;
 		for( i = 0; i < count; i++ ){
-			tmp = this._draw[i];
+			if( this._draw[i]._distance == 0.0 ){
+				this._draw[i]._distance = -1.0;
+				draw[k++] = this._draw[i];
+			}
+		}
+		for( ; k < count; k++ ){
+			distance = 0.0;
+			j = 0;
+			for( i = 0; i < count; i++ ){
+				if( this._draw[i]._distance >= distance ){
+					distance = this._draw[i]._distance;
+					j = i;
+				}
+			}
+			this._draw[j]._distance = -1.0;
+			draw[k] = this._draw[j];
+		}
+		for( i = 0; i < count; i++ ){
+			tmp = draw[i];
 			glDrawUseProgram( _gl, tmp._p, tmp._index );
 			glDrawSetProjectionMatrix( _gl, this._proj_mat, tmp._p, tmp._index );
-			glDrawSetLookMatrix( _gl, this._look_mat, tmp._p, tmp._index );
 			glDrawSetModelViewMatrix( _gl, tmp._mat, tmp._p, tmp._index );
 			tmp.draw( glt, false );
 		}
 		for( i = 0; i < count; i++ ){
-			tmp = this._draw[i];
+			tmp = draw[i];
 			glDrawUseProgram( _gl, tmp._p, tmp._index );
 			glDrawSetProjectionMatrix( _gl, this._proj_mat, tmp._p, tmp._index );
-			glDrawSetLookMatrix( _gl, this._look_mat, tmp._p, tmp._index );
 			glDrawSetModelViewMatrix( _gl, tmp._mat, tmp._p, tmp._index );
 			tmp.draw( glt, true );
 		}
@@ -1136,6 +1156,9 @@ function _GLUtility(){
 	this.hit_x = 0.0;
 	this.hit_y = 0.0;
 	this.hit_z = 0.0;
+	this.position_x = 0.0;
+	this.position_y = 0.0;
+	this.position_z = 0.0;
 	this.look_side = new Array( 3 );
 	this.look_mat = new Array( 16 );
 	this.model_mat = new Array( 16 );
@@ -1489,9 +1512,12 @@ _GLUtility.prototype = {
 	},
 	lookAt : function( position_x, position_y, position_z, look_x, look_y, look_z, up_x, up_y, up_z ){
 		var d;
-		look_x -= position_x;
-		look_y -= position_y;
-		look_z -= position_z;
+		this.position_x = position_x;
+		this.position_y = position_y;
+		this.position_z = position_z;
+		look_x -= this.position_x;
+		look_y -= this.position_y;
+		look_z -= this.position_z;
 		d = Math.sqrt( look_x * look_x + look_y * look_y + look_z * look_z );
 		if( d != 0.0 ){
 			look_x /= d;
@@ -1522,7 +1548,7 @@ _GLUtility.prototype = {
 			}
 		}
 		this.set( this.model_mat );
-		this.translate( -position_x, -position_y, -position_z );
+		this.translate( -this.position_x, -this.position_y, -this.position_z );
 		for( i = 0; i < 16; i++ ){
 			this.model_mat[i] = this.util_mat[i];
 		}
@@ -1531,7 +1557,7 @@ _GLUtility.prototype = {
 		return this.look_mat;
 	},
 	spriteMatrix : function( x, y, z ){
-		this.setIdentity();
+		this.set( this.model_mat );
 		this.translate( x, y, z );
 		this.multiply( this.look_mat );
 		return this.glMatrix();
@@ -1673,6 +1699,15 @@ _GLUtility.prototype = {
 	},
 	hitZ : function(){
 		return this.hit_z;
+	},
+	positionX : function(){
+		return this.position_x;
+	},
+	positionY : function(){
+		return this.position_y;
+	},
+	positionZ : function(){
+		return this.position_z;
 	},
 	projectX : function(){
 		return this.project_x;

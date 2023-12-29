@@ -3,8 +3,6 @@
 set CPP=gcc -E -P -x c -I..\..\..\core
 rem set AJAXMINPATH=C:\Microsoft Ajax Minifier
 if "%AJAXMINPATH%"=="" goto error
-rem set SKCOMMONPATH=C:\git\SatisKia\common
-if "%SKCOMMONPATH%"=="" goto error
 
 cd src
 %CPP% Main.js > ..\htdocs\Main.js
@@ -16,13 +14,12 @@ del Main.min.js
 AjaxMin -enc:in UTF-8 Main.js -out Main.min.js
 cd ..
 
-rem copy %SKCOMMONPATH%\_Geolocation.js htdocs\Geolocation.js
-copy ..\..\core\_Geolocation.js htdocs\Geolocation.js
+copy ..\..\core\extras\_Geolocation.js htdocs\Geolocation.js
 
 goto end
 
 :error
-echo 環境変数"AJAXMINPATH"または"SKCOMMONPATH"が設定されていません
+echo 環境変数"AJAXMINPATH"が設定されていません
 
 :end
 pause

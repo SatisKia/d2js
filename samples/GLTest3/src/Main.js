@@ -1,5 +1,7 @@
 #include "model.js"
 
+var glu;
+
 var model_sphere;
 
 function frameTime(){ return 1000 / 30/*フレーム*/; }
@@ -58,7 +60,9 @@ function rotate( glu ){
 	glu.rotate( rotation * 180 / Math.PI, 0, 1, 0 );	// Y軸回転
 }
 
-function init3D( gl, glu ){
+function init3D( gl, _glu ){
+	glu = _glu;
+
 	// 頂点シェーダーのプログラム
 	const vsSource = `
 		attribute vec3 aVertexPosition;
@@ -112,13 +116,13 @@ function init3D( gl, glu ){
 
 			vAmbient = uAmbientLightColor * uAmbient;
 
-			highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
 			highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+			highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
 			highp float diffuse = clamp(dot(transformedNormal.xyz, directionalLightPosition), 0.0, 1.0);	// ベクトルの内積
 			vDiffuse = (uDirectionalLightColor * uDiffuse) * diffuse;
 
 			highp vec3 eyeDirection = normalize(uEyeDirection);
-			highp float specular = pow(clamp(dot(aVertexNormal, eyeDirection), 0.0, 1.0), uShininess);	// 内積によって得られた結果をべき乗によって収束させる
+			highp float specular = pow(clamp(dot(transformedNormal.xyz, eyeDirection), 0.0, 1.0), uShininess);	// 内積によって得られた結果をべき乗によって収束させる
 			vSpecular = (uSpecularLightColor * uSpecular) * specular;
 		}
 	`;
@@ -188,6 +192,7 @@ function paint3D( gl, glu ){
 	gl.depthFunc( gl.LEQUAL );	// 奥にあるものは隠れるようにする
 //	gl.depthMask( true );
 
+	gl.enable( gl.BLEND );
 //	gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
 	gl.blendFuncSeparate( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE );
 
@@ -217,26 +222,20 @@ function paint3D( gl, glu ){
 	var modelViewMatrix = glu.glMatrix();	// モデル座標変換行列
 
 	if( useLighting ){
+/*
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.invert();	// モデル座標変換行列の逆行列
 		glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 		gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
 		glu.pop();
+*/
 
 		gl.uniform3fv(uAmbientLightColor, ambientLightColor);
 		gl.uniform3fv(uDirectionalLightColor, directionalLightColor);
 		gl.uniform3fv(uDirectionalLightPosition, directionalLightPosition);
 		gl.uniform3fv(uSpecularLightColor, specularLightColor);
 
-/*
-		glu.push();
-		glu.setIdentity();
-		rotate( glu );
-		var matrix = glu.glMatrix();
-		glu.pop();
-		gl.uniform3fv(uEyeDirection, [matrix[2], matrix[6], matrix[10]]);
-*/
 		/*
 		 * OpenGL用行列の配列データ
 		 * [m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15]
@@ -247,32 +246,46 @@ function paint3D( gl, glu ){
 		 * | m3 m7 m11 m15 |
 		 * 視線ベクトルは(-m2,-m6,-m10)
 		 */
+/*
+		glu.push();
+		glu.setIdentity();
+		rotate( glu );
+		var matrix = glu.glMatrix();
+		glu.pop();
+		gl.uniform3fv(uEyeDirection, [matrix[2], matrix[6], matrix[10]]);
+*/
 		gl.uniform3fv(uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
 	}
 
 	var i;
 	if( useGLDraw ){
-		var gld = new _GLDraw( null, null );
+		var gld = new _GLDraw( null );
 		for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
-			gld.add( model_sphere[0], i, -1, modelViewMatrix, -1 );
+			gld.add( model_sphere[0], i, -1, modelViewMatrix, -1, false );
 		}
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.translate( -5.0, 0.0, 0.0 );
 		for ( i = model_sphere[1].stripNum() - 1; i >= 0; i-- ) {
-			gld.add( model_sphere[1], i, -1, glu.glMatrix(), -1 );
+			gld.add( model_sphere[1], i, -1, glu.glMatrix(), -1, false );
 		}
 		glu.pop();
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.translate( 5.0, 0.0, 0.0 );
 		for ( i = model_sphere[2].stripNum() - 1; i >= 0; i-- ) {
-			gld.add( model_sphere[2], i, -1, glu.glMatrix(), -1 );
+			gld.add( model_sphere[2], i, -1, glu.glMatrix(), -1, false );
 		}
 		glu.pop();
 		gld.draw();
 	} else {
-		gl.uniformMatrix4fv( uModelViewMatrix, false, modelViewMatrix );
+		glu.set( glu.utMatrix( modelViewMatrix ) );
+		gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+		if( useLighting ){
+			glu.invert();	// モデル座標変換行列の逆行列
+			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
+			gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+		}
 		for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
 			model_sphere[0].draw( null, i, -1, false );
 		}
@@ -280,6 +293,11 @@ function paint3D( gl, glu ){
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.translate( -5.0, 0.0, 0.0 );
 		gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+		if( useLighting ){
+			glu.invert();	// モデル座標変換行列の逆行列
+			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
+			gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+		}
 		for ( i = model_sphere[1].stripNum() - 1; i >= 0; i-- ) {
 			model_sphere[1].draw( null, i, -1, false );
 		}
@@ -288,6 +306,11 @@ function paint3D( gl, glu ){
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.translate( 5.0, 0.0, 0.0 );
 		gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+		if( useLighting ){
+			glu.invert();	// モデル座標変換行列の逆行列
+			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
+			gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+		}
 		for ( i = model_sphere[2].stripNum() - 1; i >= 0; i-- ) {
 			model_sphere[2].draw( null, i, -1, false );
 		}
@@ -358,9 +381,15 @@ function glDrawUseProgram( gl, p, index ){
 }
 function glDrawSetProjectionMatrix( gl, mat, p, index ){
 }
-function glDrawSetLookMatrix( gl, mat, p, index ){
-}
 function glDrawSetModelViewMatrix( gl, mat ){
+	if( useLighting ){
+		glu.push();
+		glu.set( glu.utMatrix( mat ) );
+		glu.invert();	// モデル座標変換行列の逆行列
+		glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
+		gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+		glu.pop();
+	}
 	gl.uniformMatrix4fv( uModelViewMatrix, false, mat );
 }
 

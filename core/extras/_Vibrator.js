@@ -1,3 +1,8 @@
+/*
+ * D2JS
+ * Copyright (C) SatisKia. All rights reserved.
+ */
+
 function canUseVibration(){
 	navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
 	return !!navigator.vibrate;
