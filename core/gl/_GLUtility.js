@@ -669,6 +669,11 @@ _GLUtility.prototype = {
 			this.proj_mat[i] = this.util_mat[i];
 		}
 	},
+	setProjMatrix : function( matrix ){
+		for( var i = 0; i < 16; i++ ){
+			this.proj_mat[i] = matrix[i];
+		}
+	},
 
 	/*
 	 * glViewport
@@ -711,8 +716,8 @@ _GLUtility.prototype = {
 	 * gluUnProject
 	 */
 	unProject : function( win_x, win_y, win_z ){
-		this.set( this.model_mat );
-		this.multiply( this.proj_mat );
+		this.set( this.proj_mat );
+		this.multiply( this.model_mat );
 		this.invert();
 
 		this.project_in[0] = (win_x - this.view_mat[0]) * 2.0 / this.view_mat[2] - 1.0;

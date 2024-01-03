@@ -53,6 +53,14 @@ var uDiffuse;	// 拡散反射成分（物体の色）
 var uSpecular;	// 鏡面反射成分（きらめきの色）
 var uShininess;	// 鏡面係数（きらめきの度合い）
 
+var text = new Array( 3 );
+text[0] = null;
+text[1] = null;
+text[2] = null;
+var textX = new Array( 3 );
+var textY = new Array( 3 );
+var textZ = new Array( 3 );
+
 // カメラを回転させる
 var rotation = 0.0;
 function rotate( glu ){
@@ -62,6 +70,10 @@ function rotate( glu ){
 
 function init3D( gl, _glu ){
 	glu = _glu;
+
+	if( useProject ){
+		glu.viewport( 0, 0, getWidth(), getHeight() );
+	}
 
 	// 頂点シェーダーのプログラム
 	const vsSource = `
@@ -217,7 +229,19 @@ function paint3D( gl, glu ){
 	var projectionMatrix = glu.glMatrix();	// プロジェクション座標変換行列
 	gl.uniformMatrix4fv( uProjectionMatrix, false, projectionMatrix );
 
-	glu.setIdentity();
+	if( useProject ){
+		glu.setProjMatrix( glu.utMatrix( projectionMatrix ) );
+
+		var camera_x = 0.0;
+		var camera_y = 10.0;
+		var camera_z = -3.0;
+		var look_x = 0.0;
+		var look_y = -0.5;
+		var look_z = -15.0;
+		glu.lookAt(camera_x, camera_y, camera_z, look_x, look_y, look_z, 0.0, 1.0, 0.0);
+	} else {
+		glu.setIdentity();
+	}
 	glu.translate( 0.0, 1.0, -15.0 );
 	var modelViewMatrix = glu.glMatrix();	// モデル座標変換行列
 
@@ -257,26 +281,53 @@ function paint3D( gl, glu ){
 		gl.uniform3fv(uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
 	}
 
+	var matrix;
 	var i;
 	if( useGLDraw ){
 		var gld = new _GLDraw( null );
 		for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
 			gld.add( model_sphere[0], i, -1, modelViewMatrix, -1, false );
 		}
+		if( useProject ){
+			glu.project( modelViewMatrix[12], modelViewMatrix[13], modelViewMatrix[14] );
+			textX[0] = glu.projectX();
+			textY[0] = glu.projectY();
+			textZ[0] = glu.projectZ();
+			glu.unProject( textX[0], textY[0], textZ[0] );
+			text[0] = "1 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+		}
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.translate( -5.0, 0.0, 0.0 );
+		matrix = glu.glMatrix();
 		for ( i = model_sphere[1].stripNum() - 1; i >= 0; i-- ) {
-			gld.add( model_sphere[1], i, -1, glu.glMatrix(), -1, false );
+			gld.add( model_sphere[1], i, -1, matrix, -1, false );
 		}
 		glu.pop();
+		if( useProject ){
+			glu.project( matrix[12], matrix[13], matrix[14] );
+			textX[1] = glu.projectX();
+			textY[1] = glu.projectY();
+			textZ[1] = glu.projectZ();
+			glu.unProject( textX[1], textY[1], textZ[1] );
+			text[1] = "2 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+		}
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.translate( 5.0, 0.0, 0.0 );
+		matrix = glu.glMatrix();
 		for ( i = model_sphere[2].stripNum() - 1; i >= 0; i-- ) {
-			gld.add( model_sphere[2], i, -1, glu.glMatrix(), -1, false );
+			gld.add( model_sphere[2], i, -1, matrix, -1, false );
 		}
 		glu.pop();
+		if( useProject ){
+			glu.project( matrix[12], matrix[13], matrix[14] );
+			textX[2] = glu.projectX();
+			textY[2] = glu.projectY();
+			textZ[2] = glu.projectZ();
+			glu.unProject( textX[2], textY[2], textZ[2] );
+			text[2] = "3 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+		}
 		gld.draw();
 	} else {
 		glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -289,10 +340,19 @@ function paint3D( gl, glu ){
 		for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
 			model_sphere[0].draw( null, i, -1, false );
 		}
+		if( useProject ){
+			glu.project( modelViewMatrix[12], modelViewMatrix[13], modelViewMatrix[14] );
+			textX[0] = glu.projectX();
+			textY[0] = glu.projectY();
+			textZ[0] = glu.projectZ();
+			glu.unProject( textX[0], textY[0], textZ[0] );
+			text[0] = "1 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+		}
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.translate( -5.0, 0.0, 0.0 );
-		gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+		matrix = glu.glMatrix();
+		gl.uniformMatrix4fv( uModelViewMatrix, false, matrix );
 		if( useLighting ){
 			glu.invert();	// モデル座標変換行列の逆行列
 			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
@@ -302,10 +362,19 @@ function paint3D( gl, glu ){
 			model_sphere[1].draw( null, i, -1, false );
 		}
 		glu.pop();
+		if( useProject ){
+			glu.project( matrix[12], matrix[13], matrix[14] );
+			textX[1] = glu.projectX();
+			textY[1] = glu.projectY();
+			textZ[1] = glu.projectZ();
+			glu.unProject( textX[1], textY[1], textZ[1] );
+			text[1] = "2 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+		}
 		glu.push();
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.translate( 5.0, 0.0, 0.0 );
-		gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+		matrix = glu.glMatrix();
+		gl.uniformMatrix4fv( uModelViewMatrix, false, matrix );
 		if( useLighting ){
 			glu.invert();	// モデル座標変換行列の逆行列
 			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
@@ -315,6 +384,14 @@ function paint3D( gl, glu ){
 			model_sphere[2].draw( null, i, -1, false );
 		}
 		glu.pop();
+		if( useProject ){
+			glu.project( matrix[12], matrix[13], matrix[14] );
+			textX[2] = glu.projectX();
+			textY[2] = glu.projectY();
+			textZ[2] = glu.projectZ();
+			glu.unProject( textX[2], textY[2], textZ[2] );
+			text[2] = "3 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+		}
 	}
 }
 
@@ -329,6 +406,19 @@ function paint2D( g ){
 
 	g.setColor( g.getColorOfRGB( 0, 0, 255 ) );
 	g.drawString( "rotation " + _MOD(_INT(rotation * 180 / Math.PI), 360), 10, 30 );
+
+	if( useProject ){
+		g.setColor( g.getColorOfRGB( 255, 255, 255 ) );
+		if( text[0] != null ){
+			g.drawString( text[0], textX[0], getHeight() - textY[0] );
+		}
+		if( text[1] != null ){
+			g.drawString( text[1], textX[1], getHeight() - textY[1] );
+		}
+		if( text[2] != null ){
+			g.drawString( text[2], textX[2], getHeight() - textY[2] );
+		}
+	}
 }
 
 // _GLModel用
