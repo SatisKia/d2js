@@ -48,11 +48,15 @@ function setCurrent3D( id, id2D ){
 }
 
 var repaint3D = function(){
-	paint3D( _gl, _glu );
-
 	if( _3d != null ){
 		getCurrentContext().clearRect( 0, 0, getWidth(), getHeight() );
 		getCurrentContext().save();
+		clear2D( getGraphics() );
+	}
+
+	paint3D( _gl, _glu );
+
+	if( _3d != null ){
 		paint2D( getGraphics() );
 		getCurrentContext().restore();
 	}
@@ -110,4 +114,5 @@ function createShaderProgram( vsSource, fsSource ){
 //function init3D( gl, glu ){}
 //function paint3D( gl, glu ){}
 //function init2D(){}
+//function clear2D( g ){}
 //function paint2D( g ){}

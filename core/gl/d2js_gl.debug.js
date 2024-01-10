@@ -61,7 +61,9 @@ _GLDraw.prototype = {
 		}
 	},
 	addSprite : function( p, tex_index, x, y, z, trans ){
-		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
+		var index = this._draw.length;
+		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
+		return this._draw[index]._distance;
 	},
 	draw : function( glt ){
 		var i, j;
@@ -136,10 +138,13 @@ function setCurrent3D( id, id2D ){
 	setRepaintFunc( repaint3D );
 }
 var repaint3D = function(){
-	paint3D( _gl, _glu );
 	if( _3d != null ){
 		getCurrentContext().clearRect( 0, 0, getWidth(), getHeight() );
 		getCurrentContext().save();
+		clear2D( getGraphics() );
+	}
+	paint3D( _gl, _glu );
+	if( _3d != null ){
 		paint2D( getGraphics() );
 		getCurrentContext().restore();
 	}
@@ -753,21 +758,23 @@ _GLTexture.prototype = {
 		var context = canvas.getContext( "2d" );
 		canvas.width = width;
 		canvas.height = height;
-		var x, y, yy;
-		var tmp, r, g, b, a;
+		var imageData = context.getImageData( 0, 0, canvas.width, canvas.height );
+		var data = imageData.data;
+		var x, y, yy, x4, y4;
+		var tmp;
 		for( y = 0; y < height; y++ ){
 			yy = y * width;
+			y4 = yy * 4;
 			for( x = 0; x < width; x++ ){
+				x4 = x * 4;
 				tmp = pixels[yy + x];
-				r = this._SHIFTR(tmp) & 0xff;
-				g = (tmp >> 16) & 0xff;
-				b = (tmp >> 8) & 0xff;
-				a = tmp & 0xff;
-				context.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
-				context.fillRect( x, y, 1, 1 );
+				data[y4 + x4 ] = this._SHIFTR(tmp) & 0xff;
+				data[y4 + x4 + 1] = (tmp >> 16) & 0xff;
+				data[y4 + x4 + 2] = (tmp >> 8) & 0xff;
+				data[y4 + x4 + 3] = tmp & 0xff;
 			}
 		}
-		return context.getImageData( 0, 0, canvas.width, canvas.height );
+		return imageData;
 	},
 	getTextureSize : function( size ){
 		var tmp = 1;
@@ -892,91 +899,153 @@ _GLTexture.prototype = {
 		var i, j, k;
 		if( dx != 0 ){
 			this._apply_tx[index] = _INT( this._tx[index] );
-			var tmp = new Array( width * 4 );
-			var data = this._image_data[index].data;
-			var pos;
-			for( i = 0; i < height; i++ ){
-				pos = i * width;
-				for( j = 0; j < width; j++ ){
-					k = j - dx;
-					if( !repeat ){
-						if( (k < 0) || (k >= width) ){
-							tmp[j * 4 ] = 0;
-							tmp[j * 4 + 1] = 0;
-							tmp[j * 4 + 2] = 0;
-							tmp[j * 4 + 3] = 0;
+			if( (this._t_rgba[index] != null) && (this._t_a[index] != null) ){
+				var tmp = new Array( 2 );
+				tmp[0] = new Array( width );
+				tmp[1] = new Array( width );
+				var data = new Array( 2 );
+				data[0] = this._t_rgba[index];
+				data[1] = this._t_a[index];
+				var pos;
+				for( i = 0; i < height; i++ ){
+					pos = i * width;
+					for( j = 0; j < width; j++ ){
+						k = j - dx;
+						if( !repeat ){
+							if( (k < 0) || (k >= width) ){
+								tmp[0][j] = 0;
+								tmp[1][j] = 0;
+							} else {
+								tmp[0][j] = data[0][pos + k];
+								tmp[1][j] = data[1][pos + k];
+							}
 						} else {
+							while( k < 0 ){
+								k += width;
+							}
+							while( k >= width ){
+								k -= width;
+							}
+							tmp[0][j] = data[0][pos + k];
+							tmp[1][j] = data[1][pos + k];
+						}
+					}
+					_System.arraycopy( tmp[0], 0, data[0], pos, width );
+					_System.arraycopy( tmp[1], 0, data[1], pos, width );
+				}
+			} else {
+				var tmp = new Array( width * 4 );
+				var data = this._image_data[index].data;
+				var pos;
+				for( i = 0; i < height; i++ ){
+					pos = i * width;
+					for( j = 0; j < width; j++ ){
+						k = j - dx;
+						if( !repeat ){
+							if( (k < 0) || (k >= width) ){
+								tmp[j * 4 ] = 0;
+								tmp[j * 4 + 1] = 0;
+								tmp[j * 4 + 2] = 0;
+								tmp[j * 4 + 3] = 0;
+							} else {
+								tmp[j * 4 ] = data[(pos + k) * 4 ];
+								tmp[j * 4 + 1] = data[(pos + k) * 4 + 1];
+								tmp[j * 4 + 2] = data[(pos + k) * 4 + 2];
+								tmp[j * 4 + 3] = data[(pos + k) * 4 + 3];
+							}
+						} else {
+							while( k < 0 ){
+								k += width;
+							}
+							while( k >= width ){
+								k -= width;
+							}
 							tmp[j * 4 ] = data[(pos + k) * 4 ];
 							tmp[j * 4 + 1] = data[(pos + k) * 4 + 1];
 							tmp[j * 4 + 2] = data[(pos + k) * 4 + 2];
 							tmp[j * 4 + 3] = data[(pos + k) * 4 + 3];
 						}
-					} else {
-						while( k < 0 ){
-							k += width;
-						}
-						while( k >= width ){
-							k -= width;
-						}
-						tmp[j * 4 ] = data[(pos + k) * 4 ];
-						tmp[j * 4 + 1] = data[(pos + k) * 4 + 1];
-						tmp[j * 4 + 2] = data[(pos + k) * 4 + 2];
-						tmp[j * 4 + 3] = data[(pos + k) * 4 + 3];
 					}
+					_System.arraycopy( tmp, 0, data, pos * 4, width * 4 );
 				}
-				_System.arraycopy( tmp, 0, data, pos * 4, width * 4 );
 			}
 		}
 		if( dy != 0 ){
 			this._apply_ty[index] = _INT( this._ty[index] );
-			var tmp = new Array( height );
-			for( i = 0; i < height; i++ ){
-				tmp[i] = new Array( width * 4 );
-			}
-			var data = this._image_data[index].data;
-			for( i = 0; i < height; i++ ){
-				k = i - dy;
-				if( !repeat ){
-					if( (k < 0) || (k >= width) ){
-						for( j = 0; j < width; j++ ){
-							tmp[i][j * 4 ] = 0;
-							tmp[i][j * 4 + 1] = 0;
-							tmp[i][j * 4 + 2] = 0;
-							tmp[i][j * 4 + 3] = 0;
+			if( (this._t_rgba[index] != null) && (this._t_a[index] != null) ){
+				var tmp = new Array( 2 );
+				tmp[0] = new Array( height );
+				tmp[1] = new Array( height );
+				for( i = 0; i < height; i++ ){
+					tmp[0][i] = new Array( width );
+					tmp[1][i] = new Array( width );
+				}
+				var data = new Array( 2 );
+				data[0] = this._t_rgba[index];
+				data[1] = this._t_a[index];
+				for( i = 0; i < height; i++ ){
+					k = i - dy;
+					if( !repeat ){
+						if( (k < 0) || (k >= width) ){
+							for( j = 0; j < width; j++ ){
+								tmp[0][i][j] = 0;
+								tmp[1][i][j] = 0;
+							}
+						} else {
+							_System.arraycopy( data[0], k * width, tmp[0][i], 0, width );
+							_System.arraycopy( data[1], k * width, tmp[1][i], 0, width );
 						}
 					} else {
+						while( k < 0 ){
+							k += height;
+						}
+						while( k >= height ){
+							k -= height;
+						}
+						_System.arraycopy( data[0], k * width, tmp[0][i], 0, width );
+						_System.arraycopy( data[1], k * width, tmp[1][i], 0, width );
+					}
+				}
+				for( i = 0; i < height; i++ ){
+					_System.arraycopy( tmp[0][i], 0, data[0], i * width, width );
+					_System.arraycopy( tmp[1][i], 0, data[1], i * width, width );
+				}
+			} else {
+				var tmp = new Array( height );
+				for( i = 0; i < height; i++ ){
+					tmp[i] = new Array( width * 4 );
+				}
+				var data = this._image_data[index].data;
+				for( i = 0; i < height; i++ ){
+					k = i - dy;
+					if( !repeat ){
+						if( (k < 0) || (k >= width) ){
+							for( j = 0; j < width; j++ ){
+								tmp[i][j * 4 ] = 0;
+								tmp[i][j * 4 + 1] = 0;
+								tmp[i][j * 4 + 2] = 0;
+								tmp[i][j * 4 + 3] = 0;
+							}
+						} else {
+							_System.arraycopy( data, k * width * 4, tmp[i], 0, width * 4 );
+						}
+					} else {
+						while( k < 0 ){
+							k += height;
+						}
+						while( k >= height ){
+							k -= height;
+						}
 						_System.arraycopy( data, k * width * 4, tmp[i], 0, width * 4 );
 					}
-				} else {
-					while( k < 0 ){
-						k += height;
-					}
-					while( k >= height ){
-						k -= height;
-					}
-					_System.arraycopy( data, k * width * 4, tmp[i], 0, width * 4 );
 				}
-			}
-			for( i = 0; i < height; i++ ){
-				_System.arraycopy( tmp[i], 0, data, i * width * 4, width * 4 );
+				for( i = 0; i < height; i++ ){
+					_System.arraycopy( tmp[i], 0, data, i * width * 4, width * 4 );
+				}
 			}
 		}
 		if( (dx != 0) || (dy != 0) ){
-			if( (this._t_rgba[index] != null) && (this._t_a[index] != null) ){
-				var len = width * height;
-				var data = this._image_data[index].data;
-				for( i = 0; i < len; i++ ){
-					this._t_rgba[index][i] = this._SHIFTL(data[i * 4]) + (data[i * 4 + 1] << 16) + (data[i * 4 + 2] << 8) + data[i * 4 + 3];
-					this._t_a[index][i] = data[i * 4 + 3];
-				}
-				var r, g, b, a;
-				for( i = 0; i < len; i++ ){
-					r = this._SHIFTR(this._t_rgba[index][i]) & 0xff;
-					g = (this._t_rgba[index][i] >> 16) & 0xff;
-					b = (this._t_rgba[index][i] >> 8) & 0xff;
-					a = _INT( this._t_a[index][i] * this._t_trans[index] );
-					this._t_rgba[index][i] = this._SHIFTL(r) + (g << 16) + (b << 8) + a;
-				}
+			if( this._t_rgba[index] != null ){
 				this._image_data[index] = this.imageDataFromPixels( this._t_rgba[index], width, height );
 			}
 			_gl.pixelStorei( _gl.UNPACK_ALIGNMENT, 1 );
@@ -1553,6 +1622,11 @@ _GLUtility.prototype = {
 			this.model_mat[i] = this.util_mat[i];
 		}
 	},
+	setModelMatrix : function( matrix ){
+		for( var i = 0; i < 16; i++ ){
+			this.model_mat[i] = matrix[i];
+		}
+	},
 	lookMatrix : function(){
 		return this.look_mat;
 	},
@@ -1597,15 +1671,21 @@ _GLUtility.prototype = {
 		this.view_mat[2] = width;
 		this.view_mat[3] = height;
 	},
-	project : function( obj_x, obj_y, obj_z ){
-		this.project_in[0] = obj_x * this.model_mat[ 0] + obj_y * this.model_mat[ 1] + obj_z * this.model_mat[ 2] + this.model_mat[ 3];
-		this.project_in[1] = obj_x * this.model_mat[ 4] + obj_y * this.model_mat[ 5] + obj_z * this.model_mat[ 6] + this.model_mat[ 7];
-		this.project_in[2] = obj_x * this.model_mat[ 8] + obj_y * this.model_mat[ 9] + obj_z * this.model_mat[10] + this.model_mat[11];
-		this.project_in[3] = obj_x * this.model_mat[12] + obj_y * this.model_mat[13] + obj_z * this.model_mat[14] + this.model_mat[15];
-		this.project_out[0] = this.project_in[0] * this.proj_mat[ 0] + this.project_in[1] * this.proj_mat[ 1] + this.project_in[2] * this.proj_mat[ 2] + this.project_in[3] * this.proj_mat[ 3];
-		this.project_out[1] = this.project_in[0] * this.proj_mat[ 4] + this.project_in[1] * this.proj_mat[ 5] + this.project_in[2] * this.proj_mat[ 6] + this.project_in[3] * this.proj_mat[ 7];
-		this.project_out[2] = this.project_in[0] * this.proj_mat[ 8] + this.project_in[1] * this.proj_mat[ 9] + this.project_in[2] * this.proj_mat[10] + this.project_in[3] * this.proj_mat[11];
-		this.project_out[3] = this.project_in[0] * this.proj_mat[12] + this.project_in[1] * this.proj_mat[13] + this.project_in[2] * this.proj_mat[14] + this.project_in[3] * this.proj_mat[15];
+	project : function( obj_x, obj_y, obj_z, model_mat, proj_mat ){
+		if( (model_mat == null) || (model_mat == undefined) ){
+			model_mat = this.model_mat;
+		}
+		if( (proj_mat == null) || (proj_mat == undefined) ){
+			proj_mat = this.proj_mat;
+		}
+		this.project_in[0] = obj_x * model_mat[ 0] + obj_y * model_mat[ 1] + obj_z * model_mat[ 2] + model_mat[ 3];
+		this.project_in[1] = obj_x * model_mat[ 4] + obj_y * model_mat[ 5] + obj_z * model_mat[ 6] + model_mat[ 7];
+		this.project_in[2] = obj_x * model_mat[ 8] + obj_y * model_mat[ 9] + obj_z * model_mat[10] + model_mat[11];
+		this.project_in[3] = obj_x * model_mat[12] + obj_y * model_mat[13] + obj_z * model_mat[14] + model_mat[15];
+		this.project_out[0] = this.project_in[0] * proj_mat[ 0] + this.project_in[1] * proj_mat[ 1] + this.project_in[2] * proj_mat[ 2] + this.project_in[3] * proj_mat[ 3];
+		this.project_out[1] = this.project_in[0] * proj_mat[ 4] + this.project_in[1] * proj_mat[ 5] + this.project_in[2] * proj_mat[ 6] + this.project_in[3] * proj_mat[ 7];
+		this.project_out[2] = this.project_in[0] * proj_mat[ 8] + this.project_in[1] * proj_mat[ 9] + this.project_in[2] * proj_mat[10] + this.project_in[3] * proj_mat[11];
+		this.project_out[3] = this.project_in[0] * proj_mat[12] + this.project_in[1] * proj_mat[13] + this.project_in[2] * proj_mat[14] + this.project_in[3] * proj_mat[15];
 		if( this.project_out[3] == 0.0 ){
 			return false;
 		}
@@ -1614,9 +1694,15 @@ _GLUtility.prototype = {
 		this.project_z = (this.project_out[2] / this.project_out[3] + 1.0) / 2.0;
 		return true;
 	},
-	unProject : function( win_x, win_y, win_z ){
-		this.set( this.proj_mat );
-		this.multiply( this.model_mat );
+	unProject : function( win_x, win_y, win_z, model_mat, proj_mat ){
+		if( (model_mat == null) || (model_mat == undefined) ){
+			model_mat = this.model_mat;
+		}
+		if( (proj_mat == null) || (proj_mat == undefined) ){
+			proj_mat = this.proj_mat;
+		}
+		this.set( proj_mat );
+		this.multiply( model_mat );
 		this.invert();
 		this.project_in[0] = (win_x - this.view_mat[0]) * 2.0 / this.view_mat[2] - 1.0;
 		this.project_in[1] = (win_y - this.view_mat[1]) * 2.0 / this.view_mat[3] - 1.0;

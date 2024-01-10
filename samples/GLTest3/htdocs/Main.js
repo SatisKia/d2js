@@ -1580,13 +1580,6 @@ var uAmbient;
 var uDiffuse;
 var uSpecular;
 var uShininess;
-var text = new Array( 3 );
-text[0] = null;
-text[1] = null;
-text[2] = null;
-var textX = new Array( 3 );
-var textY = new Array( 3 );
-var textZ = new Array( 3 );
 var rotation = 0.0;
 function rotate( glu ){
  glu.rotate( 30, 1, 0, 0 );
@@ -1724,6 +1717,9 @@ function paint3D( gl, glu ){
  }
  glu.translate( 0.0, 1.0, -15.0 );
  var modelViewMatrix = glu.glMatrix();
+ if( useProject ){
+  glu.setModelMatrix( glu.utMatrix( modelViewMatrix ) );
+ }
  if( useLighting ){
   gl.uniform3fv(uAmbientLightColor, ambientLightColor);
   gl.uniform3fv(uDirectionalLightColor, directionalLightColor);
@@ -1731,6 +1727,9 @@ function paint3D( gl, glu ){
   gl.uniform3fv(uSpecularLightColor, specularLightColor);
   gl.uniform3fv(uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
  }
+var g = getGraphics();
+g.setFont( 24, "ＭＳ ゴシック" );
+g.setColor( g.getColorOfRGB( 255, 255, 255 ) );
  var matrix;
  var i;
  if( useGLDraw ){
@@ -1739,12 +1738,12 @@ function paint3D( gl, glu ){
    gld.add( model_sphere[0], i, -1, modelViewMatrix, -1, false );
   }
   if( useProject ){
-   glu.project( modelViewMatrix[12], modelViewMatrix[13], modelViewMatrix[14] );
-   textX[0] = glu.projectX();
-   textY[0] = glu.projectY();
-   textZ[0] = glu.projectZ();
-   glu.unProject( textX[0], textY[0], textZ[0] );
-   text[0] = "1 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+   glu.project( 0.0, 0.0, 0.0 );
+   var projectX = glu.projectX();
+   var projectY = glu.projectY();
+   var projectZ = glu.projectZ();
+   glu.unProject( projectX, projectY, projectZ );
+g.drawString( "1:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   glu.push();
   glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -1755,12 +1754,12 @@ function paint3D( gl, glu ){
   }
   glu.pop();
   if( useProject ){
-   glu.project( matrix[12], matrix[13], matrix[14] );
-   textX[1] = glu.projectX();
-   textY[1] = glu.projectY();
-   textZ[1] = glu.projectZ();
-   glu.unProject( textX[1], textY[1], textZ[1] );
-   text[1] = "2 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+   glu.project( -5.0, 0.0, 0.0 );
+   var projectX = glu.projectX();
+   var projectY = glu.projectY();
+   var projectZ = glu.projectZ();
+   glu.unProject( projectX, projectY, projectZ );
+g.drawString( "2:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   glu.push();
   glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -1771,12 +1770,12 @@ function paint3D( gl, glu ){
   }
   glu.pop();
   if( useProject ){
-   glu.project( matrix[12], matrix[13], matrix[14] );
-   textX[2] = glu.projectX();
-   textY[2] = glu.projectY();
-   textZ[2] = glu.projectZ();
-   glu.unProject( textX[2], textY[2], textZ[2] );
-   text[2] = "3 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+   glu.project( 5.0, 0.0, 0.0 );
+   var projectX = glu.projectX();
+   var projectY = glu.projectY();
+   var projectZ = glu.projectZ();
+   glu.unProject( projectX, projectY, projectZ );
+g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   gld.draw();
  } else {
@@ -1791,12 +1790,12 @@ function paint3D( gl, glu ){
    model_sphere[0].draw( null, i, -1, false );
   }
   if( useProject ){
-   glu.project( modelViewMatrix[12], modelViewMatrix[13], modelViewMatrix[14] );
-   textX[0] = glu.projectX();
-   textY[0] = glu.projectY();
-   textZ[0] = glu.projectZ();
-   glu.unProject( textX[0], textY[0], textZ[0] );
-   text[0] = "1 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+   glu.project( 0.0, 0.0, 0.0 );
+   var projectX = glu.projectX();
+   var projectY = glu.projectY();
+   var projectZ = glu.projectZ();
+   glu.unProject( projectX, projectY, projectZ );
+g.drawString( "1:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   glu.push();
   glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -1813,12 +1812,12 @@ function paint3D( gl, glu ){
   }
   glu.pop();
   if( useProject ){
-   glu.project( matrix[12], matrix[13], matrix[14] );
-   textX[1] = glu.projectX();
-   textY[1] = glu.projectY();
-   textZ[1] = glu.projectZ();
-   glu.unProject( textX[1], textY[1], textZ[1] );
-   text[1] = "2 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+   glu.project( -5.0, 0.0, 0.0 );
+   var projectX = glu.projectX();
+   var projectY = glu.projectY();
+   var projectZ = glu.projectZ();
+   glu.unProject( projectX, projectY, projectZ );
+g.drawString( "2:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   glu.push();
   glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -1835,35 +1834,25 @@ function paint3D( gl, glu ){
   }
   glu.pop();
   if( useProject ){
-   glu.project( matrix[12], matrix[13], matrix[14] );
-   textX[2] = glu.projectX();
-   textY[2] = glu.projectY();
-   textZ[2] = glu.projectZ();
-   glu.unProject( textX[2], textY[2], textZ[2] );
-   text[2] = "3 " + _INT(glu.projectX()) + " " + _INT(glu.projectY()) + " " + _INT(glu.projectZ());
+   glu.project( 5.0, 0.0, 0.0 );
+   var projectX = glu.projectX();
+   var projectY = glu.projectY();
+   var projectZ = glu.projectZ();
+   glu.unProject( projectX, projectY, projectZ );
+g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
  }
 }
 function init2D(){
 }
-function paint2D( g ){
+function clear2D( g ){
  g.setColor( g.getColorOfRGBA( 0, 0, 0, 0 ) );
  g.fillRect( 0, 0, getWidth(), getHeight() );
+}
+function paint2D( g ){
  g.setFont( 24, "ＭＳ ゴシック" );
  g.setColor( g.getColorOfRGB( 0, 0, 255 ) );
  g.drawString( "rotation " + _MOD(_INT(rotation * 180 / Math.PI), 360), 10, 30 );
- if( useProject ){
-  g.setColor( g.getColorOfRGB( 255, 255, 255 ) );
-  if( text[0] != null ){
-   g.drawString( text[0], textX[0], getHeight() - textY[0] );
-  }
-  if( text[1] != null ){
-   g.drawString( text[1], textX[1], getHeight() - textY[1] );
-  }
-  if( text[2] != null ){
-   g.drawString( text[2], textX[2], getHeight() - textY[2] );
-  }
- }
 }
 function glModelBindPositionBuffer( gl ){
  gl.vertexAttribPointer( aVertexPosition, 3, gl.FLOAT, false, 0, 0 );

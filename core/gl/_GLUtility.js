@@ -617,6 +617,11 @@ _GLUtility.prototype = {
 			this.model_mat[i] = this.util_mat[i];
 		}
 	},
+	setModelMatrix : function( matrix ){
+		for( var i = 0; i < 16; i++ ){
+			this.model_mat[i] = matrix[i];
+		}
+	},
 	lookMatrix : function(){
 		return this.look_mat;
 	},
@@ -691,16 +696,23 @@ _GLUtility.prototype = {
 	/*
 	 * gluProject
 	 */
-	project : function( obj_x, obj_y, obj_z ){
-		this.project_in[0] = obj_x * this.model_mat[ 0] + obj_y * this.model_mat[ 1] + obj_z * this.model_mat[ 2] + this.model_mat[ 3];
-		this.project_in[1] = obj_x * this.model_mat[ 4] + obj_y * this.model_mat[ 5] + obj_z * this.model_mat[ 6] + this.model_mat[ 7];
-		this.project_in[2] = obj_x * this.model_mat[ 8] + obj_y * this.model_mat[ 9] + obj_z * this.model_mat[10] + this.model_mat[11];
-		this.project_in[3] = obj_x * this.model_mat[12] + obj_y * this.model_mat[13] + obj_z * this.model_mat[14] + this.model_mat[15];
+	project : function( obj_x, obj_y, obj_z, model_mat, proj_mat ){
+		if( (model_mat == null) || (model_mat == undefined) ){
+			model_mat = this.model_mat;
+		}
+		if( (proj_mat == null) || (proj_mat == undefined) ){
+			proj_mat = this.proj_mat;
+		}
 
-		this.project_out[0] = this.project_in[0] * this.proj_mat[ 0] + this.project_in[1] * this.proj_mat[ 1] + this.project_in[2] * this.proj_mat[ 2] + this.project_in[3] * this.proj_mat[ 3];
-		this.project_out[1] = this.project_in[0] * this.proj_mat[ 4] + this.project_in[1] * this.proj_mat[ 5] + this.project_in[2] * this.proj_mat[ 6] + this.project_in[3] * this.proj_mat[ 7];
-		this.project_out[2] = this.project_in[0] * this.proj_mat[ 8] + this.project_in[1] * this.proj_mat[ 9] + this.project_in[2] * this.proj_mat[10] + this.project_in[3] * this.proj_mat[11];
-		this.project_out[3] = this.project_in[0] * this.proj_mat[12] + this.project_in[1] * this.proj_mat[13] + this.project_in[2] * this.proj_mat[14] + this.project_in[3] * this.proj_mat[15];
+		this.project_in[0] = obj_x * model_mat[ 0] + obj_y * model_mat[ 1] + obj_z * model_mat[ 2] + model_mat[ 3];
+		this.project_in[1] = obj_x * model_mat[ 4] + obj_y * model_mat[ 5] + obj_z * model_mat[ 6] + model_mat[ 7];
+		this.project_in[2] = obj_x * model_mat[ 8] + obj_y * model_mat[ 9] + obj_z * model_mat[10] + model_mat[11];
+		this.project_in[3] = obj_x * model_mat[12] + obj_y * model_mat[13] + obj_z * model_mat[14] + model_mat[15];
+
+		this.project_out[0] = this.project_in[0] * proj_mat[ 0] + this.project_in[1] * proj_mat[ 1] + this.project_in[2] * proj_mat[ 2] + this.project_in[3] * proj_mat[ 3];
+		this.project_out[1] = this.project_in[0] * proj_mat[ 4] + this.project_in[1] * proj_mat[ 5] + this.project_in[2] * proj_mat[ 6] + this.project_in[3] * proj_mat[ 7];
+		this.project_out[2] = this.project_in[0] * proj_mat[ 8] + this.project_in[1] * proj_mat[ 9] + this.project_in[2] * proj_mat[10] + this.project_in[3] * proj_mat[11];
+		this.project_out[3] = this.project_in[0] * proj_mat[12] + this.project_in[1] * proj_mat[13] + this.project_in[2] * proj_mat[14] + this.project_in[3] * proj_mat[15];
 		if( this.project_out[3] == 0.0 ){
 			return false;
 		}
@@ -715,9 +727,16 @@ _GLUtility.prototype = {
 	/*
 	 * gluUnProject
 	 */
-	unProject : function( win_x, win_y, win_z ){
-		this.set( this.proj_mat );
-		this.multiply( this.model_mat );
+	unProject : function( win_x, win_y, win_z, model_mat, proj_mat ){
+		if( (model_mat == null) || (model_mat == undefined) ){
+			model_mat = this.model_mat;
+		}
+		if( (proj_mat == null) || (proj_mat == undefined) ){
+			proj_mat = this.proj_mat;
+		}
+
+		this.set( proj_mat );
+		this.multiply( model_mat );
 		this.invert();
 
 		this.project_in[0] = (win_x - this.view_mat[0]) * 2.0 / this.view_mat[2] - 1.0;

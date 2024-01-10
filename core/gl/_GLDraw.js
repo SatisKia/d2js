@@ -67,7 +67,9 @@ _GLDraw.prototype = {
 	},
 
 	addSprite : function( p, tex_index, x, y, z, trans ){
-		this._draw[this._draw.length] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
+		var index = this._draw.length;
+		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
+		return this._draw[index]._distance;
 	},
 
 	draw : function( glt/*_GLTexture*/ ){

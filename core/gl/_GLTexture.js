@@ -89,6 +89,7 @@ _GLTexture.prototype = {
 		var context = canvas.getContext( "2d" );
 		canvas.width = width;
 		canvas.height = height;
+/*
 		var x, y, yy;
 		var tmp, r, g, b, a;
 		for( y = 0; y < height; y++ ){
@@ -105,6 +106,25 @@ _GLTexture.prototype = {
 			}
 		}
 		return context.getImageData( 0, 0, canvas.width, canvas.height );
+*/
+		var imageData = context.getImageData( 0, 0, canvas.width, canvas.height );
+		var data = imageData.data;
+		var x, y, yy, x4, y4;
+		var tmp;
+		for( y = 0; y < height; y++ ){
+			yy = y * width;
+			y4 = yy * 4;
+			for( x = 0; x < width; x++ ){
+				x4 = x * 4;
+				tmp = pixels[yy + x];
+//				data[y4 + x4    ] = (tmp >> 24) & 0xff;
+				data[y4 + x4    ] = this._SHIFTR(tmp) & 0xff;
+				data[y4 + x4 + 1] = (tmp >> 16) & 0xff;
+				data[y4 + x4 + 2] = (tmp >>  8) & 0xff;
+				data[y4 + x4 + 3] =  tmp        & 0xff;
+			}
+		}
+		return imageData;
 	},
 
 	getTextureSize : function( size ){
@@ -269,97 +289,154 @@ _GLTexture.prototype = {
 
 		if( dx != 0 ){
 			this._apply_tx[index] = _INT( this._tx[index] );
-			var tmp = new Array( width * 4 );
-			var data = this._image_data[index].data;
-			var pos;
-			for( i = 0; i < height; i++ ){
-				pos = i * width;
-				for( j = 0; j < width; j++ ){
-					k = j - dx;
-					if( !repeat ){
-						if( (k < 0) || (k >= width) ){
-							tmp[j * 4    ] = 0;
-							tmp[j * 4 + 1] = 0;
-							tmp[j * 4 + 2] = 0;
-							tmp[j * 4 + 3] = 0;
+			if( (this._t_rgba[index] != null) && (this._t_a[index] != null) ){
+				var tmp = new Array( 2 );
+				tmp[0] = new Array( width );
+				tmp[1] = new Array( width );
+				var data = new Array( 2 );
+				data[0] = this._t_rgba[index];
+				data[1] = this._t_a[index];
+				var pos;
+				for( i = 0; i < height; i++ ){
+					pos = i * width;
+					for( j = 0; j < width; j++ ){
+						k = j - dx;
+						if( !repeat ){
+							if( (k < 0) || (k >= width) ){
+								tmp[0][j] = 0;
+								tmp[1][j] = 0;
+							} else {
+								tmp[0][j] = data[0][pos + k];
+								tmp[1][j] = data[1][pos + k];
+							}
 						} else {
+							while( k < 0 ){
+								k += width;
+							}
+							while( k >= width ){
+								k -= width;
+							}
+							tmp[0][j] = data[0][pos + k];
+							tmp[1][j] = data[1][pos + k];
+						}
+					}
+					_System.arraycopy( tmp[0], 0, data[0], pos, width );
+					_System.arraycopy( tmp[1], 0, data[1], pos, width );
+				}
+			} else {
+				var tmp = new Array( width * 4 );
+				var data = this._image_data[index].data;
+				var pos;
+				for( i = 0; i < height; i++ ){
+					pos = i * width;
+					for( j = 0; j < width; j++ ){
+						k = j - dx;
+						if( !repeat ){
+							if( (k < 0) || (k >= width) ){
+								tmp[j * 4    ] = 0;
+								tmp[j * 4 + 1] = 0;
+								tmp[j * 4 + 2] = 0;
+								tmp[j * 4 + 3] = 0;
+							} else {
+								tmp[j * 4    ] = data[(pos + k) * 4    ];
+								tmp[j * 4 + 1] = data[(pos + k) * 4 + 1];
+								tmp[j * 4 + 2] = data[(pos + k) * 4 + 2];
+								tmp[j * 4 + 3] = data[(pos + k) * 4 + 3];
+							}
+						} else {
+							while( k < 0 ){
+								k += width;
+							}
+							while( k >= width ){
+								k -= width;
+							}
 							tmp[j * 4    ] = data[(pos + k) * 4    ];
 							tmp[j * 4 + 1] = data[(pos + k) * 4 + 1];
 							tmp[j * 4 + 2] = data[(pos + k) * 4 + 2];
 							tmp[j * 4 + 3] = data[(pos + k) * 4 + 3];
 						}
-					} else {
-						while( k < 0 ){
-							k += width;
-						}
-						while( k >= width ){
-							k -= width;
-						}
-						tmp[j * 4    ] = data[(pos + k) * 4    ];
-						tmp[j * 4 + 1] = data[(pos + k) * 4 + 1];
-						tmp[j * 4 + 2] = data[(pos + k) * 4 + 2];
-						tmp[j * 4 + 3] = data[(pos + k) * 4 + 3];
 					}
+					_System.arraycopy( tmp, 0, data, pos * 4, width * 4 );
 				}
-				_System.arraycopy( tmp, 0, data, pos * 4, width * 4 );
 			}
 		}
 		if( dy != 0 ){
 			this._apply_ty[index] = _INT( this._ty[index] );
-			var tmp = new Array( height );
-			for( i = 0; i < height; i++ ){
-				tmp[i] = new Array( width * 4 );
-			}
-			var data = this._image_data[index].data;
-			for( i = 0; i < height; i++ ){
-				k = i - dy;
-				if( !repeat ){
-					if( (k < 0) || (k >= width) ){
-						for( j = 0; j < width; j++ ){
-							tmp[i][j * 4    ] = 0;
-							tmp[i][j * 4 + 1] = 0;
-							tmp[i][j * 4 + 2] = 0;
-							tmp[i][j * 4 + 3] = 0;
+			if( (this._t_rgba[index] != null) && (this._t_a[index] != null) ){
+				var tmp = new Array( 2 );
+				tmp[0] = new Array( height );
+				tmp[1] = new Array( height );
+				for( i = 0; i < height; i++ ){
+					tmp[0][i] = new Array( width );
+					tmp[1][i] = new Array( width );
+				}
+				var data = new Array( 2 );
+				data[0] = this._t_rgba[index];
+				data[1] = this._t_a[index];
+				for( i = 0; i < height; i++ ){
+					k = i - dy;
+					if( !repeat ){
+						if( (k < 0) || (k >= width) ){
+							for( j = 0; j < width; j++ ){
+								tmp[0][i][j] = 0;
+								tmp[1][i][j] = 0;
+							}
+						} else {
+							_System.arraycopy( data[0], k * width, tmp[0][i], 0, width );
+							_System.arraycopy( data[1], k * width, tmp[1][i], 0, width );
 						}
 					} else {
+						while( k < 0 ){
+							k += height;
+						}
+						while( k >= height ){
+							k -= height;
+						}
+						_System.arraycopy( data[0], k * width, tmp[0][i], 0, width );
+						_System.arraycopy( data[1], k * width, tmp[1][i], 0, width );
+					}
+				}
+				for( i = 0; i < height; i++ ){
+					_System.arraycopy( tmp[0][i], 0, data[0], i * width, width );
+					_System.arraycopy( tmp[1][i], 0, data[1], i * width, width );
+				}
+			} else {
+				var tmp = new Array( height );
+				for( i = 0; i < height; i++ ){
+					tmp[i] = new Array( width * 4 );
+				}
+				var data = this._image_data[index].data;
+				for( i = 0; i < height; i++ ){
+					k = i - dy;
+					if( !repeat ){
+						if( (k < 0) || (k >= width) ){
+							for( j = 0; j < width; j++ ){
+								tmp[i][j * 4    ] = 0;
+								tmp[i][j * 4 + 1] = 0;
+								tmp[i][j * 4 + 2] = 0;
+								tmp[i][j * 4 + 3] = 0;
+							}
+						} else {
+							_System.arraycopy( data, k * width * 4, tmp[i], 0, width * 4 );
+						}
+					} else {
+						while( k < 0 ){
+							k += height;
+						}
+						while( k >= height ){
+							k -= height;
+						}
 						_System.arraycopy( data, k * width * 4, tmp[i], 0, width * 4 );
 					}
-				} else {
-					while( k < 0 ){
-						k += height;
-					}
-					while( k >= height ){
-						k -= height;
-					}
-					_System.arraycopy( data, k * width * 4, tmp[i], 0, width * 4 );
 				}
-			}
-			for( i = 0; i < height; i++ ){
-				_System.arraycopy( tmp[i], 0, data, i * width * 4, width * 4 );
+				for( i = 0; i < height; i++ ){
+					_System.arraycopy( tmp[i], 0, data, i * width * 4, width * 4 );
+				}
 			}
 		}
 
 		if( (dx != 0) || (dy != 0) ){
-			if( (this._t_rgba[index] != null) && (this._t_a[index] != null) ){
-				var len = width * height;
-				var data = this._image_data[index].data;
-				for( i = 0; i < len; i++ ){
-//					this._t_rgba[index][i] = (data[i * 4] << 24) | (data[i * 4 + 1] << 16) | (data[i * 4 + 2] << 8) | data[i * 4 + 3];
-					this._t_rgba[index][i] = this._SHIFTL(data[i * 4]) + (data[i * 4 + 1] << 16) + (data[i * 4 + 2] << 8) + data[i * 4 + 3];
-					this._t_a[index][i] = data[i * 4 + 3];	// アルファ値を保持
-				}
-
-				// アルファ値を操作する
-				var r, g, b, a;
-				for( i = 0; i < len; i++ ){
-//					r = (this._t_rgba[index][i] >> 24) & 0xff;
-					r = this._SHIFTR(this._t_rgba[index][i]) & 0xff;
-					g = (this._t_rgba[index][i] >> 16) & 0xff;
-					b = (this._t_rgba[index][i] >>  8) & 0xff;
-					a = _INT( this._t_a[index][i] * this._t_trans[index] );
-//					this._t_rgba[index][i] = (r << 24) | (g << 16) | (b << 8) | a;
-					this._t_rgba[index][i] = this._SHIFTL(r) + (g << 16) + (b << 8) + a;
-				}
+			if( this._t_rgba[index] != null ){
 				this._image_data[index] = this.imageDataFromPixels( this._t_rgba[index], width, height );
 			}
 
