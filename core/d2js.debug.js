@@ -1556,6 +1556,268 @@ _Vector.prototype = {
 		this.n = 0;
 	}
 };
+function canUseCookie(){
+	return navigator.cookieEnabled;
+}
+var _cookie_expires = "Tue, 01 Jan 2030 00:00:00 GMT";
+function setExpiresDate( date ){
+	_cookie_expires = (new Date( currentTimeMillis() + date * 86400000 )).toGMTString();
+}
+function _getCookieArray(){
+	return document.cookie.split( ";" );
+}
+function _getCookieParam( cookie ){
+	var param = cookie.split( "=" );
+	param[0] = param[0].replace( new RegExp( "^\\s+" ), "" );
+	return param;
+}
+function cookieNum(){
+	if( document.cookie.length == 0 ){
+		return 0;
+	}
+	return _getCookieArray().length;
+}
+function getCookieKey( index ){
+	if( document.cookie.length == 0 ){
+		return "";
+	}
+	var cookie = _getCookieArray();
+	if( index >= cookie.length ){
+		return "";
+	}
+	var param = _getCookieParam( cookie[index] );
+	return param[0];
+}
+function getCookie( key, defValue ){
+	var cookie = _getCookieArray();
+	for( var i = 0; i < cookie.length; i++ ){
+		var param = _getCookieParam( cookie[i] );
+		if( param[0] == key ){
+			return unescape( param[1] );
+		}
+	}
+	return defValue;
+}
+function setCookie( key, value ){
+	if( value == null ){
+		value = "";
+	}
+	var expires = _cookie_expires;
+	if( value.length == 0 ){
+		var date = new Date();
+		date.setTime( 0 );
+		expires = date.toGMTString();
+	}
+	document.cookie = key + "=" + escape( value ) + "; expires=" + expires;
+}
+function clearCookie( prefix ){
+	var cookie = _getCookieArray();
+	for( var i = cookie.length - 1; i >= 0; i-- ){
+		var param = _getCookieParam( cookie[i] );
+		if( (prefix == undefined) || (param[0].indexOf( prefix ) == 0) ){
+			setCookie( param[0], "" );
+		}
+	}
+}
+var _cookie_val;
+var _cookie_s;
+var _cookie_str;
+function beginCookieRead( key ){
+	_cookie_val = getCookie( key, "" );
+	_cookie_s = 0;
+}
+function cookieRead(){
+	if( _cookie_s >= _cookie_val.length ){
+		_cookie_str = "";
+	} else {
+		var e = _cookie_val.indexOf( "&", _cookie_s );
+		if( e < 0 ){
+			e = _cookie_val.length;
+		}
+		_cookie_str = _cookie_val.substring( _cookie_s, e );
+		_cookie_s = e + 1;
+	}
+	return unescape( _cookie_str );
+}
+function endCookieRead(){
+	_cookie_val = "";
+	_cookie_str = "";
+}
+function beginCookieWrite(){
+	_cookie_val = "";
+}
+function cookieWrite( str ){
+	if( _cookie_val.length > 0 ){
+		_cookie_val += "&";
+	}
+	_cookie_val += escape( str );
+}
+function endCookieWrite( key ){
+	setCookie( key, _cookie_val );
+	_cookie_val = "";
+}
+function _HttpRequestHeader( header, value ){
+	this._header = header;
+	this._value = value;
+}
+_HttpRequestHeader.prototype = {
+	set : function( request ){
+		_httpSetRequestHeader( request, this._header, this._value );
+	}
+};
+var _http_header;
+function httpInitHeader(){
+	_http_header = new Array();
+}
+function httpAddHeader( header, value ){
+	_http_header[_http_header.length] = new _HttpRequestHeader( header, value );
+}
+function httpHeader(){
+	return _http_header;
+}
+function _httpOpen( method, url ){
+	var request = null;
+	if( !!XMLHttpRequest ){
+		request = new XMLHttpRequest();
+	} else if( !!ActiveXObject ){
+		try {
+			request = new ActiveXObject( "Msxml2.XMLHTTP.6.0" );
+		} catch( e ){
+			try {
+				request = new ActiveXObject( "Msxml2.XMLHTTP.3.0" );
+			} catch( e ){
+				try {
+					request = new ActiveXObject( "Msxml2.XMLHTTP" );
+				} catch( e ){
+					try {
+						request = new ActiveXObject( "Microsoft.XMLHTTP" );
+					} catch( e ){}
+				}
+			}
+		}
+	}
+	if( request != null ){
+		request.open( method, url, true );
+		request.onreadystatechange = function(){
+			if( request.readyState == 4 ){
+				if( request.status == 200 ){
+					onHttpResponse( request, request.responseText );
+				} else {
+					onHttpError( request, request.status );
+				}
+			}
+		};
+	}
+	return request;
+}
+function _httpSetRequestHeader( request, header, value ){
+	request.setRequestHeader( header, value );
+	onHttpSetRequestHeader( header, value );
+}
+function httpGet( url, header ){
+	var request = _httpOpen( "GET", url );
+	if( request != null ){
+		_httpSetRequestHeader( request, "If-Modified-Since", "Thu, 01 Jun 1970 00:00:00 GMT" );
+		if( header != undefined ){
+			for( var i = 0; i < header.length; i++ ){
+				header[i].set( request );
+			}
+		}
+		request.send( null );
+	}
+	return request;
+}
+function httpPost( url, data, type, header ){
+	var request = _httpOpen( "POST", url );
+	if( request != null ){
+		_httpSetRequestHeader( request, "If-Modified-Since", "Thu, 01 Jun 1970 00:00:00 GMT" );
+		_httpSetRequestHeader( request, "Content-Type", type );
+		if( header != undefined ){
+			for( var i = 0; i < header.length; i++ ){
+				header[i].set( request );
+			}
+		}
+		request.send( data );
+	}
+	return request;
+}
+function canUseStorage(){
+	try {
+		return window.localStorage != null;
+	} catch( e ){}
+	return false;
+}
+function storageNum(){
+	return window.localStorage.length;
+}
+function getStorageKey( index ){
+	if( index >= storageNum() ){
+		return "";
+	}
+	return window.localStorage.key( index );
+}
+function getStorage( key, defValue ){
+	var value = window.localStorage.getItem( key );
+	return (value == null) ? defValue : value;
+}
+function setStorage( key, value ){
+	if( (value != null) && (value.length > 0) ){
+		window.localStorage.setItem( key, value );
+	} else {
+		window.localStorage.removeItem( key );
+	}
+}
+function clearStorage( prefix ){
+	if( prefix == undefined ){
+		window.localStorage.clear();
+	} else {
+		var num = storageNum();
+		var key;
+		for( var i = num - 1; i >= 0; i-- ){
+			key = getStorageKey( i );
+			if( (prefix == undefined) || (key.indexOf( prefix ) == 0) ){
+				setStorage( key, null );
+			}
+		}
+	}
+}
+var _storage_val;
+var _storage_s;
+var _storage_str;
+function beginStorageRead( key ){
+	_storage_val = getStorage( key, "" );
+	_storage_s = 0;
+}
+function storageRead(){
+	if( _storage_s >= _storage_val.length ){
+		_storage_str = "";
+	} else {
+		var e = _storage_val.indexOf( "&", _storage_s );
+		if( e < 0 ){
+			e = _storage_val.length;
+		}
+		_storage_str = _storage_val.substring( _storage_s, e );
+		_storage_s = e + 1;
+	}
+	return unescape( _storage_str );
+}
+function endStorageRead(){
+	_storage_val = "";
+	_storage_str = "";
+}
+function beginStorageWrite(){
+	_storage_val = "";
+}
+function storageWrite( str ){
+	if( _storage_val.length > 0 ){
+		_storage_val += "&";
+	}
+	_storage_val += escape( str );
+}
+function endStorageWrite( key ){
+	setStorage( key, _storage_val );
+	_storage_val = "";
+}
 window.canUseCanvas = canUseCanvas;
 window.d2js_onload = d2js_onload;
 window.d2js_onorientationchange = d2js_onorientationchange;
@@ -1658,6 +1920,37 @@ window._MOD = _MOD;
 window._Random = _Random;
 window._System = _System;
 window._Vector = _Vector;
+window.canUseCookie = canUseCookie;
+window.setExpiresDate = setExpiresDate;
+window.cookieNum = cookieNum;
+window.getCookieKey = getCookieKey;
+window.getCookie = getCookie;
+window.setCookie = setCookie;
+window.clearCookie = clearCookie;
+window.beginCookieRead = beginCookieRead;
+window.cookieRead = cookieRead;
+window.endCookieRead = endCookieRead;
+window.beginCookieWrite = beginCookieWrite;
+window.cookieWrite = cookieWrite;
+window.endCookieWrite = endCookieWrite;
+window._HttpRequestHeader = _HttpRequestHeader;
+window.httpInitHeader = httpInitHeader;
+window.httpAddHeader = httpAddHeader;
+window.httpHeader = httpHeader;
+window.httpGet = httpGet;
+window.httpPost = httpPost;
+window.canUseStorage = canUseStorage;
+window.storageNum = storageNum;
+window.getStorageKey = getStorageKey;
+window.getStorage = getStorage;
+window.setStorage = setStorage;
+window.clearStorage = clearStorage;
+window.beginStorageRead = beginStorageRead;
+window.storageRead = storageRead;
+window.endStorageRead = endStorageRead;
+window.beginStorageWrite = beginStorageWrite;
+window.storageWrite = storageWrite;
+window.endStorageWrite = endStorageWrite;
 window._KEY_BACKSPACE = 8;
 window._KEY_TAB = 9;
 window._KEY_ENTER = 13;

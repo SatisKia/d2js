@@ -4,11 +4,13 @@ set CPP=gcc -E -P -x c
 set TMP=tmp\core
 rem set AJAXMINPATH=C:\Microsoft Ajax Minifier
 if "%AJAXMINPATH%"=="" goto error
+rem set SKCOMMONPATH=C:\git\SatisKia\common
+if "%SKCOMMONPATH%"=="" goto error
 
 md %TMP%
 
 cd core
-%CPP% _Main.js _Audio.js _Button.js _Graphics.js _ScalableGraphics.js _Image.js _Layout.js _Math.js _Random.js _System.js _Vector.js > ..\%TMP%\tmp1.js
+%CPP% _Main.js _Audio.js _Button.js _Graphics.js _ScalableGraphics.js _Image.js _Layout.js _Math.js _Random.js _System.js _Vector.js %SKCOMMONPATH%\_Cookie.js %SKCOMMONPATH%\_HttpRequest.js %SKCOMMONPATH%\_Storage.js > ..\%TMP%\tmp1.js
 cd ..
 
 function %TMP%\tmp1.js %TMP%\function.js
@@ -31,7 +33,7 @@ copy /B head.txt+%TMP%\d2js.js       core\d2js.js
 goto end
 
 :error
-echo 環境変数"AJAXMINPATH"が設定されていません
+echo 環境変数"AJAXMINPATH"または"SKCOMMONPATH"が設定されていません
 
 :end
 pause
