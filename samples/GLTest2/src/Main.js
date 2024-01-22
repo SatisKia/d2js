@@ -79,9 +79,9 @@ var aTextureCoord = null;
 var uProjectionMatrix;
 var uModelViewMatrix;
 var uNormalMatrix = null;
-var uAmbientLightColor;
 var uDirectionalLightColor;
 var uDirectionalLightPosition;
+var uAmbientLightColor;
 var uSampler = null;
 
 var positionBuffer;
@@ -165,25 +165,16 @@ function init3D( gl, glu ){
 		uniform mat4 uProjectionMatrix;
 		uniform mat4 uModelViewMatrix;
 		uniform mat4 uNormalMatrix;
-		uniform vec3 uAmbientLightColor;
-		uniform vec3 uDirectionalLightColor;
-		uniform vec3 uDirectionalLightPosition;
 
 		varying highp vec2 vTextureCoord;
-		varying lowp vec3 vAmbient;
-		varying highp vec3 vDiffuse;
+		varying highp vec3 vNormal;
 
 		void main(void) {
 			gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
 
 			vTextureCoord = aTextureCoord;
 
-			vAmbient = uAmbientLightColor;
-
-			highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-			highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
-			highp float diffuse = clamp(dot(transformedNormal.xyz, directionalLightPosition), 0.0, 1.0);	// ベクトルの内積
-			vDiffuse = uDirectionalLightColor * diffuse;
+			vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
 		}
 	`;
 
@@ -209,13 +200,28 @@ function init3D( gl, glu ){
 
 	// フラグメントシェーダーのプログラム（ライティング使用の場合）
 	const fsSourceLighting = `
+		precision mediump float;
+
+		uniform vec3 uDirectionalLightColor;
+		uniform vec3 uDirectionalLightPosition;
+
+		uniform vec3 uAmbientLightColor;
+
 		uniform sampler2D uSampler;
+
 		varying highp vec2 vTextureCoord;
-		varying lowp vec3 vAmbient;
-		varying highp vec3 vDiffuse;
+		varying highp vec3 vNormal;
+
 		void main(void) {
+			highp vec3 normal = normalize(vNormal);
+			highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
+			highp float cosAngle = clamp(dot(normal, directionalLightPosition), 0.0, 1.0);	// ベクトルの内積
+			highp vec3 diffuse = uDirectionalLightColor * cosAngle;
+
+			lowp vec3 ambient = uAmbientLightColor;
+
 			highp vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-			gl_FragColor = vec4(texelColor.rgb * (vAmbient + vDiffuse), texelColor.a);
+			gl_FragColor = vec4(texelColor.rgb * (diffuse + ambient), texelColor.a);
 		}
 	`;
 
@@ -238,9 +244,9 @@ function init3D( gl, glu ){
 		uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
 		if( use_lighting ){
 			uNormalMatrix = gl.getUniformLocation( shaderProgram, "uNormalMatrix" );
-			uAmbientLightColor = gl.getUniformLocation( shaderProgram, "uAmbientLightColor" );
 			uDirectionalLightColor = gl.getUniformLocation( shaderProgram, "uDirectionalLightColor" );
 			uDirectionalLightPosition = gl.getUniformLocation( shaderProgram, "uDirectionalLightPosition" );
+			uAmbientLightColor = gl.getUniformLocation( shaderProgram, "uAmbientLightColor" );
 		}
 
 		uSampler = gl.getUniformLocation( shaderProgram, "uSampler" );
@@ -393,9 +399,9 @@ function paint3D( gl, glu ){
 		glu.transpose();
 		gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
 
-		gl.uniform3fv(uAmbientLightColor, ambientLightColor);
 		gl.uniform3fv(uDirectionalLightColor, directionalLightColor);
 		gl.uniform3fv(uDirectionalLightPosition, directionalLightPosition);
+		gl.uniform3fv(uAmbientLightColor, ambientLightColor);
 	}
 
 	if( use_texture ){

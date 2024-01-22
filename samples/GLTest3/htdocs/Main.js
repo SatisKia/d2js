@@ -1571,13 +1571,13 @@ var aVertexNormal = null;
 var uProjectionMatrix;
 var uModelViewMatrix;
 var uNormalMatrix = null;
-var uAmbientLightColor;
 var uDirectionalLightColor;
 var uDirectionalLightPosition;
+var uAmbientLightColor;
 var uEyeDirection;
 var uSpecularLightColor;
-var uAmbient;
 var uDiffuse;
+var uAmbient;
 var uSpecular;
 var uShininess;
 var rotation = 0.0;
@@ -1608,30 +1608,12 @@ function init3D( gl, _glu ){
   uniform mat4 uProjectionMatrix;
   uniform mat4 uModelViewMatrix;
   uniform mat4 uNormalMatrix;
-  uniform vec3 uAmbientLightColor;
-  uniform vec3 uDirectionalLightColor;
-  uniform vec3 uDirectionalLightPosition;
-  uniform vec3 uEyeDirection;
-  uniform vec3 uSpecularLightColor;
-  uniform vec3 uAmbient;
-  uniform vec3 uDiffuse;
-  uniform vec3 uSpecular;
-  uniform float uShininess;
   varying lowp vec4 vColor;
-  varying lowp vec3 vAmbient;
-  varying highp vec3 vDiffuse;
-  varying highp vec3 vSpecular;
+  varying highp vec3 vNormal;
   void main(void) {
    gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
    vColor = aVertexColor;
-   vAmbient = uAmbientLightColor * uAmbient;
-   highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-   highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
-   highp float diffuse = clamp(dot(transformedNormal.xyz, directionalLightPosition), 0.0, 1.0);
-   vDiffuse = (uDirectionalLightColor * uDiffuse) * diffuse;
-   highp vec3 eyeDirection = normalize(uEyeDirection);
-   highp float specular = pow(clamp(dot(transformedNormal.xyz, eyeDirection), 0.0, 1.0), uShininess);
-   vSpecular = (uSpecularLightColor * uSpecular) * specular;
+   vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
   }
  `;
  const fsSource = `
@@ -1641,12 +1623,28 @@ function init3D( gl, _glu ){
   }
  `;
  const fsSourceLighting = `
+  precision mediump float;
+  uniform vec3 uDirectionalLightColor;
+  uniform vec3 uDirectionalLightPosition;
+  uniform vec3 uAmbientLightColor;
+  uniform vec3 uEyeDirection;
+  uniform vec3 uSpecularLightColor;
+  uniform vec3 uDiffuse;
+  uniform vec3 uAmbient;
+  uniform vec3 uSpecular;
+  uniform float uShininess;
   varying lowp vec4 vColor;
-  varying lowp vec3 vAmbient;
-  varying highp vec3 vDiffuse;
-  varying highp vec3 vSpecular;
+  varying highp vec3 vNormal;
   void main(void) {
-   gl_FragColor = vec4(vColor.rgb * (vAmbient + vDiffuse + vSpecular), vColor.a);
+   highp vec3 normal = normalize(vNormal);
+   highp vec3 directionalLightPosition = normalize(uDirectionalLightPosition);
+   highp float cosAngle = clamp(dot(normal, directionalLightPosition), 0.0, 1.0);
+   highp vec3 diffuse = (uDirectionalLightColor * uDiffuse) * cosAngle;
+   lowp vec3 ambient = uAmbientLightColor * uAmbient;
+   highp vec3 eyeDirection = normalize(uEyeDirection);
+   highp float powCosAngle = pow(clamp(dot(normal, eyeDirection), 0.0, 1.0), uShininess);
+   highp vec3 specular = (uSpecularLightColor * uSpecular) * powCosAngle;
+   gl_FragColor = vec4(vColor.rgb * (diffuse + ambient + specular), vColor.a);
   }
  `;
  if( useLighting ){
@@ -1669,8 +1667,8 @@ function init3D( gl, _glu ){
   uDirectionalLightPosition = gl.getUniformLocation( shaderProgram, "uDirectionalLightPosition" );
   uEyeDirection = gl.getUniformLocation( shaderProgram, "uEyeDirection" );
   uSpecularLightColor = gl.getUniformLocation( shaderProgram, "uSpecularLightColor" );
-  uAmbient = gl.getUniformLocation( shaderProgram, "uAmbient" );
   uDiffuse = gl.getUniformLocation( shaderProgram, "uDiffuse" );
+  uAmbient = gl.getUniformLocation( shaderProgram, "uAmbient" );
   uSpecular = gl.getUniformLocation( shaderProgram, "uSpecular" );
   uShininess = gl.getUniformLocation( shaderProgram, "uShininess" );
  }
@@ -1877,8 +1875,8 @@ function glModelSetTexture( gl, glt , index, tex_index ){
 }
 function glModelBeginDraw( gl, glt , index, tex_index, id, lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ){
  if( lighting ){
-  gl.uniform3fv(uAmbient, ambient[id]);
   gl.uniform3fv(uDiffuse, diffuse[id]);
+  gl.uniform3fv(uAmbient, ambient[id]);
   gl.uniform3fv(uSpecular, specular[id]);
   gl.uniform1f(uShininess, shininess[id]);
  } else {

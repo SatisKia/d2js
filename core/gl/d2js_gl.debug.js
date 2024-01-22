@@ -324,9 +324,23 @@ _GLModel.prototype = {
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
 		}
 		if( (this._color != null) && (this._strip_color[index] >= 0) ){
+			var color;
+			var trans = this.transparency();
+			if( trans != 1.0 ){
+				var tmp = this._color[this._strip_color[index]];
+				color = new Array( tmp.length );
+				for( var i = 0; i < tmp.length; i += 4 ){
+					color[i ] = tmp[i ];
+					color[i + 1] = tmp[i + 1];
+					color[i + 2] = tmp[i + 2];
+					color[i + 3] = tmp[i + 3] * trans;
+				}
+			} else {
+				color = this._color[this._strip_color[index]];
+			}
 			this._color_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, this._color_buffer );
-			_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._color[this._strip_color[index]] ), _gl.STATIC_DRAW );
+			_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( color ), _gl.STATIC_DRAW );
 			glModelBindColorBuffer( _gl, this._id, this._lighting );
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
 		}
