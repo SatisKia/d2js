@@ -399,7 +399,7 @@ g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
 	}
 }
 
-function init2D(){
+function init2D( g ){
 }
 
 function clear2D( g ){

@@ -133,7 +133,7 @@ function setCurrent3D( id, id2D ){
 	_glu = new _GLUtility();
 	init3D( _gl, _glu );
 	if( _3d != null ){
-		init2D();
+		init2D( getGraphics() );
 	}
 	setRepaintFunc( repaint3D );
 }

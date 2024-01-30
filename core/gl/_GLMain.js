@@ -42,7 +42,7 @@ function setCurrent3D( id, id2D ){
 
 	init3D( _gl, _glu );
 	if( _3d != null ){
-		init2D();
+		init2D( getGraphics() );
 	}
 	setRepaintFunc( repaint3D );
 }
@@ -113,6 +113,6 @@ function createShaderProgram( vsSource, fsSource ){
 
 //function init3D( gl, glu ){}
 //function paint3D( gl, glu ){}
-//function init2D(){}
+//function init2D( g ){}
 //function clear2D( g ){}
 //function paint2D( g ){}
