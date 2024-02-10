@@ -611,6 +611,20 @@ _GLPrimitive.prototype = {
 		return this._trans;
 	}
 };
+function _GLShader( vsSource, fsSource ){
+	this._program = createShaderProgram( vsSource, fsSource );
+}
+_GLShader.prototype = {
+	attrib : function( name ){
+		return _gl.getAttribLocation( this._program, name );
+	},
+	uniform : function( name ){
+		return _gl.getUniformLocation( this._program, name );
+	},
+	use : function(){
+		_gl.useProgram( this._program );
+	}
+};
 function _GLSprite( depth ){
 	this._glp = new _GLPrimitive();
 	this._glp.setType( 1 );
@@ -1835,6 +1849,7 @@ window.createShaderProgram = createShaderProgram;
 window._GLModel = _GLModel;
 window.createGLModel = createGLModel;
 window._GLPrimitive = _GLPrimitive;
+window._GLShader = _GLShader;
 window._GLSprite = _GLSprite;
 window._GLTexture = _GLTexture;
 window._GLTriangle = _GLTriangle;

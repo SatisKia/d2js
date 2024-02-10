@@ -8,7 +8,7 @@ if "%AJAXMINPATH%"=="" goto error
 md %TMP%
 
 cd core\gl
-%CPP% _GLDraw.js _GLMain.js _GLModel.js _GLPrimitive.js _GLSprite.js _GLTexture.js _GLTriangle.js _GLUtility.js > ..\..\%TMP%\tmp1.js
+%CPP% _GLDraw.js _GLMain.js _GLModel.js _GLPrimitive.js _GLShader.js _GLSprite.js _GLTexture.js _GLTriangle.js _GLUtility.js > ..\..\%TMP%\tmp1.js
 cd ..\..
 
 function %TMP%\tmp1.js %TMP%\function.js

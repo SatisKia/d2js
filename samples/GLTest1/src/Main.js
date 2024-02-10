@@ -71,7 +71,7 @@ function paint( g ){
 	}
 }
 
-var shaderProgram;
+var shader;
 var aVertexPosition;
 var aVertexColor = null;
 var aTextureCoord = null;
@@ -172,27 +172,27 @@ function init3D( gl, glu ){
 	// シェーダープログラムを初期化する
 	// （ここで頂点へのライティングなどがすべて確立される）
 	if( use_texture ){
-		shaderProgram = createShaderProgram( vsSourceTexture, fsSourceTexture );
+		shader = new _GLShader( vsSourceTexture, fsSourceTexture );
 
-		aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
-		aTextureCoord = gl.getAttribLocation( shaderProgram, "aTextureCoord" );
+		aVertexPosition = shader.attrib( "aVertexPosition" );
+		aTextureCoord = shader.attrib( "aTextureCoord" );
 
-		uProjectionMatrix = gl.getUniformLocation( shaderProgram, "uProjectionMatrix" );
-		uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
+		uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
+		uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
 
-		uSampler = gl.getUniformLocation( shaderProgram, "uSampler" );
+		uSampler = shader.uniform( "uSampler" );
 	} else {
-		shaderProgram = createShaderProgram( vsSource, fsSource );
+		shader = new _GLShader( vsSource, fsSource );
 
-		aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
-		aVertexColor = gl.getAttribLocation( shaderProgram, "aVertexColor" );
+		aVertexPosition = shader.attrib( "aVertexPosition" );
+		aVertexColor = shader.attrib( "aVertexColor" );
 
-		uProjectionMatrix = gl.getUniformLocation( shaderProgram, "uProjectionMatrix" );
-		uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
+		uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
+		uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
 	}
 
 	// WebGLに、描写に使用するプログラムを伝える
-	gl.useProgram( shaderProgram );
+	shader.use();
 
 	if( uSampler != null ){
 		gl.uniform1i( uSampler, 0 );

@@ -1564,7 +1564,7 @@ function paint( g ){
  g.setFont( 24, "ＭＳ ゴシック" );
  setCurrent3D( "canvas1", "canvas0" );
 }
-var shaderProgram;
+var shader;
 var aVertexPosition;
 var aVertexColor = null;
 var aVertexNormal = null;
@@ -1648,29 +1648,29 @@ function init3D( gl, _glu ){
   }
  `;
  if( useLighting ){
-  shaderProgram = createShaderProgram( vsSourceLighting, fsSourceLighting );
+  shader = new _GLShader( vsSourceLighting, fsSourceLighting );
  } else {
-  shaderProgram = createShaderProgram( vsSource, fsSource );
+  shader = new _GLShader( vsSource, fsSource );
  }
- gl.useProgram( shaderProgram );
- aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
+ shader.use();
+ aVertexPosition = shader.attrib( "aVertexPosition" );
  if( useLighting ){
-  aVertexNormal = gl.getAttribLocation( shaderProgram, "aVertexNormal" );
+  aVertexNormal = shader.attrib( "aVertexNormal" );
  }
- aVertexColor = gl.getAttribLocation( shaderProgram, "aVertexColor" );
- uProjectionMatrix = gl.getUniformLocation( shaderProgram, "uProjectionMatrix" );
- uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
+ aVertexColor = shader.attrib( "aVertexColor" );
+ uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
+ uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
  if( useLighting ){
-  uNormalMatrix = gl.getUniformLocation( shaderProgram, "uNormalMatrix" );
-  uAmbientLightColor = gl.getUniformLocation( shaderProgram, "uAmbientLightColor" );
-  uDirectionalLightColor = gl.getUniformLocation( shaderProgram, "uDirectionalLightColor" );
-  uDirectionalLightPosition = gl.getUniformLocation( shaderProgram, "uDirectionalLightPosition" );
-  uEyeDirection = gl.getUniformLocation( shaderProgram, "uEyeDirection" );
-  uSpecularLightColor = gl.getUniformLocation( shaderProgram, "uSpecularLightColor" );
-  uDiffuse = gl.getUniformLocation( shaderProgram, "uDiffuse" );
-  uAmbient = gl.getUniformLocation( shaderProgram, "uAmbient" );
-  uSpecular = gl.getUniformLocation( shaderProgram, "uSpecular" );
-  uShininess = gl.getUniformLocation( shaderProgram, "uShininess" );
+  uNormalMatrix = shader.uniform( "uNormalMatrix" );
+  uAmbientLightColor = shader.uniform( "uAmbientLightColor" );
+  uDirectionalLightColor = shader.uniform( "uDirectionalLightColor" );
+  uDirectionalLightPosition = shader.uniform( "uDirectionalLightPosition" );
+  uEyeDirection = shader.uniform( "uEyeDirection" );
+  uSpecularLightColor = shader.uniform( "uSpecularLightColor" );
+  uDiffuse = shader.uniform( "uDiffuse" );
+  uAmbient = shader.uniform( "uAmbient" );
+  uSpecular = shader.uniform( "uSpecular" );
+  uShininess = shader.uniform( "uShininess" );
  }
  model_sphere = new Array( 3 );
  model_sphere[0] = createGLModel( MODEL_SPHERE, 0.015, 0, true, useLighting );
@@ -1841,7 +1841,7 @@ g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
   }
  }
 }
-function init2D(){
+function init2D( g ){
 }
 function clear2D( g ){
  g.setColor( g.getColorOfRGBA( 0, 0, 0, 0 ) );

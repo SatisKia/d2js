@@ -71,7 +71,7 @@ function paint( g ){
 	}
 }
 
-var shaderProgram;
+var shader;
 var aVertexPosition;
 var aVertexColor = null;
 var aVertexNormal = null;
@@ -229,39 +229,39 @@ function init3D( gl, glu ){
 	// （ここで頂点へのライティングなどがすべて確立される）
 	if( use_texture ){
 		if( use_lighting ){
-			shaderProgram = createShaderProgram( vsSourceLighting, fsSourceLighting );
+			shader = new _GLShader( vsSourceLighting, fsSourceLighting );
 		} else {
-			shaderProgram = createShaderProgram( vsSourceTexture, fsSourceTexture );
+			shader = new _GLShader( vsSourceTexture, fsSourceTexture );
 		}
 
-		aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
+		aVertexPosition = shader.attrib( "aVertexPosition" );
 		if( use_lighting ){
-			aVertexNormal = gl.getAttribLocation( shaderProgram, "aVertexNormal" );
+			aVertexNormal = shader.attrib( "aVertexNormal" );
 		}
-		aTextureCoord = gl.getAttribLocation( shaderProgram, "aTextureCoord" );
+		aTextureCoord = shader.attrib( "aTextureCoord" );
 
-		uProjectionMatrix = gl.getUniformLocation( shaderProgram, "uProjectionMatrix" );
-		uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
+		uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
+		uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
 		if( use_lighting ){
-			uNormalMatrix = gl.getUniformLocation( shaderProgram, "uNormalMatrix" );
-			uDirectionalLightColor = gl.getUniformLocation( shaderProgram, "uDirectionalLightColor" );
-			uDirectionalLightPosition = gl.getUniformLocation( shaderProgram, "uDirectionalLightPosition" );
-			uAmbientLightColor = gl.getUniformLocation( shaderProgram, "uAmbientLightColor" );
+			uNormalMatrix = shader.uniform( "uNormalMatrix" );
+			uDirectionalLightColor = shader.uniform( "uDirectionalLightColor" );
+			uDirectionalLightPosition = shader.uniform( "uDirectionalLightPosition" );
+			uAmbientLightColor = shader.uniform( "uAmbientLightColor" );
 		}
 
-		uSampler = gl.getUniformLocation( shaderProgram, "uSampler" );
+		uSampler = shader.uniform( "uSampler" );
 	} else {
-		shaderProgram = createShaderProgram( vsSource, fsSource );
+		shader = new _GLShader( vsSource, fsSource );
 
-		aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
-		aVertexColor = gl.getAttribLocation( shaderProgram, "aVertexColor" );
+		aVertexPosition = shader.attrib( "aVertexPosition" );
+		aVertexColor = shader.attrib( "aVertexColor" );
 
-		uProjectionMatrix = gl.getUniformLocation( shaderProgram, "uProjectionMatrix" );
-		uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
+		uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
+		uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
 	}
 
 	// WebGLに、描写に使用するプログラムを伝える
-	gl.useProgram( shaderProgram );
+	shader.use();
 
 	if( uSampler != null ){
 		gl.uniform1i( uSampler, 0 );

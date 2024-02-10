@@ -25,7 +25,7 @@ function paint( g ){
 	setCurrent3D( "canvas1", "canvas0" );
 }
 
-var shaderProgram;
+var shader;
 
 var aVertexPosition;
 var aVertexColor = null;
@@ -153,31 +153,31 @@ function init3D( gl, _glu ){
 	`;
 
 	if( useLighting ){
-		shaderProgram = createShaderProgram( vsSourceLighting, fsSourceLighting );
+		shader = new _GLShader( vsSourceLighting, fsSourceLighting );
 	} else {
-		shaderProgram = createShaderProgram( vsSource, fsSource );
+		shader = new _GLShader( vsSource, fsSource );
 	}
-	gl.useProgram( shaderProgram );
+	shader.use();
 
-	aVertexPosition = gl.getAttribLocation( shaderProgram, "aVertexPosition" );
+	aVertexPosition = shader.attrib( "aVertexPosition" );
 	if( useLighting ){
-		aVertexNormal = gl.getAttribLocation( shaderProgram, "aVertexNormal" );
+		aVertexNormal = shader.attrib( "aVertexNormal" );
 	}
-	aVertexColor = gl.getAttribLocation( shaderProgram, "aVertexColor" );
+	aVertexColor = shader.attrib( "aVertexColor" );
 
-	uProjectionMatrix = gl.getUniformLocation( shaderProgram, "uProjectionMatrix" );
-	uModelViewMatrix = gl.getUniformLocation( shaderProgram, "uModelViewMatrix" );
+	uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
+	uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
 	if( useLighting ){
-		uNormalMatrix = gl.getUniformLocation( shaderProgram, "uNormalMatrix" );
-		uAmbientLightColor = gl.getUniformLocation( shaderProgram, "uAmbientLightColor" );
-		uDirectionalLightColor = gl.getUniformLocation( shaderProgram, "uDirectionalLightColor" );
-		uDirectionalLightPosition = gl.getUniformLocation( shaderProgram, "uDirectionalLightPosition" );
-		uEyeDirection = gl.getUniformLocation( shaderProgram, "uEyeDirection" );
-		uSpecularLightColor = gl.getUniformLocation( shaderProgram, "uSpecularLightColor" );
-		uDiffuse = gl.getUniformLocation( shaderProgram, "uDiffuse" );
-		uAmbient = gl.getUniformLocation( shaderProgram, "uAmbient" );
-		uSpecular = gl.getUniformLocation( shaderProgram, "uSpecular" );
-		uShininess = gl.getUniformLocation( shaderProgram, "uShininess" );
+		uNormalMatrix = shader.uniform( "uNormalMatrix" );
+		uAmbientLightColor = shader.uniform( "uAmbientLightColor" );
+		uDirectionalLightColor = shader.uniform( "uDirectionalLightColor" );
+		uDirectionalLightPosition = shader.uniform( "uDirectionalLightPosition" );
+		uEyeDirection = shader.uniform( "uEyeDirection" );
+		uSpecularLightColor = shader.uniform( "uSpecularLightColor" );
+		uDiffuse = shader.uniform( "uDiffuse" );
+		uAmbient = shader.uniform( "uAmbient" );
+		uSpecular = shader.uniform( "uSpecular" );
+		uShininess = shader.uniform( "uShininess" );
 	}
 
 	model_sphere = new Array( 3 );
