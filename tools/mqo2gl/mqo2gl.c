@@ -178,6 +178,7 @@ void get_line(char** buf) {
 	skip_line(buf);
 }
 
+int string_f;
 char* f(char* var, double scale) {
 	int i, j;
 	double v;
@@ -203,22 +204,43 @@ char* f(char* var, double scale) {
 		tmp[j] = '\0';
 	}
 	strcpy(var, tmp);
-/*
-	if ( (var[0] == '-') && (var[1] == '0') ) {
-		var[1] = '-';
-		if ( var[2] == '\0' ) {
-			return &var[2];
-		} else {
+	if ( string_f == 1 ) {
+		if ( (var[0] == '-') && (var[1] == '0') ) {
+			var[1] = '-';
+			if ( var[2] == '\0' ) {
+				return &var[2];
+			} else {
+				return &var[1];
+			}
+		} else if ( var[0] == '0' ) {
 			return &var[1];
 		}
-	} else if ( var[0] == '0' ) {
-		return &var[1];
-	}
-*/
-	if ( (var[0] == '-') && (var[1] == '0') && (var[2] == '\0') ) {
-		return &var[1];
+	} else {
+		if ( (var[0] == '-') && (var[1] == '0') && (var[2] == '\0') ) {
+			return &var[1];
+		}
 	}
 	return var;
+}
+void print(int val) {
+	if ( (string_f == 1) && (val == 0) ) {
+	} else {
+		printf("%d", val);
+	}
+}
+void print_fc(int val) {
+	if ( (string_f == 1) && (val == 0) ) {
+		printf(",");
+	} else {
+		printf(",%d", val);
+	}
+}
+void print_bc(int val) {
+	if ( (string_f == 1) && (val == 0) ) {
+		printf(",");
+	} else {
+		printf("%d,", val);
+	}
 }
 
 int main(int argc, char* argv[]) {
@@ -249,15 +271,33 @@ int main(int argc, char* argv[]) {
 
 	int col;
 
-	if ( argc < 6 ) {
-		printf("usage: %s <mqo_file> <keta> <scale> <texture_file_list> <max_face_num>\n", progName(argv[0]));
+	int enter_f;
+//	int string_f;
+	int offset;
+
+	enter_f = 0;
+	string_f = 0;
+	offset = 0;
+	if ( argc > 1 ) {
+		if ( stricmp(argv[1], "-e") == 0 ) {
+			enter_f = 1;
+			offset = 1;
+		}
+		if ( stricmp(argv[1], "-s") == 0 ) {
+			string_f = 1;
+			offset = 1;
+		}
+	}
+
+	if ( argc < 6 + offset ) {
+		printf("usage: %s [-e | -s] <mqo_file> <keta> <scale> <texture_file_list> <max_face_num>\n", progName(argv[0]));
 		return 0;
 	}
 
-	sprintf(keta, "%%.%df", atoi(argv[2]));
-	scale = atof(argv[3]);
+	sprintf(keta, "%%.%df", atoi(argv[2 + offset]));
+	scale = atof(argv[3 + offset]);
 
-	if ( (in = fopen(argv[1], "rb")) != NULL ) {
+	if ( (in = fopen(argv[1 + offset], "rb")) != NULL ) {
 		in_size = 0;
 		while ( fread(tmp, 1, 1024, in) != 0 ) {
 			in_size += 1024;
@@ -266,7 +306,7 @@ int main(int argc, char* argv[]) {
 
 		buf = (char*)malloc(in_size + 1);
 
-		in = fopen(argv[1], "rb");
+		in = fopen(argv[1 + offset], "rb");
 		in_size = 0;
 		while ( (tmp_size = fread(&buf[in_size], 1, 1024, in)) != 0 ) {
 			in_size += tmp_size;
@@ -274,12 +314,16 @@ int main(int argc, char* argv[]) {
 		buf[in_size] = '\0';
 		fclose(in);
 
+if ( string_f == 1 ) {
+	printf("\"");
+}
+
 		// Material
 		cur = buf;
 		if ( find(&cur, "Material ") ) {
 			word(&cur, tmp);
 			material_num = atoi(tmp);
-printf("%d,\n", material_num);
+print_bc(material_num); if ( enter_f == 1 ) { printf("\n"); }
 
 			material_f = (char*)malloc(sizeof(char) * material_num);
 			material_col = (float*)malloc(sizeof(float) * material_num * 3);
@@ -304,10 +348,10 @@ printf("%d,\n", material_num);
 						sprintf(tmp_texture2, "%s", tmp);
 					}
 					cnt = 0;
-					if ( (texture_fp = fopen(argv[4], "rt")) != NULL ) {
+					if ( (texture_fp = fopen(argv[4 + offset], "rt")) != NULL ) {
 						while ( fgets(tmp_texture, 127, texture_fp) != NULL ) {
 							if ( strstr(tmp_texture, tmp_texture2) != NULL ) {
-printf("%d", cnt);
+print(cnt);
 cnt = -1;
 								break;
 							}
@@ -356,7 +400,7 @@ printf(",");
 					word(&cur2, tmp);
 					printf("%s", f(tmp, scale));
 				}
-printf(",\n");
+printf(","); if ( enter_f == 1 ) { printf("\n"); }
 
 				cur2 = line;
 				if ( find_line(&cur2, " col(") ) {
@@ -368,8 +412,13 @@ printf(",\n");
 			}
 		}
 
-printf("0,0,0,\n");
-printf("0,0,0,0,\n");
+if ( string_f == 1 ) {
+	printf(",,,");
+	printf(",,,,");
+} else {
+	printf("0,0,0,"); if ( enter_f == 1 ) { printf("\n"); }
+	printf("0,0,0,0,"); if ( enter_f == 1 ) { printf("\n"); }
+}
 
 		group_num = 0;
 		coord_num = 0;
@@ -513,33 +562,33 @@ printf("0,0,0,0,\n");
 		}
 
 		// coord
-printf("%d,\n", group_num);
+print_bc(group_num); if ( enter_f == 1 ) { printf("\n"); }
 		vertex_top = 0;
 		cur = buf;
 		while ( find(&cur, "vertex ") ) {
 			word(&cur, tmp);
 			vertex_num = atoi(tmp);
 			if ( vertex_num > 0 ) {
-				printf("%d,\n", vertex_num);
+				print_bc(vertex_num); if ( enter_f == 1 ) { printf("\n"); }
 				for ( i = 0; i < vertex_num; i++ ) {
 					sprintf(tmp1, "%f", coord[vertex_top * 3 + i * 3    ]);
 					sprintf(tmp2, "%f", coord[vertex_top * 3 + i * 3 + 1]);
 					sprintf(tmp3, "%f", coord[vertex_top * 3 + i * 3 + 2]);
-					printf("%s,%s,%s,\n", f(tmp1, scale), f(tmp2, scale), f(tmp3, scale));
+					printf("%s,%s,%s,", f(tmp1, scale), f(tmp2, scale), f(tmp3, scale)); if ( enter_f == 1 ) { printf("\n"); }
 				}
 				vertex_top += vertex_num;
 			}
 		}
 
 		// normal
-printf("%d,\n", group_num);
+print_bc(group_num); if ( enter_f == 1 ) { printf("\n"); }
 		vertex_top = 0;
 		cur = buf;
 		while ( find(&cur, "vertex ") ) {
 			word(&cur, tmp);
 			vertex_num = atoi(tmp);
 			if ( vertex_num > 0 ) {
-				printf("%d,\n", vertex_num);
+				print_bc(vertex_num); if ( enter_f == 1 ) { printf("\n"); }
 				for ( i = 0; i < vertex_num; i++ ) {
 					normalize(
 						normal[vertex_top * 3 + i * 3    ],
@@ -549,14 +598,14 @@ printf("%d,\n", group_num);
 					sprintf(tmp1, "%f", normal_x);
 					sprintf(tmp2, "%f", normal_y);
 					sprintf(tmp3, "%f", normal_z);
-					printf("%s,%s,%s,\n", f(tmp1, scale), f(tmp2, scale), f(tmp3, scale));
+					printf("%s,%s,%s,", f(tmp1, scale), f(tmp2, scale), f(tmp3, scale)); if ( enter_f == 1 ) { printf("\n"); }
 				}
 				vertex_top += vertex_num;
 			}
 		}
 
 		// color
-printf("%d,\n", group_num);
+print_bc(group_num); if ( enter_f == 1 ) { printf("\n"); }
 		vertex_top = 0;
 		cur = buf;
 		while ( find(&cur, "vertex ") ) {
@@ -568,15 +617,15 @@ printf("%d,\n", group_num);
 			word(&cur, tmp);
 			vertex_num = atoi(tmp);
 			if ( vertex_num > 0 ) {
-				printf("%d,\n", vertex_num);
+				print_bc(vertex_num); if ( enter_f == 1 ) { printf("\n"); }
 				for ( i = 0; i < vertex_num; i++ ) {
 //					if ( color[vertex_top * 3 + i * 3] >= 0.0f ) {
 						sprintf(tmp1, "%f", color[vertex_top * 3 + i * 3    ]);
 						sprintf(tmp2, "%f", color[vertex_top * 3 + i * 3 + 1]);
 						sprintf(tmp3, "%f", color[vertex_top * 3 + i * 3 + 2]);
-						printf("%s,%s,%s,\n", f(tmp1, scale), f(tmp2, scale), f(tmp3, scale));
+						printf("%s,%s,%s,", f(tmp1, scale), f(tmp2, scale), f(tmp3, scale)); if ( enter_f == 1 ) { printf("\n"); }
 //					} else {
-//						printf("%s,%s,%s,\n", tmp1, tmp2, tmp3);
+//						printf("%s,%s,%s,", tmp1, tmp2, tmp3); if ( enter_f == 1 ) { printf("\n"); }
 //					}
 				}
 				vertex_top += vertex_num;
@@ -584,25 +633,25 @@ printf("%d,\n", group_num);
 		}
 
 		// map
-printf("%d,\n", group_num);
+print_bc(group_num); if ( enter_f == 1 ) { printf("\n"); }
 		vertex_top = 0;
 		cur = buf;
 		while ( find(&cur, "vertex ") ) {
 			word(&cur, tmp);
 			vertex_num = atoi(tmp);
 			if ( vertex_num > 0 ) {
-				printf("%d,\n", vertex_num);
+				print_bc(vertex_num); if ( enter_f == 1 ) { printf("\n"); }
 				for ( i = 0; i < vertex_num; i++ ) {
 					sprintf(tmp1, "%f", map[vertex_top * 2 + i * 2    ]);
 					sprintf(tmp2, "%f", map[vertex_top * 2 + i * 2 + 1]);
-					printf("%s,%s,\n", f(tmp1, 1.0f), f(tmp2, 1.0f));
+					printf("%s,%s,", f(tmp1, 1.0f), f(tmp2, 1.0f)); if ( enter_f == 1 ) { printf("\n"); }
 				}
 				vertex_top += vertex_num;
 			}
 		}
 
-		if ( face_cnt > atoi(argv[5]) ) {
-			face_cnt = atoi(argv[5]);
+		if ( face_cnt > atoi(argv[5 + offset]) ) {
+			face_cnt = atoi(argv[5 + offset]);
 		}
 
 		tri_num = 0;
@@ -620,7 +669,7 @@ printf("%d,\n", group_num);
 				}
 			}
 		}
-		printf("%d,\n", strip_num);
+		print_bc(strip_num); if ( enter_f == 1 ) { printf("\n"); }
 		i = 0;
 		cur = buf;
 		while ( find(&cur, "Object ") ) {
@@ -644,50 +693,67 @@ printf("%d,\n", group_num);
 				}
 				if ( cnt > 0 ) {
 #if 0
-					printf("%s,%s,%s,\n", tmp2, tmp3, tmp4);
-					printf("%s,0,1,0,\n", tmp1);
+					printf("%s,%s,%s,", tmp2, tmp3, tmp4); if ( enter_f == 1 ) { printf("\n"); }
+					printf("%s,0,1,0,", tmp1); if ( enter_f == 1 ) { printf("\n"); }
 #else
-					printf("0,0,0,\n");
-					printf("0,0,0,0,\n");
+if ( string_f == 1 ) {
+					printf(",,,");
+					printf(",,,,");
+} else {
+					printf("0,0,0,"); if ( enter_f == 1 ) { printf("\n"); }
+					printf("0,0,0,0,"); if ( enter_f == 1 ) { printf("\n"); }
+}
 #endif
-					printf("%d,\n", j);
-					printf("%d,%d,%d,%d,\n", i, i, i, i);
-					printf("%d", cnt);
+					print_bc(j); if ( enter_f == 1 ) { printf("\n"); }
+if ( string_f == 1 ) {
+	if ( i == 0 ) {
+					printf(",,,,");
+	} else {
+					printf("%d,%d,%d,%d,", i, i, i, i);
+	}
+} else {
+					printf("%d,%d,%d,%d,", i, i, i, i); if ( enter_f == 1 ) { printf("\n"); }
+}
+					print(cnt);
 					last_index = -1;
 					for ( k = 0; k < face_cnt; k++ ) {
 						if ( (face[k * 7] == i) && (face[k * 7 + 1] == j) ) {
 							if ( last_index >= 0 ) {
-								printf(",%d", last_index);
-								printf(",%d", face[k * 7 + 3]);
+								print_fc(last_index);
+								print_fc(face[k * 7 + 3]);
 							}
 							if ( face[k * 7 + 2] == 4 ) {
 								last_index = face[k * 7 + 3];
-								printf(",%d", last_index);
+								print_fc(last_index);
 								last_index = face[k * 7 + 3 + 1];
-								printf(",%d", last_index);
+								print_fc(last_index);
 								last_index = face[k * 7 + 3 + 3];
-								printf(",%d", last_index);
+								print_fc(last_index);
 								last_index = face[k * 7 + 3 + 2];
-								printf(",%d", last_index);
+								print_fc(last_index);
 								tri_num += 2;
 							} else {
 								last_index = face[k * 7 + 3];
-								printf(",%d", last_index);
+								print_fc(last_index);
 								last_index = face[k * 7 + 3 + 1];
-								printf(",%d", last_index);
+								print_fc(last_index);
 								last_index = face[k * 7 + 3 + 2];
-								printf(",%d", last_index);
+								print_fc(last_index);
 								tri_num++;
 							}
 						}
 					}
-					printf(",\n");
+					printf(","); if ( enter_f == 1 ) { printf("\n"); }
 				}
 			}
 			i++;
 		}
 
+if ( string_f == 1 ) {
+		printf("%d\",\n", tri_num);
+} else {
 		printf("%d,\n", tri_num);
+}
 
 		free(material_f);
 		free(material_col);

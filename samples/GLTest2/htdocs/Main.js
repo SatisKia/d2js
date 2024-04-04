@@ -353,6 +353,8 @@ function init3D( gl, glu ){
  gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, indexBuffer );
  gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( indices ), gl.STATIC_DRAW );
  gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, null );
+
+ return true;
 }
 
 function paint3D( gl, glu ){

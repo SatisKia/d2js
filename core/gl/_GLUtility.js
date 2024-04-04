@@ -636,7 +636,7 @@ _GLUtility.prototype = {
 	 * glFrustum
 	 */
 	frustum : function( l, r, b, t, n, f ){
-		// 射影行列を取得
+		// 現在の行列に射影行列を乗算
 		/******************************************
 		 *   2 n                r + l             *
 		 * -------     0       -------       0    *
@@ -668,12 +668,97 @@ _GLUtility.prototype = {
 		this.proj_mat[13] = 0.0;
 		this.proj_mat[14] = -1.0;
 		this.proj_mat[15] = 0.0;
-		this.setIdentity();
 		this.multiply( this.proj_mat );
 		for( var i = 0; i < 16; i++ ){
 			this.proj_mat[i] = this.util_mat[i];
 		}
 	},
+
+	/*
+	 * glOrtho
+	 */
+	ortho : function( l, r, b, t, n, f ){
+		// 現在の行列に正投影行列を乗算
+		/******************************************
+		 *    2                            r + l  *
+		 * -------     0          0     - ------- *
+		 *  r - l                          r - l  *
+		 *                                        *
+		 *             2                   t + b  *
+		 *    0     -------       0     - ------- *
+		 *           t - b                 t - b  *
+		 *                                        *
+		 *                        2        f + n  *
+		 *    0        0     - -------  - ------- *
+		 *                      f - n      f - n  *
+		 *                                        *
+		 *    0        0          0          1    *
+		 ******************************************/
+		this.proj_mat[ 0] = 2.0 / (r - l);
+		this.proj_mat[ 1] = 0.0;
+		this.proj_mat[ 2] = 0.0;
+		this.proj_mat[ 3] = -(r + l) / (r - l);
+		this.proj_mat[ 4] = 0.0;
+		this.proj_mat[ 5] = 2.0 / (t - b);
+		this.proj_mat[ 6] = 0.0;
+		this.proj_mat[ 7] = -(t + b) / (t - b);
+		this.proj_mat[ 8] = 0.0;
+		this.proj_mat[ 9] = 0.0;
+		this.proj_mat[10] = -2.0 / (f - n);
+		this.proj_mat[11] = -(f + n) / (f - n);
+		this.proj_mat[12] = 0.0;
+		this.proj_mat[13] = 0.0;
+		this.proj_mat[14] = 0.0;
+		this.proj_mat[15] = 1.0;
+		this.multiply( this.proj_mat );
+		for( var i = 0; i < 16; i++ ){
+			this.proj_mat[i] = this.util_mat[i];
+		}
+	},
+
+	/*
+	 * gluPerspective
+	 */
+	perspective : function( fovy, a, n, f ){
+		// 現在の行列に射影行列を乗算
+		// F = cotangent(fovy / 2)
+		// cotangent(t) = 1 / tan(t)
+		/****************************
+		 *  F                       *
+		 * ---  0     0        0    *
+		 *  a                       *
+		 *                          *
+		 *  0   F     0        0    *
+		 *                          *
+		 *          f + n    2 f n  *
+		 *  0   0  -------  ------- *
+		 *          n - f    n - f  *
+		 *                          *
+		 *  0   0    -1        0    *
+		 ****************************/
+		var F = 1.0 / Math.tan(((fovy * Math.PI) / 180.0) / 2.0);
+		this.proj_mat[ 0] = F / a;
+		this.proj_mat[ 1] = 0.0;
+		this.proj_mat[ 2] = 0.0;
+		this.proj_mat[ 3] = 0.0;
+		this.proj_mat[ 4] = 0.0;
+		this.proj_mat[ 5] = F;
+		this.proj_mat[ 6] = 0.0;
+		this.proj_mat[ 7] = 0.0;
+		this.proj_mat[ 8] = 0.0;
+		this.proj_mat[ 9] = 0.0;
+		this.proj_mat[10] = (f + n) / (n - f);
+		this.proj_mat[11] = (2.0 * f * n) / (n - f);
+		this.proj_mat[12] = 0.0;
+		this.proj_mat[13] = 0.0;
+		this.proj_mat[14] = -1.0;
+		this.proj_mat[15] = 0.0;
+		this.multiply( this.proj_mat );
+		for( var i = 0; i < 16; i++ ){
+			this.proj_mat[i] = this.util_mat[i];
+		}
+	},
+
 	setProjMatrix : function( matrix ){
 		for( var i = 0; i < 16; i++ ){
 			this.proj_mat[i] = matrix[i];

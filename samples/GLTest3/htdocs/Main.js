@@ -1676,6 +1676,7 @@ function init3D( gl, _glu ){
  model_sphere[0] = createGLModel( MODEL_SPHERE, 0.015, 0, true, useLighting );
  model_sphere[1] = createGLModel( MODEL_SPHERE, 0.015, 1, true, useLighting );
  model_sphere[2] = createGLModel( MODEL_SPHERE, 0.015, 2, true, useLighting );
+ return true;
 }
 function paint3D( gl, glu ){
  gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
@@ -1851,6 +1852,9 @@ function paint2D( g ){
  g.setFont( 24, "ＭＳ ゴシック" );
  g.setColor( g.getColorOfRGB( 0, 0, 255 ) );
  g.drawString( "rotation " + _MOD(_INT(rotation * 180 / Math.PI), 360), 10, 30 );
+}
+function glModelActiveTexture( gl, id ){
+ return gl.TEXTURE0;
 }
 function glModelBindPositionBuffer( gl ){
  gl.vertexAttribPointer( aVertexPosition, 3, gl.FLOAT, false, 0, 0 );

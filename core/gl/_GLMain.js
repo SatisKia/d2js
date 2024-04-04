@@ -40,11 +40,14 @@ function setCurrent3D( id, id2D ){
 
 	_glu = new _GLUtility();
 
-	init3D( _gl, _glu );
-	if( _3d != null ){
-		init2D( getGraphics() );
+	if( init3D( _gl, _glu ) ){
+		if( _3d != null ){
+			init2D( getGraphics() );
+		}
+		setRepaintFunc( repaint3D );
+	} else {
+		killTimer();
 	}
-	setRepaintFunc( repaint3D );
 }
 
 var repaint3D = function(){
@@ -111,7 +114,7 @@ function createShaderProgram( vsSource, fsSource ){
 	return shaderProgram;
 }
 
-//function init3D( gl, glu ){}
+//function init3D( gl, glu ){ return true; }
 //function paint3D( gl, glu ){}
 //function init2D( g ){}
 //function clear2D( g ){}

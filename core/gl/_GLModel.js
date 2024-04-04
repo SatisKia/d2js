@@ -199,7 +199,7 @@ _GLModel.prototype = {
 		}
 		if( !glModelSetTexture( _gl, glt, index, tex_index, this._id, this._lighting ) ){
 			if( (this._map != null) && (this._strip_map[index] >= 0) && (tex_index >= 0) ){
-				_gl.activeTexture( _gl.TEXTURE0 );
+				_gl.activeTexture( glModelActiveTexture( _gl, this._id ) );
 				glt.bindTexture( _gl.TEXTURE_2D, glt.id( tex_index ) );
 				this._texture_coord_buffer = _gl.createBuffer();
 				_gl.bindBuffer( _gl.ARRAY_BUFFER, this._texture_coord_buffer );
@@ -288,10 +288,46 @@ _GLModel.prototype = {
 
 };
 
-function createGLModel( data, scale, id, depth, lighting ){
+function _GLModelData( data ){
+	this._data = data;
+	this._cur = 0;
+}
+_GLModelData.prototype = {
+	get : function(){
+		if( typeof this._data == "string" ){
+			var tmp = "";
+			var chr;
+			while( (chr = this._data.charAt( this._cur++ )) != "," ){
+				tmp += chr;
+				if( this._cur >= this._data.length ){
+					break;
+				}
+			}
+			if( tmp.length > 0 ){
+				if( tmp.charAt( 0 ) == "." ){
+					return Number( "0" + tmp );
+				} else if( tmp.charAt( 0 ) == "-" ){
+					if( (tmp.length > 1) && (tmp.charAt( 1 ) == ".") ){
+						return Number( "-0" + tmp.substring( 1 ) );
+					}
+				}
+				return Number( tmp );
+			}
+			return 0;
+		}
+		return this._data[this._cur++];
+	}
+};
+function createGLModel( _data, scale, id, depth, lighting ){
+	var data;
+	if( _data instanceof _GLModelData ){
+		data = _data;
+	} else {
+		data = new _GLModelData( _data );
+	}
+
 	var model = new _GLModel( id, depth, lighting );
 
-	var cur = 0;
 	var i, j, k;
 	var coord_count;
 	var normal_count;
@@ -299,7 +335,7 @@ function createGLModel( data, scale, id, depth, lighting ){
 	var map_count;
 
 	// テクスチャ
-	var texture_num = data[cur++];
+	var texture_num = data.get();
 	var texture_index = new Array(texture_num);
 	var material_dif = new Array(texture_num * 4);
 	var material_amb = new Array(texture_num * 4);
@@ -307,35 +343,35 @@ function createGLModel( data, scale, id, depth, lighting ){
 	var material_spc = new Array(texture_num * 4);
 	var material_power = new Array(texture_num);
 	for ( i = 0; i < texture_num; i++ ) {
-		texture_index[i] = data[cur++];
-		material_dif[i * 4] = data[cur++];
+		texture_index[i] = data.get();
+		material_dif[i * 4] = data.get();
 		material_dif[i * 4 + 1] = material_dif[i * 4];
 		material_dif[i * 4 + 2] = material_dif[i * 4];
 		material_dif[i * 4 + 3] = 1.0;
-		material_amb[i * 4] = data[cur++];
+		material_amb[i * 4] = data.get();
 		material_amb[i * 4 + 1] = material_amb[i * 4];
 		material_amb[i * 4 + 2] = material_amb[i * 4];
 		material_amb[i * 4 + 3] = 1.0;
-		material_emi[i * 4] = data[cur++];
+		material_emi[i * 4] = data.get();
 		material_emi[i * 4 + 1] = material_emi[i * 4];
 		material_emi[i * 4 + 2] = material_emi[i * 4];
 		material_emi[i * 4 + 3] = 1.0;
-		material_spc[i * 4] = data[cur++];
+		material_spc[i * 4] = data.get();
 		material_spc[i * 4 + 1] = material_spc[i * 4];
 		material_spc[i * 4 + 2] = material_spc[i * 4];
 		material_spc[i * 4 + 3] = 1.0;
-		material_power[i] = data[cur++] * 128.0 / 100.0;
+		material_power[i] = data.get() * 128.0 / 100.0;
 	}
 	model.setMaterial(texture_num, texture_index, material_dif, material_amb, material_emi, material_spc, material_power);
 
 	// グループ
-	var group_tx = data[cur++] * scale;
-	var group_ty = data[cur++] * scale;
-	var group_tz = data[cur++] * scale;
-	var group_or = data[cur++];
-	var group_ox = data[cur++];
-	var group_oy = data[cur++];
-	var group_oz = data[cur++];
+	var group_tx = data.get() * scale;
+	var group_ty = data.get() * scale;
+	var group_tz = data.get() * scale;
+	var group_or = data.get();
+	var group_ox = data.get();
+	var group_oy = data.get();
+	var group_oz = data.get();
 	_glu.setIdentity();
 	_glu.translate(group_tx, group_ty, group_tz);
 	_glu.rotate(group_ox, group_oy, group_oz, group_or);
@@ -343,22 +379,22 @@ function createGLModel( data, scale, id, depth, lighting ){
 	var x, y, z;
 
 	// coord
-	var coord_num = data[cur++];
+	var coord_num = data.get();
 	coord_count = null;
 	var coord = null;
 	if ( coord_num > 0 ) {
 		coord_count = new Array(coord_num);
 		coord = new Array(coord_num);
 		for ( j = 0; j < coord_num; j++ ) {
-			coord_count[j] = data[cur++];
+			coord_count[j] = data.get();
 			if ( coord_count[j] <= 0 ) {
 				coord[j] = null;
 			} else {
 				coord[j] = new Array(coord_count[j] * 3);
 				for ( i = 0; i < coord_count[j]; i++ ) {
-					x = data[cur++] * scale;
-					y = data[cur++] * scale;
-					z = data[cur++] * scale;
+					x = data.get() * scale;
+					y = data.get() * scale;
+					z = data.get() * scale;
 					_glu.transVector(x, y, z);
 					coord[j][i * 3    ] = _glu.transX();
 					coord[j][i * 3 + 1] = _glu.transY();
@@ -369,22 +405,22 @@ function createGLModel( data, scale, id, depth, lighting ){
 	}
 
 	// normal
-	var num = data[cur++];
+	var num = data.get();
 	normal_count = null;
 	var normal = null;
 	if ( num > 0 ) {
 		normal_count = new Array(coord_num);
 		normal = new Array(coord_num);
 		for ( j = 0; j < coord_num; j++ ) {
-			normal_count[j] = data[cur++];
+			normal_count[j] = data.get();
 			if ( normal_count[j] <= 0 ) {
 				normal[j] = null;
 			} else {
 				normal[j] = new Array(normal_count[j] * 3);
 				for ( i = 0; i < normal_count[j]; i++ ) {
-					x = data[cur++];
-					y = data[cur++];
-					z = data[cur++];
+					x = data.get();
+					y = data.get();
+					z = data.get();
 					_glu.transVector(x, y, z);
 					normal[j][i * 3    ] = _glu.transX();
 					normal[j][i * 3 + 1] = _glu.transY();
@@ -395,22 +431,22 @@ function createGLModel( data, scale, id, depth, lighting ){
 	}
 
 	// color
-	num = data[cur++];
+	num = data.get();
 	color_count = null;
 	var color = null;
 	if ( num > 0 ) {
 		color_count = new Array(coord_num);
 		color = new Array(coord_num);
 		for ( j = 0; j < coord_num; j++ ) {
-			color_count[j] = data[cur++];
+			color_count[j] = data.get();
 			if ( color_count[j] <= 0 ) {
 				color[j] = null;
 			} else {
 				color[j] = new Array(color_count[j] * 4);
 				for ( i = 0; i < color_count[j]; i++ ) {
-					color[j][i * 4    ] = data[cur++];
-					color[j][i * 4 + 1] = data[cur++];
-					color[j][i * 4 + 2] = data[cur++];
+					color[j][i * 4    ] = data.get();
+					color[j][i * 4 + 1] = data.get();
+					color[j][i * 4 + 2] = data.get();
 					color[j][i * 4 + 3] = 1.0;
 				}
 			}
@@ -418,21 +454,21 @@ function createGLModel( data, scale, id, depth, lighting ){
 	}
 
 	// map
-	num = data[cur++];
+	num = data.get();
 	map_count = null;
 	var map = null;
 	if ( num > 0 ) {
 		map_count = new Array(coord_num);
 		map = new Array(coord_num);
 		for ( j = 0; j < coord_num; j++ ) {
-			map_count[j] = data[cur++];
+			map_count[j] = data.get();
 			if ( map_count[j] <= 0 ) {
 				map[j] = null;
 			} else {
 				map[j] = new Array(map_count[j] * 2);
 				for ( i = 0; i < map_count[j]; i++ ) {
-					map[j][i * 2    ] = data[cur++];
-					map[j][i * 2 + 1] = data[cur++];
+					map[j][i * 2    ] = data.get();
+					map[j][i * 2 + 1] = data.get();
 				}
 			}
 		}
@@ -441,7 +477,7 @@ function createGLModel( data, scale, id, depth, lighting ){
 	model.setObject(coord_num, coord, normal, color, map);
 
 	// 三角形ストリップ
-	var strip_num = data[cur++];
+	var strip_num = data.get();
 	var strip_tx = new Array(strip_num);	// translation
 	var strip_ty = new Array(strip_num);
 	var strip_tz = new Array(strip_num);
@@ -457,22 +493,22 @@ function createGLModel( data, scale, id, depth, lighting ){
 	var strip_len = new Array(strip_num);
 	var strip = new Array(strip_num);
 	for ( j = 0; j < strip_num; j++ ) {
-		strip_tx[j] = data[cur++] * scale;
-		strip_ty[j] = data[cur++] * scale;
-		strip_tz[j] = data[cur++] * scale;
-		strip_or[j] = data[cur++];
-		strip_ox[j] = data[cur++];
-		strip_oy[j] = data[cur++];
-		strip_oz[j] = data[cur++];
-		strip_texture[j] = data[cur++];
-		strip_coord[j] = data[cur++];
-		strip_normal[j] = data[cur++];
-		strip_color[j] = data[cur++];
-		strip_map[j] = data[cur++];
-		strip_len[j] = data[cur++];
+		strip_tx[j] = data.get() * scale;
+		strip_ty[j] = data.get() * scale;
+		strip_tz[j] = data.get() * scale;
+		strip_or[j] = data.get();
+		strip_ox[j] = data.get();
+		strip_oy[j] = data.get();
+		strip_oz[j] = data.get();
+		strip_texture[j] = data.get();
+		strip_coord[j] = data.get();
+		strip_normal[j] = data.get();
+		strip_color[j] = data.get();
+		strip_map[j] = data.get();
+		strip_len[j] = data.get();
 		strip[j] = new Array(strip_len[j]);
 		for ( k = 0; k < strip_len[j]; k++ ) {
-			strip[j][k] = data[cur++];
+			strip[j][k] = data.get();
 		}
 	}
 	model.setStrip(strip_num, strip_texture, strip_coord, strip_normal, strip_color, strip_map, strip_len, strip);
@@ -480,6 +516,7 @@ function createGLModel( data, scale, id, depth, lighting ){
 	return model;
 }
 
+//function glModelActiveTexture( gl, id ){ return gl.TEXTURE0; }
 //function glModelBindPositionBuffer( gl, id, lighting ){}
 //function glModelBindNormalBuffer( gl, id, lighting ){}
 //function glModelBindColorBuffer( gl, id, lighting ){}

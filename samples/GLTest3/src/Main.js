@@ -184,6 +184,8 @@ function init3D( gl, _glu ){
 	model_sphere[0] = createGLModel( MODEL_SPHERE, 0.015, 0, true, useLighting );
 	model_sphere[1] = createGLModel( MODEL_SPHERE, 0.015, 1, true, useLighting );
 	model_sphere[2] = createGLModel( MODEL_SPHERE, 0.015, 2, true, useLighting );
+
+	return true;
 }
 
 function paint3D( gl, glu ){
@@ -414,6 +416,9 @@ function paint2D( g ){
 }
 
 // _GLModel用
+function glModelActiveTexture( gl, id ){
+	return gl.TEXTURE0;
+}
 function glModelBindPositionBuffer( gl ){
 	gl.vertexAttribPointer( aVertexPosition, 3, gl.FLOAT, false, 0, 0 );
 	gl.enableVertexAttribArray( aVertexPosition );

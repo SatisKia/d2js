@@ -241,6 +241,8 @@ function init3D( gl, glu ){
   gl.enableVertexAttribArray( aTextureCoord );
   gl.bindBuffer( gl.ARRAY_BUFFER, null );
  }
+
+ return true;
 }
 
 function paint3D( gl, glu ){
