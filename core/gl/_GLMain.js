@@ -14,15 +14,26 @@ var _glu;
 
 var _3d = null;
 
-function setCurrent3D( id, id2D ){
+function setCurrent3D( id, id2D, stencil ){
+	if( id2D == undefined ){
+		id2D = "";
+	}
+	if( stencil == undefined ){
+		stencil = false;
+	}
+
 	// マウスイベント
 	removeMouseEvent();
 
 	var _canvas = setCanvas( document.getElementById( id ) );
-	_gl = _canvas.getContext( "webgl" );
+	if( stencil ){
+		_gl = _canvas.getContext( "webgl", { stencil: true } );
+	} else {
+		_gl = _canvas.getContext( "webgl" );
+	}
 	initLock();
 
-	if( id2D != undefined ){
+	if( id2D.length > 0 ){
 		_3d = _canvas;
 		_canvas = setCanvas( document.getElementById( id2D ) );
 		var _context = setContext( _canvas.getContext( "2d" ) );
