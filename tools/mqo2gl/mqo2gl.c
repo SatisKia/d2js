@@ -138,6 +138,10 @@ char find_line(char** buf, char* str) {
 			*buf = cur;
 			return 0;
 		}
+		if ( *cur == '\n' ) {
+			*buf = cur;
+			return 0;
+		}
 	}
 	return 0;
 }
@@ -164,6 +168,10 @@ void get_line(char** buf) {
 	for ( ; ; ) {
 		if ( *cur == '\r' ) {
 			cur++;
+			*buf = cur;
+			break;
+		}
+		if ( *cur == '\n' ) {
 			*buf = cur;
 			break;
 		}

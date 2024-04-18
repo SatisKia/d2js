@@ -5,10 +5,12 @@
 
 #include "_GLPrimitive.h"
 
-function _GLSprite( depth ){
+function _GLSprite( id, depth ){
 	this._glp = new _GLPrimitive();
 	this._glp.setType( _GLPRIMITIVE_TYPE_SPRITE );
 	this._glp.setDepth( depth );
+
+	this._id = id;
 
 	this._coord = new Array( 12 );
 	this._map = new Array( 8 );
@@ -45,6 +47,10 @@ _GLSprite.prototype = {
 		return this._glp.transparency();
 	},
 
+	id : function(){
+		return this._id;
+	},
+
 	setCoord : function( coord ){
 		for( var i = 0; i < 12; i++ ){
 			this._coord[i] = coord[i];
@@ -68,9 +74,14 @@ _GLSprite.prototype = {
 	},
 
 	textureAlpha : function( glt/*_GLTexture*/, tex_index ){
-		glt.use( tex_index );
-		glt.setTransparency( tex_index, this.transparency() );
-		return (glt.alpha( tex_index ) && !this.depth());
+		var alpha = false;
+		var depth = this.depth();
+		if( tex_index >= 0 ){
+			glt.use( tex_index );
+			glt.setTransparency( tex_index, this.transparency() );
+			alpha = glt.alpha( tex_index );
+		}
+		return (alpha && !depth);
 	},
 
 	draw : function( glt/*_GLTexture*/, tex_index, alpha ){
@@ -84,7 +95,7 @@ _GLSprite.prototype = {
 
 		_gl.bindBuffer( _gl.ARRAY_BUFFER, this._coord_buffer );
 		_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._coord ), _gl.STATIC_DRAW );
-		glSpriteBindPositionBuffer( _gl );
+		glSpriteBindPositionBuffer( _gl, this._id );
 		_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
 
 		if( !this._uv_f ){
@@ -97,12 +108,16 @@ _GLSprite.prototype = {
 		}
 		_gl.bindBuffer( _gl.ARRAY_BUFFER, this._uv_buffer );
 		_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._uv ), _gl.STATIC_DRAW );
-		glSpriteBindTextureCoordBuffer( _gl );
+		glSpriteBindTextureCoordBuffer( _gl, this._id );
 		_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
 
-		_gl.activeTexture( _gl.TEXTURE0 );
-		glt.bindTexture( _gl.TEXTURE_2D, glt.id( tex_index ) );
-//		_gl.texEnvf( _gl.TEXTURE_ENV, _gl.TEXTURE_ENV_MODE, _gl.REPLACE );
+		if( !glSpriteSetTexture( _gl, glt, tex_index, this._id ) ){
+			if( tex_index >= 0 ){
+				_gl.activeTexture( glSpriteActiveTexture( _gl, this._id ) );
+				glt.bindTexture( _gl.TEXTURE_2D, glt.id( tex_index ) );
+//				_gl.texEnvf( _gl.TEXTURE_ENV, _gl.TEXTURE_ENV_MODE, _gl.REPLACE );
+			}
+		}
 
 //		if( glt.alpha( tex_index ) ){
 //			_gl.enable( _gl.ALPHA_TEST );
@@ -126,5 +141,7 @@ _GLSprite.prototype = {
 
 };
 
-//function glSpriteBindPositionBuffer( gl ){}
-//function glSpriteBindTextureCoordBuffer( gl ){}
+//function glSpriteActiveTexture( gl, id ){ return gl.TEXTURE0; }
+//function glSpriteBindPositionBuffer( gl, id ){}
+//function glSpriteBindTextureCoordBuffer( gl, id ){}
+//function glSpriteSetTexture( gl, glt/*_GLTexture*/, tex_index, id ){ return false; }

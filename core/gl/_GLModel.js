@@ -72,6 +72,10 @@ _GLModel.prototype = {
 		return this._glp.transparency();
 	},
 
+	id : function(){
+		return this._id;
+	},
+
 	setMaterial : function( num, texture/*int[]*/, diffuse/*float[]*/, ambient/*float[]*/, emission/*float[]*/, specular/*float[]*/, shininess/*float[]*/ ){
 		this._material_num = num;
 		this._material_texture = texture;
