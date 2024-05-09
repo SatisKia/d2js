@@ -117,7 +117,7 @@ function createShaderProgram( vsSource, fsSource ){
 	_gl.attachShader( shaderProgram, fragmentShader );
 	_gl.linkProgram( shaderProgram );
 
-	// シェーダーの作成に失敗した場合、アラートを出す
+	// シェーダーの作成に失敗した場合、nullを返す
 	if( !_gl.getProgramParameter( shaderProgram, _gl.LINK_STATUS ) ){
 		return null;
 	}

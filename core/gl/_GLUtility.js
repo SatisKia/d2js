@@ -80,13 +80,13 @@ function _GLUtility(){
 	this.position_z = 0.0;
 	this.look_side = new Array( 3 );
 	this.look_mat = new Array( 16 );
-	this.model_mat = new Array( 16 );
+	this.view_mat = new Array( 16 );
 
 	// frustum用
 	this.proj_mat = new Array( 16 );
 
 	// viewport用
-	this.view_mat = new Array( 4 );
+	this.viewport_mat = new Array( 4 );
 
 	// project用
 	this.project_in = new Array( 4 );
@@ -602,31 +602,31 @@ _GLUtility.prototype = {
 		this.look_mat[ 8] = this.look_side[2]; this.look_mat[ 9] = up_z; this.look_mat[10] = -look_z; this.look_mat[11] = 0.0;
 		this.look_mat[12] = 0.0              ; this.look_mat[13] = 0.0 ; this.look_mat[14] = 0.0    ; this.look_mat[15] = 1.0;
 
-		// モデルビュー行列を取得
+		// ビュー行列を取得
 		// （OpenGL形式の行列を_GLUtility形式の行列に変換）
 		var i, j, k;
 		for( j = 0; j < 4; j++ ){
 			k = j * 4;
 			for( i = 0; i < 4; i++ ){
-				this.model_mat[k + i] = this.look_mat[i * 4 + j];
+				this.view_mat[k + i] = this.look_mat[i * 4 + j];
 			}
 		}
-		this.set( this.model_mat );
+		this.set( this.view_mat );
 		this.translate( -this.position_x, -this.position_y, -this.position_z );
 		for( i = 0; i < 16; i++ ){
-			this.model_mat[i] = this.util_mat[i];
+			this.view_mat[i] = this.util_mat[i];
 		}
 	},
-	setModelMatrix : function( matrix ){
+	setViewMatrix : function( matrix ){
 		for( var i = 0; i < 16; i++ ){
-			this.model_mat[i] = matrix[i];
+			this.view_mat[i] = matrix[i];
 		}
 	},
 	lookMatrix : function(){
 		return this.look_mat;
 	},
 	spriteMatrix : function( x, y, z ){
-		this.set( this.model_mat );
+		this.set( this.view_mat );
 		this.translate( x, y, z );
 		this.multiply( this.look_mat );
 		return this.glMatrix();
@@ -772,10 +772,10 @@ _GLUtility.prototype = {
 		_gl.viewport( x, y, width, height );
 
 		// ビューポート行列を取得
-		this.view_mat[0] = x;
-		this.view_mat[1] = y;
-		this.view_mat[2] = width;
-		this.view_mat[3] = height;
+		this.viewport_mat[0] = x;
+		this.viewport_mat[1] = y;
+		this.viewport_mat[2] = width;
+		this.viewport_mat[3] = height;
 	},
 
 	/*
@@ -783,7 +783,7 @@ _GLUtility.prototype = {
 	 */
 	project : function( obj_x, obj_y, obj_z, model_mat, proj_mat ){
 		if( (model_mat == null) || (model_mat == undefined) ){
-			model_mat = this.model_mat;
+			model_mat = this.view_mat;
 		}
 		if( (proj_mat == null) || (proj_mat == undefined) ){
 			proj_mat = this.proj_mat;
@@ -802,8 +802,8 @@ _GLUtility.prototype = {
 			return false;
 		}
 
-		this.project_x = ((this.project_out[0] / this.project_out[3] + 1.0) / 2.0) * this.view_mat[2] + this.view_mat[0];
-		this.project_y = ((this.project_out[1] / this.project_out[3] + 1.0) / 2.0) * this.view_mat[3] + this.view_mat[1];
+		this.project_x = ((this.project_out[0] / this.project_out[3] + 1.0) / 2.0) * this.viewport_mat[2] + this.viewport_mat[0];
+		this.project_y = ((this.project_out[1] / this.project_out[3] + 1.0) / 2.0) * this.viewport_mat[3] + this.viewport_mat[1];
 		this.project_z =  (this.project_out[2] / this.project_out[3] + 1.0) / 2.0;
 
 		return true;
@@ -814,7 +814,7 @@ _GLUtility.prototype = {
 	 */
 	unProject : function( win_x, win_y, win_z, model_mat, proj_mat ){
 		if( (model_mat == null) || (model_mat == undefined) ){
-			model_mat = this.model_mat;
+			model_mat = this.view_mat;
 		}
 		if( (proj_mat == null) || (proj_mat == undefined) ){
 			proj_mat = this.proj_mat;
@@ -824,8 +824,8 @@ _GLUtility.prototype = {
 		this.multiply( model_mat );
 		this.invert();
 
-		this.project_in[0] = (win_x - this.view_mat[0]) * 2.0 / this.view_mat[2] - 1.0;
-		this.project_in[1] = (win_y - this.view_mat[1]) * 2.0 / this.view_mat[3] - 1.0;
+		this.project_in[0] = (win_x - this.viewport_mat[0]) * 2.0 / this.viewport_mat[2] - 1.0;
+		this.project_in[1] = (win_y - this.viewport_mat[1]) * 2.0 / this.viewport_mat[3] - 1.0;
 		this.project_in[2] = win_z * 2.0 - 1.0;
 
 		this.project_out[0] = this.project_in[0] * this.util_mat[ 0] + this.project_in[1] * this.util_mat[ 1] + this.project_in[2] * this.util_mat[ 2] + this.util_mat[ 3];

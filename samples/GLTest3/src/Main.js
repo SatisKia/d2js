@@ -192,7 +192,7 @@ function paint3D( gl, glu ){
 	gl.clearColor( 0.0, 0.0, 0.0, 1.0 );	// 黒でクリア、完全に不透明
 	gl.clearDepth( 1.0 );	// 全てをクリア
 
-//	gl.enable( gl.CULL_FACE );	// 裏面を表示しない
+	gl.enable( gl.CULL_FACE );	// 裏面を表示しない
 
 	gl.enable( gl.DEPTH_TEST );	// 深度テストを有効化
 	gl.depthFunc( gl.LEQUAL );	// 奥にあるものは隠れるようにする
@@ -210,11 +210,11 @@ function paint3D( gl, glu ){
 	var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;	// 幅と高さの比率はキャンバスの表示サイズに合わせる
 	var zNear = 0.1;	// 表示するオブジェクトの範囲（手前）
 	var zFar = 100.0;	// 表示するオブジェクトの範囲（奥）
-	glu.setIdentity();
 	var t = Math.tan( fieldOfView / 2 ) * zNear;
 	var b = -t;
 	var r = t * aspect;
 	var l = -r;
+	glu.setIdentity();
 	glu.frustum( l, r, b, t, zNear, zFar );
 	glu.translate( 0.0, 1.0, -15.0 );
 	rotation += 0.03;
@@ -239,7 +239,7 @@ function paint3D( gl, glu ){
 	glu.translate( 0.0, 1.0, -15.0 );
 	var modelViewMatrix = glu.glMatrix();	// モデル座標変換行列
 	if( useProject ){
-		glu.setModelMatrix( glu.utMatrix( modelViewMatrix ) );
+		glu.setViewMatrix( glu.utMatrix( modelViewMatrix ) );
 	}
 
 	if( useLighting ){

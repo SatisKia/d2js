@@ -30,6 +30,8 @@ int tri_num;
 int v_num;
 short* face;
 int last_index;
+int last_vertex;
+int next_reverse;
 
 char* progName(char* argv0) {
 	char* szTop;
@@ -380,31 +382,31 @@ printf("-1");
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "dif(") ) {	// �g�U�� 0�`1
+				if ( find_line(&cur2, "dif(") ) {	// 拡散光 0～1
 					word(&cur2, tmp);
 					printf("%s", f(tmp, scale));
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "amb(") ) {	// ���͌� 0�`1
+				if ( find_line(&cur2, "amb(") ) {	// 周囲光 0～1
 					word(&cur2, tmp);
 					printf("%s", f(tmp, scale));
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "emi(") ) {	// ���ȏƖ� 0�`1
+				if ( find_line(&cur2, "emi(") ) {	// 自己照明 0～1
 					word(&cur2, tmp);
 					printf("%s", f(tmp, scale));
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "spc(") ) {	// ���ˌ� 0�`1
+				if ( find_line(&cur2, "spc(") ) {	// 反射光 0～1
 					word(&cur2, tmp);
 					printf("%s", f(tmp, scale));
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "power(") ) {	// ���ˌ��̋��� 0�`100
+				if ( find_line(&cur2, "power(") ) {	// 反射光の強さ 0～100
 					word(&cur2, tmp);
 					printf("%s", f(tmp, scale));
 				}
@@ -724,30 +726,81 @@ if ( string_f == 1 ) {
 }
 					print(cnt);
 					last_index = -1;
+					last_vertex = -1;
+					next_reverse = 0;
 					for ( k = 0; k < face_cnt; k++ ) {
 						if ( (face[k * 7] == i) && (face[k * 7 + 1] == j) ) {
 							if ( last_index >= 0 ) {
+								// インデックスを2個追加
 								print_fc(last_index);
 								print_fc(face[k * 7 + 3]);
 							}
 							if ( face[k * 7 + 2] == 4 ) {
-								last_index = face[k * 7 + 3];
-								print_fc(last_index);
-								last_index = face[k * 7 + 3 + 1];
-								print_fc(last_index);
-								last_index = face[k * 7 + 3 + 3];
-								print_fc(last_index);
-								last_index = face[k * 7 + 3 + 2];
-								print_fc(last_index);
+								if ( (last_vertex == 4) && (next_reverse == 1) ) {
+									// 前回が反転させた四角形の場合、反転させる
+									last_index = face[k * 7 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 1];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 2];
+									print_fc(last_index);
+									next_reverse = 1;
+								} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
+									// 前回が反転でない三角形の場合、反転させる
+									last_index = face[k * 7 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 1];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 2];
+									print_fc(last_index);
+									next_reverse = 1;
+								} else {
+									last_index = face[k * 7 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 1];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 2];
+									print_fc(last_index);
+									next_reverse = 0;
+								}
 								tri_num += 2;
+								last_vertex = 4;
 							} else {
-								last_index = face[k * 7 + 3];
-								print_fc(last_index);
-								last_index = face[k * 7 + 3 + 1];
-								print_fc(last_index);
-								last_index = face[k * 7 + 3 + 2];
-								print_fc(last_index);
+								if ( (last_vertex == 4) && (next_reverse == 1) ) {
+									// 前回が反転させた四角形の場合、反転させる
+									last_index = face[k * 7 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 1];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 2];
+									print_fc(last_index);
+									next_reverse = 0;
+								} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
+									// 前回が反転でない三角形の場合、反転させる
+									last_index = face[k * 7 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 1];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 2];
+									print_fc(last_index);
+									next_reverse = 0;
+								} else {
+									last_index = face[k * 7 + 3];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 2];
+									print_fc(last_index);
+									last_index = face[k * 7 + 3 + 1];
+									print_fc(last_index);
+									next_reverse = 1;
+								}
 								tri_num++;
+								last_vertex = 3;
 							}
 						}
 					}
@@ -778,3 +831,59 @@ if ( string_f == 1 ) {
 
 	return 0;
 }
+
+/*
+■三角形・四角形リストから三角形ストリップを作成するメモ
+
+①反転でない三角形から、三角形または四角形に繋げる場合
+
+A B C  /  D E F
+ ↓        ↓反転させる
+A B C c d D F E
+A B C c d D F E G
+
+【結果】
+
+A B C / C B c / C c d / c d D / d D F / F D E
+        ~~~~~   ~~~~~   ~~~~~   ~~~~~    ↓同じ
+                 縮退三角形             D E F
+
+②反転させた三角形から、三角形または四角形に繋げる場合（①の続き）
+
+D E F  /  G H I
+ ↓反転    ↓
+D F E e g G H I
+D F E e g G H I J
+
+【結果】
+
+F D E / F E e / e E g / e g G / G g H / G H I
+        ~~~~~   ~~~~~   ~~~~~   ~~~~~
+                 縮退三角形
+
+③反転させた四角形から、四角形または三角形に繋げる場合（①の続き）
+
+D E F G  /  H I J K
+  ↓反転      ↓反転させる
+D F E G g h H J I K
+D F E G g h H J I
+
+【結果】
+
+F D E / F E G / G E g / G g h / h g H / h H J / J H I
+                ~~~~~   ~~~~~   ~~~~~   ~~~~~    ↓同じ
+                         縮退三角形             H I J
+
+④反転でない四角形から、四角形または三角形に繋げる場合
+
+A B C D  /  E F G H
+  ↓          ↓
+A B C D d e E F G H
+A B C D d e E F G
+
+【結果】
+
+A B C / C B D / C D d / d D e / d e E / E e F / E F G
+                ~~~~~   ~~~~~   ~~~~~   ~~~~~
+                         縮退三角形
+*/

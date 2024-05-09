@@ -378,11 +378,11 @@ function paint3D( gl, glu ){
 	var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;	// 幅と高さの比率はキャンバスの表示サイズに合わせる
 	var zNear = 0.1;	// 表示するオブジェクトの範囲（手前）
 	var zFar = 100.0;	// 表示するオブジェクトの範囲（奥）
-	glu.setIdentity();
 	var t = Math.tan( fieldOfView / 2 ) * zNear;
 	var b = -t;
 	var r = t * aspect;
 	var l = -r;
+	glu.setIdentity();
 	glu.frustum( l, r, b, t, zNear, zFar );
 	gl.uniformMatrix4fv( uProjectionMatrix, false, glu.glMatrix() );
 

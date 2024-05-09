@@ -212,6 +212,7 @@ function _GLModel( id, depth, lighting ){
 	this._normal = null;
 	this._color = null;
 	this._map = null;
+	this._radius = 0.0;
 	this._strip_num = 0;
 	this._strip_material = null;
 	this._strip_coord = null;
@@ -251,6 +252,9 @@ _GLModel.prototype = {
 	id : function(){
 		return this._id;
 	},
+	lighting : function(){
+		return this._lighting;
+	},
 	setMaterial : function( num, texture , diffuse , ambient , emission , specular , shininess ){
 		this._material_num = num;
 		this._material_texture = texture;
@@ -260,12 +264,13 @@ _GLModel.prototype = {
 		this._material_specular = specular;
 		this._material_shininess = shininess;
 	},
-	setObject : function( num, coord , normal , color , map ){
+	setObject : function( num, coord , normal , color , map , radius ){
 		this._object_num = num;
 		this._coord = coord;
 		this._normal = normal;
 		this._color = color;
 		this._map = map;
+		this._radius = radius;
 	},
 	setStrip : function( num, material , coord , normal , color , map , len , strip ){
 		this._strip_num = num;
@@ -294,6 +299,12 @@ _GLModel.prototype = {
 	},
 	stripNum : function(){
 		return this._strip_num;
+	},
+	stripTranslate : function( index ){
+		_glu.translate( this._strip_tx[index], this._strip_ty[index], this._strip_tz[index] );
+	},
+	stripRotate : function( index ){
+		_glu.rotate( this._strip_or[index], this._strip_ox[index], this._strip_oy[index], this._strip_oz[index] );
 	},
 	textureIndex : function( index ){
 		if( this._strip_material[index] < 0 ){
@@ -428,6 +439,9 @@ _GLModel.prototype = {
 			_gl.depthMask( true );
 		}
 	},
+	radius : function(){
+		return this._radius;
+	},
 };
 function _GLModelData( data ){
 	this._data = data;
@@ -511,6 +525,8 @@ function createGLModel( _data, scale, id, depth, lighting ){
 	_glu.translate(group_tx, group_ty, group_tz);
 	_glu.rotate(group_ox, group_oy, group_oz, group_or);
 	var x, y, z;
+	var tx, ty, tz, r;
+	var radius = 0.0;
 	var coord_num = data.get();
 	coord_count = null;
 	var coord = null;
@@ -528,13 +544,21 @@ function createGLModel( _data, scale, id, depth, lighting ){
 					y = data.get() * scale;
 					z = data.get() * scale;
 					_glu.transVector(x, y, z);
-					coord[j][i * 3 ] = _glu.transX();
-					coord[j][i * 3 + 1] = _glu.transY();
-					coord[j][i * 3 + 2] = _glu.transZ();
+					tx = _glu.transX();
+					ty = _glu.transY();
+					tz = _glu.transZ();
+					r = tx * tx + ty * ty + tz * tz;
+					if ( r > radius ) {
+						radius = r;
+					}
+					coord[j][i * 3 ] = tx;
+					coord[j][i * 3 + 1] = ty;
+					coord[j][i * 3 + 2] = tz;
 				}
 			}
 		}
 	}
+	radius = Math.sqrt(radius);
 	var num = data.get();
 	normal_count = null;
 	var normal = null;
@@ -599,7 +623,7 @@ function createGLModel( _data, scale, id, depth, lighting ){
 			}
 		}
 	}
-	model.setObject(coord_num, coord, normal, color, map);
+	model.setObject(coord_num, coord, normal, color, map, radius);
 	var strip_num = data.get();
 	var strip_tx = new Array(strip_num);
 	var strip_ty = new Array(strip_num);
@@ -635,6 +659,8 @@ function createGLModel( _data, scale, id, depth, lighting ){
 		}
 	}
 	model.setStrip(strip_num, strip_texture, strip_coord, strip_normal, strip_color, strip_map, strip_len, strip);
+	model.setStripTranslate( strip_tx, strip_ty, strip_tz );
+	model.setStripRotate( strip_or, strip_ox, strip_oy, strip_oz );
 	return model;
 }
 function _GLPrimitive(){
@@ -1322,9 +1348,9 @@ function _GLUtility(){
 	this.position_z = 0.0;
 	this.look_side = new Array( 3 );
 	this.look_mat = new Array( 16 );
-	this.model_mat = new Array( 16 );
+	this.view_mat = new Array( 16 );
 	this.proj_mat = new Array( 16 );
-	this.view_mat = new Array( 4 );
+	this.viewport_mat = new Array( 4 );
 	this.project_in = new Array( 4 );
 	this.project_out = new Array( 4 );
 	this.project_x = 0.0;
@@ -1705,25 +1731,25 @@ _GLUtility.prototype = {
 		for( j = 0; j < 4; j++ ){
 			k = j * 4;
 			for( i = 0; i < 4; i++ ){
-				this.model_mat[k + i] = this.look_mat[i * 4 + j];
+				this.view_mat[k + i] = this.look_mat[i * 4 + j];
 			}
 		}
-		this.set( this.model_mat );
+		this.set( this.view_mat );
 		this.translate( -this.position_x, -this.position_y, -this.position_z );
 		for( i = 0; i < 16; i++ ){
-			this.model_mat[i] = this.util_mat[i];
+			this.view_mat[i] = this.util_mat[i];
 		}
 	},
-	setModelMatrix : function( matrix ){
+	setViewMatrix : function( matrix ){
 		for( var i = 0; i < 16; i++ ){
-			this.model_mat[i] = matrix[i];
+			this.view_mat[i] = matrix[i];
 		}
 	},
 	lookMatrix : function(){
 		return this.look_mat;
 	},
 	spriteMatrix : function( x, y, z ){
-		this.set( this.model_mat );
+		this.set( this.view_mat );
 		this.translate( x, y, z );
 		this.multiply( this.look_mat );
 		return this.glMatrix();
@@ -1802,14 +1828,14 @@ _GLUtility.prototype = {
 	},
 	viewport : function( x, y, width, height ){
 		_gl.viewport( x, y, width, height );
-		this.view_mat[0] = x;
-		this.view_mat[1] = y;
-		this.view_mat[2] = width;
-		this.view_mat[3] = height;
+		this.viewport_mat[0] = x;
+		this.viewport_mat[1] = y;
+		this.viewport_mat[2] = width;
+		this.viewport_mat[3] = height;
 	},
 	project : function( obj_x, obj_y, obj_z, model_mat, proj_mat ){
 		if( (model_mat == null) || (model_mat == undefined) ){
-			model_mat = this.model_mat;
+			model_mat = this.view_mat;
 		}
 		if( (proj_mat == null) || (proj_mat == undefined) ){
 			proj_mat = this.proj_mat;
@@ -1825,14 +1851,14 @@ _GLUtility.prototype = {
 		if( this.project_out[3] == 0.0 ){
 			return false;
 		}
-		this.project_x = ((this.project_out[0] / this.project_out[3] + 1.0) / 2.0) * this.view_mat[2] + this.view_mat[0];
-		this.project_y = ((this.project_out[1] / this.project_out[3] + 1.0) / 2.0) * this.view_mat[3] + this.view_mat[1];
+		this.project_x = ((this.project_out[0] / this.project_out[3] + 1.0) / 2.0) * this.viewport_mat[2] + this.viewport_mat[0];
+		this.project_y = ((this.project_out[1] / this.project_out[3] + 1.0) / 2.0) * this.viewport_mat[3] + this.viewport_mat[1];
 		this.project_z = (this.project_out[2] / this.project_out[3] + 1.0) / 2.0;
 		return true;
 	},
 	unProject : function( win_x, win_y, win_z, model_mat, proj_mat ){
 		if( (model_mat == null) || (model_mat == undefined) ){
-			model_mat = this.model_mat;
+			model_mat = this.view_mat;
 		}
 		if( (proj_mat == null) || (proj_mat == undefined) ){
 			proj_mat = this.proj_mat;
@@ -1840,8 +1866,8 @@ _GLUtility.prototype = {
 		this.set( proj_mat );
 		this.multiply( model_mat );
 		this.invert();
-		this.project_in[0] = (win_x - this.view_mat[0]) * 2.0 / this.view_mat[2] - 1.0;
-		this.project_in[1] = (win_y - this.view_mat[1]) * 2.0 / this.view_mat[3] - 1.0;
+		this.project_in[0] = (win_x - this.viewport_mat[0]) * 2.0 / this.viewport_mat[2] - 1.0;
+		this.project_in[1] = (win_y - this.viewport_mat[1]) * 2.0 / this.viewport_mat[3] - 1.0;
 		this.project_in[2] = win_z * 2.0 - 1.0;
 		this.project_out[0] = this.project_in[0] * this.util_mat[ 0] + this.project_in[1] * this.util_mat[ 1] + this.project_in[2] * this.util_mat[ 2] + this.util_mat[ 3];
 		this.project_out[1] = this.project_in[0] * this.util_mat[ 4] + this.project_in[1] * this.util_mat[ 5] + this.project_in[2] * this.util_mat[ 6] + this.util_mat[ 7];

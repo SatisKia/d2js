@@ -28,6 +28,7 @@ function _GLModel( id, depth, lighting ){
 	this._normal = null;	// X、Y、Z
 	this._color = null;		// R、G、B、Aを各0～1
 	this._map = null;		// U、V
+	this._radius = 0.0;
 
 	// 三角形ストリップ
 	this._strip_num = 0;
@@ -75,6 +76,9 @@ _GLModel.prototype = {
 	id : function(){
 		return this._id;
 	},
+	lighting : function(){
+		return this._lighting;
+	},
 
 	setMaterial : function( num, texture/*int[]*/, diffuse/*float[]*/, ambient/*float[]*/, emission/*float[]*/, specular/*float[]*/, shininess/*float[]*/ ){
 		this._material_num = num;
@@ -86,12 +90,13 @@ _GLModel.prototype = {
 		this._material_shininess = shininess;
 	},
 
-	setObject : function( num, coord/*float[][]*/, normal/*float[][]*/, color/*float[][]*/, map/*float[][]*/ ){
+	setObject : function( num, coord/*float[][]*/, normal/*float[][]*/, color/*float[][]*/, map/*float[][]*/, radius ){
 		this._object_num = num;
 		this._coord = coord;
 		this._normal = normal;
 		this._color = color;
 		this._map = map;
+		this._radius = radius;
 	},
 
 	setStrip : function( num, material/*int[]*/, coord/*int[]*/, normal/*int[]*/, color/*int[]*/, map/*int[]*/, len/*int[]*/, strip/*short[][]*/ ){
@@ -123,6 +128,13 @@ _GLModel.prototype = {
 
 	stripNum : function(){
 		return this._strip_num;
+	},
+
+	stripTranslate : function( index ){
+		_glu.translate( this._strip_tx[index], this._strip_ty[index], this._strip_tz[index] );
+	},
+	stripRotate : function( index ){
+		_glu.rotate( this._strip_or[index], this._strip_ox[index], this._strip_oy[index], this._strip_oz[index] );
 	},
 
 	textureIndex : function( index ){
@@ -290,6 +302,10 @@ _GLModel.prototype = {
 		}
 	},
 
+	radius : function(){
+		return this._radius;
+	},
+
 };
 
 function _GLModelData( data ){
@@ -381,6 +397,8 @@ function createGLModel( _data, scale, id, depth, lighting ){
 	_glu.rotate(group_ox, group_oy, group_oz, group_or);
 
 	var x, y, z;
+	var tx, ty, tz, r;
+	var radius = 0.0;
 
 	// coord
 	var coord_num = data.get();
@@ -400,13 +418,22 @@ function createGLModel( _data, scale, id, depth, lighting ){
 					y = data.get() * scale;
 					z = data.get() * scale;
 					_glu.transVector(x, y, z);
-					coord[j][i * 3    ] = _glu.transX();
-					coord[j][i * 3 + 1] = _glu.transY();
-					coord[j][i * 3 + 2] = _glu.transZ();
+					tx = _glu.transX();
+					ty = _glu.transY();
+					tz = _glu.transZ();
+					r = tx * tx + ty * ty + tz * tz;
+					if ( r > radius ) {
+						radius = r;
+					}
+					coord[j][i * 3    ] = tx;
+					coord[j][i * 3 + 1] = ty;
+					coord[j][i * 3 + 2] = tz;
 				}
 			}
 		}
 	}
+
+	radius = Math.sqrt(radius);
 
 	// normal
 	var num = data.get();
@@ -478,7 +505,7 @@ function createGLModel( _data, scale, id, depth, lighting ){
 		}
 	}
 
-	model.setObject(coord_num, coord, normal, color, map);
+	model.setObject(coord_num, coord, normal, color, map, radius);
 
 	// 三角形ストリップ
 	var strip_num = data.get();
@@ -516,6 +543,8 @@ function createGLModel( _data, scale, id, depth, lighting ){
 		}
 	}
 	model.setStrip(strip_num, strip_texture, strip_coord, strip_normal, strip_color, strip_map, strip_len, strip);
+	model.setStripTranslate( strip_tx, strip_ty, strip_tz );
+	model.setStripRotate( strip_or, strip_ox, strip_oy, strip_oz );
 
 	return model;
 }
