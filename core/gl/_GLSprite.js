@@ -123,6 +123,7 @@ _GLSprite.prototype = {
 //			_gl.enable( _gl.ALPHA_TEST );
 //		}
 		if( alpha2 ){
+			_gl.disable( _gl.CULL_FACE );
 			_gl.enable( _gl.BLEND );
 			_gl.depthMask( false );
 		}
@@ -134,6 +135,7 @@ _GLSprite.prototype = {
 //			_gl.disable( _gl.ALPHA_TEST );
 //		}
 		if( alpha2 ){
+			_gl.enable( _gl.CULL_FACE );
 			_gl.disable( _gl.BLEND );
 			_gl.depthMask( true );
 		}

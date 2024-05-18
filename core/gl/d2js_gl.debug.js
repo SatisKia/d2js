@@ -422,6 +422,7 @@ _GLModel.prototype = {
 			material_shininess = this._material_shininess[this._strip_material[index]];
 		}
 		if( alpha2 ){
+			_gl.disable( _gl.CULL_FACE );
 			_gl.enable( _gl.BLEND );
 			_gl.depthMask( false );
 		}
@@ -435,6 +436,7 @@ _GLModel.prototype = {
 			glModelEndDraw( _gl, glt, index, tex_index, this._id, this._lighting );
 		}
 		if( alpha2 ){
+			_gl.enable( _gl.CULL_FACE );
 			_gl.disable( _gl.BLEND );
 			_gl.depthMask( true );
 		}
@@ -799,11 +801,13 @@ _GLSprite.prototype = {
 			}
 		}
 		if( alpha2 ){
+			_gl.disable( _gl.CULL_FACE );
 			_gl.enable( _gl.BLEND );
 			_gl.depthMask( false );
 		}
 		_gl.drawArrays( _gl.TRIANGLE_STRIP, 0, 4 );
 		if( alpha2 ){
+			_gl.enable( _gl.CULL_FACE );
 			_gl.disable( _gl.BLEND );
 			_gl.depthMask( true );
 		}
