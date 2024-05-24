@@ -34,7 +34,8 @@ var uProjectionMatrix;
 var uModelViewMatrix;
 
 // ライティング
-var uNormalMatrix = null;
+var uNormalMatrix;
+var uInvMatrix;
 
 // diffuse（平行光源による拡散光）
 var uDirectionalLightColor;
@@ -119,6 +120,8 @@ function init3D( gl, _glu ){
 	const fsSourceLighting = `
 		precision mediump float;
 
+		uniform mat4 uInvMatrix;
+
 		uniform vec3 uDirectionalLightColor;
 		uniform vec3 uDirectionalLightPosition;
 
@@ -144,8 +147,9 @@ function init3D( gl, _glu ){
 
 			lowp vec3 ambient = uAmbientLightColor * uAmbient;
 
-			highp vec3 eyeDirection = normalize(uEyeDirection);
-			highp float powCosAngle = pow(clamp(dot(normal, eyeDirection), 0.0, 1.0), uShininess);	// 内積によって得られた結果をべき乗によって収束させる
+			highp vec3 invLight = normalize(uInvMatrix * vec4(uDirectionalLightPosition, 0.0)).xyz;
+			highp vec3 halfVector = normalize(invLight + uEyeDirection);
+			highp float powCosAngle = pow(clamp(dot(normal, halfVector), 0.0, 1.0), uShininess);	// 内積によって得られた結果をべき乗によって収束させる
 			highp vec3 specular = (uSpecularLightColor * uSpecular) * powCosAngle;
 
 			gl_FragColor = vec4(vColor.rgb * (diffuse + ambient + specular), vColor.a);
@@ -169,6 +173,7 @@ function init3D( gl, _glu ){
 	uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
 	if( useLighting ){
 		uNormalMatrix = shader.uniform( "uNormalMatrix" );
+		uInvMatrix = shader.uniform( "uInvMatrix" ); // モデル座標変換行列の逆行列
 		uAmbientLightColor = shader.uniform( "uAmbientLightColor" );
 		uDirectionalLightColor = shader.uniform( "uDirectionalLightColor" );
 		uDirectionalLightPosition = shader.uniform( "uDirectionalLightPosition" );
@@ -337,6 +342,7 @@ g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
 		gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
 		if( useLighting ){
 			glu.invert();	// モデル座標変換行列の逆行列
+			gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
 			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 			gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
 		}
@@ -359,6 +365,7 @@ g.drawString( "1:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
 		gl.uniformMatrix4fv( uModelViewMatrix, false, matrix );
 		if( useLighting ){
 			glu.invert();	// モデル座標変換行列の逆行列
+			gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
 			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 			gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
 		}
@@ -382,6 +389,7 @@ g.drawString( "2:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
 		gl.uniformMatrix4fv( uModelViewMatrix, false, matrix );
 		if( useLighting ){
 			glu.invert();	// モデル座標変換行列の逆行列
+			gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
 			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 			gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
 		}
@@ -473,6 +481,7 @@ function glDrawSetModelViewMatrix( gl, mat ){
 		glu.push();
 		glu.set( glu.utMatrix( mat ) );
 		glu.invert();	// モデル座標変換行列の逆行列
+		gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
 		glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 		gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
 		glu.pop();

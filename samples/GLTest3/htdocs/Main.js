@@ -1570,7 +1570,8 @@ var aVertexColor = null;
 var aVertexNormal = null;
 var uProjectionMatrix;
 var uModelViewMatrix;
-var uNormalMatrix = null;
+var uNormalMatrix;
+var uInvMatrix;
 var uDirectionalLightColor;
 var uDirectionalLightPosition;
 var uAmbientLightColor;
@@ -1624,6 +1625,7 @@ function init3D( gl, _glu ){
  `;
  const fsSourceLighting = `
   precision mediump float;
+  uniform mat4 uInvMatrix;
   uniform vec3 uDirectionalLightColor;
   uniform vec3 uDirectionalLightPosition;
   uniform vec3 uAmbientLightColor;
@@ -1641,7 +1643,8 @@ function init3D( gl, _glu ){
    highp float cosAngle = clamp(dot(normal, directionalLightPosition), 0.0, 1.0);
    highp vec3 diffuse = (uDirectionalLightColor * uDiffuse) * cosAngle;
    lowp vec3 ambient = uAmbientLightColor * uAmbient;
-   highp vec3 eyeDirection = normalize(uEyeDirection);
+   highp vec3 invLight = normalize(uInvMatrix * vec4(uDirectionalLightPosition, 0.0)).xyz;
+   highp vec3 eyeDirection = normalize(invLight + uEyeDirection);
    highp float powCosAngle = pow(clamp(dot(normal, eyeDirection), 0.0, 1.0), uShininess);
    highp vec3 specular = (uSpecularLightColor * uSpecular) * powCosAngle;
    gl_FragColor = vec4(vColor.rgb * (diffuse + ambient + specular), vColor.a);
@@ -1662,6 +1665,7 @@ function init3D( gl, _glu ){
  uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
  if( useLighting ){
   uNormalMatrix = shader.uniform( "uNormalMatrix" );
+  uInvMatrix = shader.uniform( "uInvMatrix" );
   uAmbientLightColor = shader.uniform( "uAmbientLightColor" );
   uDirectionalLightColor = shader.uniform( "uDirectionalLightColor" );
   uDirectionalLightPosition = shader.uniform( "uDirectionalLightPosition" );
@@ -1783,6 +1787,7 @@ g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
   gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
   if( useLighting ){
    glu.invert();
+   gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
    glu.transpose();
    gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
   }
@@ -1804,6 +1809,7 @@ g.drawString( "1:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
   gl.uniformMatrix4fv( uModelViewMatrix, false, matrix );
   if( useLighting ){
    glu.invert();
+   gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
    glu.transpose();
    gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
   }
@@ -1826,6 +1832,7 @@ g.drawString( "2:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
   gl.uniformMatrix4fv( uModelViewMatrix, false, matrix );
   if( useLighting ){
    glu.invert();
+   gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
    glu.transpose();
    gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
   }
@@ -1909,6 +1916,7 @@ function glDrawSetModelViewMatrix( gl, mat ){
   glu.push();
   glu.set( glu.utMatrix( mat ) );
   glu.invert();
+  gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
   glu.transpose();
   gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
   glu.pop();
