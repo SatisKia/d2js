@@ -704,6 +704,22 @@ _GLShader.prototype = {
 		_gl.useProgram( this._program );
 	}
 };
+_GLShader.bindPositionBuffer = function( attrib ){
+	_gl.vertexAttribPointer( attrib, 3, _gl.FLOAT, false, 0, 0 );
+	_gl.enableVertexAttribArray( attrib );
+};
+_GLShader.bindNormalBuffer = function( attrib ){
+	_gl.vertexAttribPointer( attrib, 3, _gl.FLOAT, false, 0, 0 );
+	_gl.enableVertexAttribArray( attrib );
+};
+_GLShader.bindColorBuffer = function( attrib ){
+	_gl.vertexAttribPointer( attrib, 4, _gl.FLOAT, false, 0, 0 );
+	_gl.enableVertexAttribArray( attrib );
+};
+_GLShader.bindTextureCoordBuffer = function( attrib ){
+	_gl.vertexAttribPointer( attrib, 2, _gl.FLOAT, false, 0, 0 );
+	_gl.enableVertexAttribArray( attrib );
+};
 function _GLSprite( id, depth ){
 	this._glp = new _GLPrimitive();
 	this._glp.setType( 1 );

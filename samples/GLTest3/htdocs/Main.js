@@ -1644,8 +1644,8 @@ function init3D( gl, _glu ){
    highp vec3 diffuse = (uDirectionalLightColor * uDiffuse) * cosAngle;
    lowp vec3 ambient = uAmbientLightColor * uAmbient;
    highp vec3 invLight = normalize(uInvMatrix * vec4(uDirectionalLightPosition, 0.0)).xyz;
-   highp vec3 eyeDirection = normalize(invLight + uEyeDirection);
-   highp float powCosAngle = pow(clamp(dot(normal, eyeDirection), 0.0, 1.0), uShininess);
+   highp vec3 halfVector = normalize(invLight + uEyeDirection);
+   highp float powCosAngle = pow(clamp(dot(normal, halfVector), 0.0, 1.0), uShininess);
    highp vec3 specular = (uSpecularLightColor * uSpecular) * powCosAngle;
    gl_FragColor = vec4(vColor.rgb * (diffuse + ambient + specular), vColor.a);
   }
@@ -1865,19 +1865,16 @@ function glModelActiveTexture( gl, id ){
  return gl.TEXTURE0;
 }
 function glModelBindPositionBuffer( gl ){
- gl.vertexAttribPointer( aVertexPosition, 3, gl.FLOAT, false, 0, 0 );
- gl.enableVertexAttribArray( aVertexPosition );
+ _GLShader.bindPositionBuffer( aVertexPosition );
 }
 function glModelBindNormalBuffer( gl ){
  if( aVertexNormal != null ){
-  gl.vertexAttribPointer( aVertexNormal, 3, gl.FLOAT, false, 0, 0 );
-  gl.enableVertexAttribArray( aVertexNormal );
+  _GLShader.bindNormalBuffer( aVertexNormal );
  }
 }
 function glModelBindColorBuffer( gl ){
  if( aVertexColor != null ){
-  gl.vertexAttribPointer( aVertexColor, 4, gl.FLOAT, false, 0, 0 );
-  gl.enableVertexAttribArray( aVertexColor );
+  _GLShader.bindColorBuffer( aVertexColor );
  }
 }
 function glModelBindTextureCoordBuffer( gl ){
