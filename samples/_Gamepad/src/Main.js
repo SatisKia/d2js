@@ -4,7 +4,8 @@
 
 var h;
 var gamepad;
-var event;
+var eventStr;
+var eventDisp;
 
 function frameTime(){ return 1000 / 30/*フレーム*/; }
 
@@ -23,9 +24,11 @@ function start( g ){
 	gamepad = new _Gamepad();
 	gamepad.setTolerance( 0.05, 1.0 );
 
-	event = new Array( 20 );
+	eventStr = new Array( 20 );
+	eventDisp = new Array( 20 );
 	for( var i = 0; i < 20; i++ ){
-		event[i] = "";
+		eventStr[i] = "";
+		eventDisp[i] = 0;
 	}
 
 	return true;
@@ -52,8 +55,8 @@ function paint( g ){
 			g.drawString( "axis", 0, h * 6 );
 			g.drawString( "value", 0, h * 7 );
 			for( i = 0; i < gamepad.axisNum(); i++ ){
-				g.drawString( "" + i, 80 + 60 * i, h * 6 );
-				g.drawString( "" + (Math.floor( gamepad.axisValue( i ) * 100 ) / 100), 80 + 60 * i, h * 7 );
+				g.drawString( "" + i, 80 + 80 * i, h * 6 );
+				g.drawString( "" + (Math.floor( gamepad.axisValue( i ) * 100 ) / 100), 80 + 80 * i, h * 7 );
 			}
 
 			for( j = 0; j <= _DIV( gamepad.buttonNum() - 1, 8 ); j++ ){
@@ -65,12 +68,18 @@ function paint( g ){
 				for( i = 0; i < 8; i++ ){
 					ii = j * 8 + i;
 					if( ii < gamepad.buttonNum() ){
-						g.drawString( "" + ii, 80 + 60 * i, h * (9 + j * 6) );
-						g.drawString( "" + (gamepad.isButtonPressed( ii ) ? "true" : "false"), 80 + 60 * i, h * (10 + j * 6) );
-						g.drawString( "" + (gamepad.isButtonTouched( ii ) ? "true" : "false"), 80 + 60 * i, h * (11 + j * 6) );
-						g.drawString( "" + (Math.floor( gamepad.buttonValue( ii ) * 100 ) / 100), 80 + 60 * i, h * (12 + j * 6) );
-						g.drawString( "" + event[ii], 80 + 60 * i, h * (13 + j * 6) );
-						event[ii] = "";
+						g.drawString( "" + ii, 80 + 80 * i, h * (9 + j * 6) );
+						g.drawString( "" + (gamepad.isButtonPressed( ii ) ? "true" : "false"), 80 + 80 * i, h * (10 + j * 6) );
+						g.drawString( "" + (gamepad.isButtonTouched( ii ) ? "true" : "false"), 80 + 80 * i, h * (11 + j * 6) );
+						g.drawString( "" + (Math.floor( gamepad.buttonValue( ii ) * 100 ) / 100), 80 + 80 * i, h * (12 + j * 6) );
+						g.setColor( g.getColorOfRGB( 51 * (5 - eventDisp[ii]), 51 * (5 - eventDisp[ii]), 255 ) );
+						g.drawString( "" + eventStr[ii], 80 + 80 * i, h * (13 + j * 6) );
+						g.setColor( g.getColorOfRGB( 0, 0, 255 ) );
+						if( eventDisp[ii] > 0 ){
+							eventDisp[ii]--;
+						} else {
+							eventStr[ii] = "";
+						}
 					}
 				}
 			}
@@ -91,10 +100,12 @@ function processEvent( type, param ){
 function processGamepadEvent( type, id, param ){
 	switch( type ){
 	case _GAMEPAD_BUTTON_PRESSED_EVENT:
-		event[param] = "pressed";
+		eventStr[param] = "PRESSED";
+		eventDisp[param] = 5;
 		break;
 	case _GAMEPAD_BUTTON_RELEASED_EVENT:
-		event[param] = "released";
+		eventStr[param] = "RELEASED";
+		eventDisp[param] = 5;
 		break;
 	}
 }
