@@ -829,6 +829,64 @@ _GLSprite.prototype = {
 		}
 	}
 };
+function _GLStereo( x, y, width, height ){
+	this._x = x;
+	this._y = y;
+	this._width = width;
+	this._height = height;
+	this._proj_mat = null;
+	this._view_mat = null;
+	this._angle = 0.0;
+	this._left = true;
+}
+_GLStereo.prototype = {
+	setProjectionMatrix : function( mat ){
+		_glu.set( _glu.utMatrix( mat ) );
+		_glu.scale( 2.0, 1.0, 1.0 );
+		this._proj_mat = _glu.glMatrix();
+		glStereoSetProjectionMatrix( _gl, this._proj_mat );
+	},
+	projectionMatrix : function(){
+		return this._proj_mat;
+	},
+	setViewMatrix : function( mat, angle ){
+		this._view_mat = mat;
+		this._angle = angle;
+	},
+	clear : function( mask ){
+		_gl.enable( _gl.SCISSOR_TEST );
+		if( this._left ){
+			_gl.scissor( this._x, this._y, this._width / 2, this._height );
+		} else {
+			_gl.scissor( this._x + this._width / 2, this._y, this._width / 2, this._height );
+		}
+		_gl.clear( mask );
+		_gl.disable( _gl.SCISSOR_TEST );
+	},
+	viewport : function(){
+		if( this._left ){
+			_glu.viewport( this._x, this._y, this._width / 2, this._height );
+		} else {
+			_glu.viewport( this._x + this._width / 2, this._y, this._width / 2, this._height );
+		}
+	},
+	draw : function(){
+		if( this._view_mat != null ){
+			_glu.set( _glu.utMatrix( this._view_mat ) );
+			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
+			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+		}
+		this._left = true;
+		glStereoDraw( _gl, _glu, this._left );
+		if( this._view_mat != null ){
+			_glu.set( _glu.utMatrix( this._view_mat ) );
+			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
+			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+		}
+		this._left = false;
+		glStereoDraw( _gl, _glu, this._left );
+	}
+};
 function _GLTexture( img_array, gen_num ){
 	var i;
 	this._img_array = img_array;
@@ -2006,6 +2064,7 @@ window.createGLModel = createGLModel;
 window._GLPrimitive = _GLPrimitive;
 window._GLShader = _GLShader;
 window._GLSprite = _GLSprite;
+window._GLStereo = _GLStereo;
 window._GLTexture = _GLTexture;
 window._GLTriangle = _GLTriangle;
 window._GLUtility = _GLUtility;

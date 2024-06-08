@@ -1548,6 +1548,7 @@ var MODEL_SPHERE = [
 760,
 ];
 var glu;
+var stereo;
 var model_sphere;
 function frameTime(){ return 1000 / 30 ; }
 function init(){
@@ -1581,6 +1582,7 @@ var uDiffuse;
 var uAmbient;
 var uSpecular;
 var uShininess;
+var modelViewMatrix;
 var rotation = 0.0;
 function rotate( glu ){
  glu.rotate( 30, 1, 0, 0 );
@@ -1588,6 +1590,11 @@ function rotate( glu ){
 }
 function init3D( gl, _glu ){
  glu = _glu;
+ if( useStereo ){
+  setCanvasSize( canvasWidth, getHeight() );
+  setCanvas3DSize( canvasWidth, getHeight() );
+  stereo = new _GLStereo( 0, 0, getWidth(), getHeight() );
+ }
  if( useProject ){
   glu.viewport( 0, 0, getWidth(), getHeight() );
  }
@@ -1683,6 +1690,7 @@ function init3D( gl, _glu ){
  return true;
 }
 function paint3D( gl, glu ){
+ rotation += 0.03;
  gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
  gl.clearDepth( 1.0 );
  gl.enable( gl.CULL_FACE );
@@ -1701,8 +1709,10 @@ function paint3D( gl, glu ){
  var l = -r;
  glu.setIdentity();
  glu.frustum( l, r, b, t, zNear, zFar );
+ if( useStereo ){
+  stereo.setProjectionMatrix( glu.glMatrix() );
+ }
  glu.translate( 0.0, 1.0, -15.0 );
- rotation += 0.03;
  rotate( glu );
  glu.translate( 0.0, -1.0, 15.0 );
  var projectionMatrix = glu.glMatrix();
@@ -1720,7 +1730,7 @@ function paint3D( gl, glu ){
   glu.setIdentity();
  }
  glu.translate( 0.0, 1.0, -15.0 );
- var modelViewMatrix = glu.glMatrix();
+ modelViewMatrix = glu.glMatrix();
  if( useProject ){
   glu.setViewMatrix( glu.utMatrix( modelViewMatrix ) );
  }
@@ -1730,6 +1740,17 @@ function paint3D( gl, glu ){
   gl.uniform3fv(uDirectionalLightPosition, directionalLightPosition);
   gl.uniform3fv(uSpecularLightColor, specularLightColor);
   gl.uniform3fv(uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
+ }
+ if( useStereo ){
+  stereo.draw();
+ } else {
+  myDraw( gl, glu );
+ }
+}
+function myDraw( gl, glu ){
+ if( useStereo ){
+  stereo.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+  stereo.viewport();
  }
 var g = getGraphics();
 g.setFont( 24, "ＭＳ ゴシック" );
@@ -1919,6 +1940,23 @@ function glDrawSetModelViewMatrix( gl, mat ){
   glu.pop();
  }
  gl.uniformMatrix4fv( uModelViewMatrix, false, mat );
+}
+function glStereoSetProjectionMatrix( gl, mat ){
+}
+function glStereoSetViewMatrix( gl, mat ){
+}
+function glStereoDraw( gl, glu, leftFlag ){
+ glu.push();
+ glu.set( glu.utMatrix( stereo.projectionMatrix() ) );
+ glu.translate( 0.0, 1.0, -15.0 );
+ var angle = leftFlag ? -stereoAngle : stereoAngle;
+ rotation += angle;
+ rotate( glu );
+ rotation -= angle;
+ glu.translate( 0.0, -1.0, 15.0 );
+ gl.uniformMatrix4fv( uProjectionMatrix, false, glu.glMatrix() );
+ glu.pop();
+ myDraw( gl, glu );
 }
 function processEvent( type, param ){
  switch( type ){
