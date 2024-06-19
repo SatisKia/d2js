@@ -529,17 +529,29 @@ if ( string_f == 1 ) {
 
 					face[face_cnt * 7 + 1] = -1;
 
-					for ( j = 0; j < v_num; j++ ) {
-						for ( k = 0; k < 2; k++ ) {
-							word(&cur2, tmp);
-							if ( tmp[0] == 'M' ) {
-								face[face_cnt * 7 + 1] = atoi(&tmp[2]);
+					if ( strstr(cur2, "UV(") != NULL ) {
+						for ( j = 0; j < v_num; j++ ) {
+							for ( k = 0; k < 2; k++ ) {
 								word(&cur2, tmp);
+								if ( tmp[0] == 'M' ) {
+									face[face_cnt * 7 + 1] = atoi(&tmp[2]);
+									word(&cur2, tmp);
+								}
+								if ( tmp[0] == 'U' ) {
+									map[coord_index[j] * 2 + k] = atof(&tmp[3]);
+								} else {
+									map[coord_index[j] * 2 + k] = atof(tmp);
+								}
 							}
-							if ( tmp[0] == 'U' ) {
-								map[coord_index[j] * 2 + k] = atof(&tmp[3]);
-							} else {
-								map[coord_index[j] * 2 + k] = atof(tmp);
+						}
+					} else {
+						for ( j = 0; j < v_num; j++ ) {
+							for ( k = 0; k < 2; k++ ) {
+								word(&cur2, tmp);
+								if ( tmp[0] == 'M' ) {
+									face[face_cnt * 7 + 1] = atoi(&tmp[2]);
+								}
+								map[coord_index[j] * 2 + k] = atof("0.0");
 							}
 						}
 					}
