@@ -71,6 +71,13 @@ _GLDraw.prototype = {
 		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
 		return this._draw[index]._distance;
 	},
+	addSpriteScale : function( p, tex_index, x, y, z, scale_x, scale_y, scale_z, trans ){
+		var index = this._draw.length;
+		_glu.spriteMatrix( x, y, z );
+		_glu.scale( scale_x, scale_y, scale_z );
+		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.glMatrix(), trans, true, x, y, z );
+		return this._draw[index]._distance;
+	},
 
 	draw : function( glt/*_GLTexture*/ ){
 		var i, j;

@@ -617,13 +617,29 @@ _GLUtility.prototype = {
 			this.view_mat[i] = this.util_mat[i];
 		}
 	},
+	viewMatrix : function(){
+		var _matrix = new Array( 16 );
+		for( var i = 0; i < 16; i++ ){
+			_matrix[i] = this.view_mat[i];
+		}
+		return _matrix;
+	},
+	lookMatrix : function(){
+		var _matrix = new Array( 16 );
+		for( var i = 0; i < 16; i++ ){
+			_matrix[i] = this.look_mat[i];
+		}
+		return _matrix;
+	},
 	setViewMatrix : function( matrix ){
 		for( var i = 0; i < 16; i++ ){
 			this.view_mat[i] = matrix[i];
 		}
 	},
-	lookMatrix : function(){
-		return this.look_mat;
+	setLookMatrix : function( matrix ){
+		for( var i = 0; i < 16; i++ ){
+			this.look_mat[i] = matrix[i];
+		}
 	},
 	spriteMatrix : function( x, y, z ){
 		this.set( this.view_mat );

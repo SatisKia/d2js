@@ -1064,6 +1064,8 @@ function removeButton( button ){
 	}
 }
 function _Graphics(){
+	this.x = 0;
+	this.y = 0;
 	this.f = 0;
 }
 _Graphics.prototype = {
@@ -1107,7 +1109,13 @@ _Graphics.prototype = {
 		_context.restore();
 		_context.save();
 	},
+	setOrigin : function( x, y ){
+		this.x = x;
+		this.y = y;
+	},
 	setClip : function( x, y, width, height ){
+		x += this.x;
+		y += this.y;
 		if( !!_context.clip ){
 			_context.restore();
 			_context.save();
@@ -1121,6 +1129,10 @@ _Graphics.prototype = {
 		}
 	},
 	drawLine : function( x1, y1, x2, y2 ){
+		x1 += this.x;
+		y1 += this.y;
+		x2 += this.x;
+		y2 += this.y;
 		_context.beginPath();
 		_context.moveTo( x1 + 0.5, y1 + 0.5 );
 		_context.lineTo( x2 + 0.5, y2 + 0.5 );
@@ -1128,17 +1140,25 @@ _Graphics.prototype = {
 		_context.closePath();
 	},
 	drawRect : function( x, y, width, height ){
+		x += this.x;
+		y += this.y;
 		_context.strokeRect( x + 0.5, y + 0.5, width, height );
 	},
 	fillRect : function( x, y, width, height ){
+		x += this.x;
+		y += this.y;
 		_context.fillRect( x, y, width, height );
 	},
 	drawCircle : function( cx, cy, r ){
+		cx += this.x;
+		cy += this.y;
 		_context.beginPath();
 		_context.arc( cx, cy, r, 0.0, Math.PI * 2.0, false );
 		_context.stroke();
 	},
 	drawString : function( str, x, y ){
+		x += this.x;
+		y += this.y;
 		if( !!_context.fillText ){
 			_context.fillText( str, x, y );
 		} else {
@@ -1151,6 +1171,8 @@ _Graphics.prototype = {
 		this.f = flip;
 	},
 	drawScaledImage : function( image, dx, dy, width, height, sx, sy, swidth, sheight ){
+		dx += this.x;
+		dy += this.y;
 		if( this.f == 0 ){
 			try {
 				_context.drawImage( image, sx, sy, swidth, sheight, dx, dy, width, height );
@@ -1182,6 +1204,8 @@ _Graphics.prototype = {
 		this.drawScaledImage( image, x, y, image.width, image.height, 0, 0, image.width, image.height );
 	},
 	drawTransImage : function( image, dx, dy, sx, sy, width, height, cx, cy, r360, z128x, z128y ){
+		dx += this.x;
+		dy += this.y;
 		_context.save();
 		_context.setTransform( 1.0, 0.0, 0.0, 1.0, 0.0, 0.0 );
 		_context.translate( dx, dy );
@@ -1242,7 +1266,13 @@ _ScalableGraphics.prototype = {
 		_context.restore();
 		_context.save();
 	},
+	setOrigin : function( x, y ){
+		this.x = x;
+		this.y = y;
+	},
 	setClip : function( x, y, width, height ){
+		x += this.x;
+		y += this.y;
 		if( !!_context.clip ){
 			_context.restore();
 			_context.save();
@@ -1256,6 +1286,10 @@ _ScalableGraphics.prototype = {
 		}
 	},
 	drawLine : function( x1, y1, x2, y2 ){
+		x1 += this.x;
+		y1 += this.y;
+		x2 += this.x;
+		y2 += this.y;
 		_context.beginPath();
 		_context.moveTo( (x1 + 0.5) * this.s, (y1 + 0.5) * this.s );
 		_context.lineTo( (x2 + 0.5) * this.s, (y2 + 0.5) * this.s );
@@ -1263,17 +1297,25 @@ _ScalableGraphics.prototype = {
 		_context.closePath();
 	},
 	drawRect : function( x, y, width, height ){
+		x += this.x;
+		y += this.y;
 		_context.strokeRect( (x + 0.5) * this.s, (y + 0.5) * this.s, width * this.s, height * this.s );
 	},
 	fillRect : function( x, y, width, height ){
+		x += this.x;
+		y += this.y;
 		_context.fillRect( x * this.s, y * this.s, width * this.s, height * this.s );
 	},
 	drawCircle : function( cx, cy, r ){
+		cx += this.x;
+		cy += this.y;
 		_context.beginPath();
 		_context.arc( cx * this.s, cy * this.s, r * this.s, 0.0, Math.PI * 2.0, false );
 		_context.stroke();
 	},
 	drawString : function( str, x, y ){
+		x += this.x;
+		y += this.y;
 		if( !!_context.fillText ){
 			_context.fillText( str, x * this.s, y * this.s );
 		} else {
@@ -1286,6 +1328,8 @@ _ScalableGraphics.prototype = {
 		this.f = flip;
 	},
 	drawScaledImage : function( image, dx, dy, width, height, sx, sy, swidth, sheight ){
+		dx += this.x;
+		dy += this.y;
 		if( this.f == 0 ){
 			try {
 				_context.drawImage( image, sx, sy, swidth, sheight, dx * this.s, dy * this.s, width * this.s, height * this.s );
@@ -1317,6 +1361,8 @@ _ScalableGraphics.prototype = {
 		this.drawScaledImage( image, x, y, image.width, image.height, 0, 0, image.width, image.height );
 	},
 	drawTransImage : function( image, dx, dy, sx, sy, width, height, cx, cy, r360, z128x, z128y ){
+		dx += this.x;
+		dy += this.y;
 		_context.save();
 		_context.setTransform( 1.0, 0.0, 0.0, 1.0, 0.0, 0.0 );
 		_context.translate( dx * this.s, dy * this.s );

@@ -12,6 +12,11 @@ function _GLStereo( x, y, width, height ){
 	this._view_mat = null;
 	this._angle = 0.0;
 	this._left = true;
+
+	// スプライト用
+	this._position_x = 0.0;
+	this._position_y = 0.0;
+	this._position_z = 0.0;
 }
 
 _GLStereo.prototype = {
@@ -31,6 +36,11 @@ _GLStereo.prototype = {
 	setViewMatrix : function( mat, angle ){
 		this._view_mat = mat;
 		this._angle = angle;
+
+		// スプライト用
+		this._position_x = _glu.positionX();
+		this._position_y = _glu.positionY();
+		this._position_z = _glu.positionZ();
 	},
 
 	clear : function( mask ){
@@ -57,7 +67,13 @@ _GLStereo.prototype = {
 		if( this._view_mat != null ){
 			_glu.set( _glu.utMatrix( this._view_mat ) );
 			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
-			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+			var mat = _glu.glMatrix();
+			glStereoSetViewMatrix( _gl, mat );
+
+			// スプライト用
+			_glu.set( _glu.utMatrix( mat ) );
+			_glu.translate( this._position_x, this._position_y, this._position_z );
+			_glu.setLookMatrix( _glu.get() );
 		}
 
 		this._left = true;
@@ -67,11 +83,29 @@ _GLStereo.prototype = {
 		if( this._view_mat != null ){
 			_glu.set( _glu.utMatrix( this._view_mat ) );
 			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
-			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+			var mat = _glu.glMatrix();
+			glStereoSetViewMatrix( _gl, mat );
+
+			// スプライト用
+			_glu.set( _glu.utMatrix( mat ) );
+			_glu.translate( this._position_x, this._position_y, this._position_z );
+			_glu.setLookMatrix( _glu.get() );
 		}
 
 		this._left = false;
 		glStereoDraw( _gl, _glu, this._left );
+	},
+
+	getGraphics : function( clip ){
+		var g = getGraphics();
+		if( clip ){
+			if( this._left ){
+				g.setClip( 0, 0, this._width / 2, this._height );
+			} else {
+				g.setClip( this._width / 2, 0, this._width / 2, this._height );
+			}
+		}
+		return g;
 	}
 
 };

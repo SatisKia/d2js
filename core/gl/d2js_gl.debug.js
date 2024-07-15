@@ -65,6 +65,13 @@ _GLDraw.prototype = {
 		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
 		return this._draw[index]._distance;
 	},
+	addSpriteScale : function( p, tex_index, x, y, z, scale_x, scale_y, scale_z, trans ){
+		var index = this._draw.length;
+		_glu.spriteMatrix( x, y, z );
+		_glu.scale( scale_x, scale_y, scale_z );
+		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.glMatrix(), trans, true, x, y, z );
+		return this._draw[index]._distance;
+	},
 	draw : function( glt ){
 		var i, j;
 		var distance;
@@ -838,6 +845,9 @@ function _GLStereo( x, y, width, height ){
 	this._view_mat = null;
 	this._angle = 0.0;
 	this._left = true;
+	this._position_x = 0.0;
+	this._position_y = 0.0;
+	this._position_z = 0.0;
 }
 _GLStereo.prototype = {
 	setProjectionMatrix : function( mat ){
@@ -852,6 +862,9 @@ _GLStereo.prototype = {
 	setViewMatrix : function( mat, angle ){
 		this._view_mat = mat;
 		this._angle = angle;
+		this._position_x = _glu.positionX();
+		this._position_y = _glu.positionY();
+		this._position_z = _glu.positionZ();
 	},
 	clear : function( mask ){
 		_gl.enable( _gl.SCISSOR_TEST );
@@ -874,17 +887,36 @@ _GLStereo.prototype = {
 		if( this._view_mat != null ){
 			_glu.set( _glu.utMatrix( this._view_mat ) );
 			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
-			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+			var mat = _glu.glMatrix();
+			glStereoSetViewMatrix( _gl, mat );
+			_glu.set( _glu.utMatrix( mat ) );
+			_glu.translate( this._position_x, this._position_y, this._position_z );
+			_glu.setLookMatrix( _glu.get() );
 		}
 		this._left = true;
 		glStereoDraw( _gl, _glu, this._left );
 		if( this._view_mat != null ){
 			_glu.set( _glu.utMatrix( this._view_mat ) );
 			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
-			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+			var mat = _glu.glMatrix();
+			glStereoSetViewMatrix( _gl, mat );
+			_glu.set( _glu.utMatrix( mat ) );
+			_glu.translate( this._position_x, this._position_y, this._position_z );
+			_glu.setLookMatrix( _glu.get() );
 		}
 		this._left = false;
 		glStereoDraw( _gl, _glu, this._left );
+	},
+	getGraphics : function( clip ){
+		var g = getGraphics();
+		if( clip ){
+			if( this._left ){
+				g.setClip( 0, 0, this._width / 2, this._height );
+			} else {
+				g.setClip( this._width / 2, 0, this._width / 2, this._height );
+			}
+		}
+		return g;
 	}
 };
 function _GLTexture( img_array, gen_num ){
@@ -1818,13 +1850,29 @@ _GLUtility.prototype = {
 			this.view_mat[i] = this.util_mat[i];
 		}
 	},
+	viewMatrix : function(){
+		var _matrix = new Array( 16 );
+		for( var i = 0; i < 16; i++ ){
+			_matrix[i] = this.view_mat[i];
+		}
+		return _matrix;
+	},
+	lookMatrix : function(){
+		var _matrix = new Array( 16 );
+		for( var i = 0; i < 16; i++ ){
+			_matrix[i] = this.look_mat[i];
+		}
+		return _matrix;
+	},
 	setViewMatrix : function( matrix ){
 		for( var i = 0; i < 16; i++ ){
 			this.view_mat[i] = matrix[i];
 		}
 	},
-	lookMatrix : function(){
-		return this.look_mat;
+	setLookMatrix : function( matrix ){
+		for( var i = 0; i < 16; i++ ){
+			this.look_mat[i] = matrix[i];
+		}
 	},
 	spriteMatrix : function( x, y, z ){
 		this.set( this.view_mat );
