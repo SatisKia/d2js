@@ -1768,7 +1768,7 @@ g.setColor( g.getColorOfRGB( 255, 255, 255 ) );
    var projectY = glu.projectY();
    var projectZ = glu.projectZ();
    glu.unProject( projectX, projectY, projectZ );
-g.drawString( "1:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
+g.drawString( "[0]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   glu.push();
   glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -1784,7 +1784,7 @@ g.drawString( "1:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
    var projectY = glu.projectY();
    var projectZ = glu.projectZ();
    glu.unProject( projectX, projectY, projectZ );
-g.drawString( "2:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
+g.drawString( "[1]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   glu.push();
   glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -1800,7 +1800,7 @@ g.drawString( "2:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
    var projectY = glu.projectY();
    var projectZ = glu.projectZ();
    glu.unProject( projectX, projectY, projectZ );
-g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
+g.drawString( "[2]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   gld.draw();
  } else {
@@ -1821,7 +1821,7 @@ g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
    var projectY = glu.projectY();
    var projectZ = glu.projectZ();
    glu.unProject( projectX, projectY, projectZ );
-g.drawString( "1:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
+g.drawString( "[0]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   glu.push();
   glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -1844,7 +1844,7 @@ g.drawString( "1:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
    var projectY = glu.projectY();
    var projectZ = glu.projectZ();
    glu.unProject( projectX, projectY, projectZ );
-g.drawString( "2:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
+g.drawString( "[1]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
   glu.push();
   glu.set( glu.utMatrix( modelViewMatrix ) );
@@ -1867,7 +1867,7 @@ g.drawString( "2:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY
    var projectY = glu.projectY();
    var projectZ = glu.projectZ();
    glu.unProject( projectX, projectY, projectZ );
-g.drawString( "3:" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
+g.drawString( "[2]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.projectY() * 10) / 10) + "," + (_INT(glu.projectZ() * 10) / 10), projectX, getHeight() - projectY );
   }
  }
 }

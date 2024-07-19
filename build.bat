@@ -10,7 +10,7 @@ if "%SKCOMMONPATH%"=="" goto error
 md %TMP%
 
 cd core
-%CPP% _Main.js _Audio.js _Button.js _Graphics.js _ScalableGraphics.js _Image.js _Layout.js _Math.js _Random.js _System.js _Vector.js %SKCOMMONPATH%\_Cookie.js %SKCOMMONPATH%\_HttpRequest.js %SKCOMMONPATH%\_Preference.js %SKCOMMONPATH%\_Storage.js > ..\%TMP%\tmp1.js
+%CPP% _Main.js _Audio.js _Button.js _Graphics.js _ScalableGraphics.js _Image.js _Layout.js _Math.js _Random.js _System.js _Vector.js %SKCOMMONPATH%\_Cookie.js %SKCOMMONPATH%\_HttpRequest.js %SKCOMMONPATH%\_NativeRequest.js %SKCOMMONPATH%\_Preference.js %SKCOMMONPATH%\_Storage.js > ..\%TMP%\tmp1.js
 cd ..
 
 function %TMP%\tmp1.js %TMP%\function.js

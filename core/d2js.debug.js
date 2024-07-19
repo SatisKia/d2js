@@ -1219,6 +1219,8 @@ _Graphics.prototype = {
 	}
 };
 function _ScalableGraphics(){
+	this.x = 0;
+	this.y = 0;
 	this.f = 0;
 	this.s = 1.0;
 }
@@ -1237,6 +1239,9 @@ _ScalableGraphics.prototype = {
 	},
 	getColorOfRGB : function( r, g, b ){
 		return "rgb(" + r + "," + g + "," + b + ")";
+	},
+	getColorOfRGBA : function( r, g, b, a ){
+		return "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
 	},
 	setStrokeWidth : function( width ){
 		_context.lineWidth = width * this.s;
@@ -1787,6 +1792,29 @@ function httpPost( url, data, type, header ){
 	}
 	return request;
 }
+function _NativeRequest(){
+	this.e = document.createElement( "iframe" );
+	this.e.setAttribute( "width", 0 );
+	this.e.setAttribute( "height", 0 );
+	this.e.setAttribute( "style", "position:absolute;left:0;top:0" );
+	this.e.setAttribute( "scrolling", "no" );
+	this.e.setAttribute( "frameborder", "no" );
+	this.e.setAttribute( "src", "about:blank" );
+	document.body.appendChild( this.e );
+	this.s = "";
+}
+_NativeRequest.prototype = {
+	setScheme : function( scheme ){
+		this.s = scheme;
+	},
+	send : function( url ){
+		if( this.s.length > 0 ){
+			this.e.src = this.s + "://" + url;
+		} else {
+			this.e.src = url;
+		}
+	}
+};
 function _Preference( useStorage ){
 	this.s = (useStorage && canUseStorage());
 	this.c = canUseCookie();
@@ -2072,6 +2100,7 @@ window.httpAddHeader = httpAddHeader;
 window.httpHeader = httpHeader;
 window.httpGet = httpGet;
 window.httpPost = httpPost;
+window._NativeRequest = _NativeRequest;
 window._Preference = _Preference;
 window.canUseStorage = canUseStorage;
 window.storageNum = storageNum;

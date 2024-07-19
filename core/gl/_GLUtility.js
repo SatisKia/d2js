@@ -6,11 +6,35 @@
 #define _GLUTILITY_TOLERANCE_M	-1.0
 #define _GLUTILITY_TOLERANCE	1.0
 
+function _GLUtilitySave(){
+	this.util_mat = new Array( 16 );
+	this.look_mat = new Array( 16 );
+	this.view_mat = new Array( 16 );
+}
+_GLUtilitySave.prototype = {
+	push : function( glu ){
+		for( var i = 0; i < 16; i++ ){
+			this.util_mat[i] = glu.util_mat[i];
+			this.look_mat[i] = glu.look_mat[i];
+			this.view_mat[i] = glu.view_mat[i];
+		}
+	},
+	pop : function( glu ){
+		for( var i = 0; i < 16; i++ ){
+			glu.util_mat[i] = this.util_mat[i];
+			glu.look_mat[i] = this.look_mat[i];
+			glu.view_mat[i] = this.view_mat[i];
+		}
+	},
+};
+
 function _GLUtility(){
+	this.save = new Array();
+	this.save_num = 0;
+
 	// 各種行列演算用
 	this.util_mat = new Array( 16 );
 	this.tmp_mat = new Array( 16 );
-	this.save_mat = new Array( 16 );
 
 	// 回転
 	this._rotate = new Array( 16 );
@@ -180,13 +204,16 @@ _GLUtility.prototype = {
 	},
 
 	push : function(){
-		for( var i = 0; i < 16; i++ ){
-			this.save_mat[i] = this.util_mat[i];
+		if( this.save[this.save_num] == undefined ){
+			this.save[this.save_num] = new _GLUtilitySave();
 		}
+		this.save[this.save_num].push( this );
+		this.save_num++;
 	},
 	pop : function(){
-		for( var i = 0; i < 16; i++ ){
-			this.util_mat[i] = this.save_mat[i];
+		if( this.save_num > 0 ){
+			this.save_num--;
+			this.save[this.save_num].pop( this );
 		}
 	},
 

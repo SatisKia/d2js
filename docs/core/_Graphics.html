@@ -140,6 +140,29 @@ HTML5 Canvas テキストAPIをサポートしている場合 true、サポートしていない場合 fals
 <table border="0" width="100%" cellpadding="0" cellspacing="0">
 <tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
 <tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>getColorOfRGBA</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>getColorOfRGBA</b>(r,g,b,a)</p>
+<p>RGBA値を指定してそのRGBA値に対応するカラーを表す文字列を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">r</td><td>赤要素の輝度を指定します（0～255）。</td></tr>
+<tr><td valign="top">g</td><td>緑要素の輝度を指定します（0～255）。</td></tr>
+<tr><td valign="top">b</td><td>青要素の輝度を指定します（0～255）。</td></tr>
+<tr><td valign="top">a</td><td>不透明度を指定します（0～255）。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+カラーを表す文字列を返します。</p>
+<p><b>補足説明：</b><br/>
+不透明度とは、255 で不透明、0 で完全な透明になる値です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
 <b>setStrokeWidth</b>
 </font></td></tr>
 </table>
@@ -312,6 +335,29 @@ DoJaでの Font クラスの getHeight() メソッドに相当する機能です。</p>
 <tr><td valign="top"></td><td></td></tr>
 </table>
 </div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setOrigin</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setOrigin</b>(x,y)</p>
+<p>各種描画の際の座標原点を設定します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">x</td><td>X方向のオフセット値を指定します。</td></tr>
+<tr><td valign="top">y</td><td>Y方向のオフセット値を指定します。</td></tr>
+</table>
+</div></p>
+<!--
 <p><b>戻り値：</b><br/>
 </p>
 <p><b>補足説明：</b><br/>

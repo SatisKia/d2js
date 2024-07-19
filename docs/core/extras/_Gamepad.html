@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="Shift_JIS" />
+<title>D2JSドキュメント</title>
+</head>
+<body>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr height="100">
+<td bgcolor="#cccccc">
+<p><font size="+2"><b>_Gamepad.js</b></font></p>
+</td>
+</tr>
+</table>
+</p>
+
+<p>ゲームパッド機能を提供します。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>canUseGamepad</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>canUseGamepad</b>()</p>
+<p>ゲームパッド機能が使用できるかどうかチェックします。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+ゲームパッド機能が使用できる場合 true、できない場合 false</p>
+<p><b>補足説明：</b><br/>
+ブラウザがゲームパッド機能を有しているかのチェックであり、ゲームパッドを認識するかのチェックではありません。ゲームパッドの認識は fetch() で行います。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>processGamepadEvent</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>processGamepadEvent</b>(type,id,param)</p>
+<p>各種イベントが通知されたときに呼ばれる関数です。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">type</td><td>イベントのタイプが渡されます。</td></tr>
+<tr><td valign="top">id</td><td></td></tr>
+<tr><td valign="top">param</td><td>イベントのパラメータが渡されます。パラメータの意味はイベントによって異なります。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+-->
+<p><div><b>補足説明：</b><br/>
+イベントのタイプには、次のものがあります。<br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr>
+<td valign="top">_GAMEPAD_BUTTON_PRESSED_EVENT</td>
+<td></td>
+</tr>
+<tr>
+<td valign="top">_GAMEPAD_BUTTON_RELEASED_EVENT</td>
+<td></td>
+</tr>
+<tr>
+<td valign="top">_GAMEPAD_AXIS_MINUS_INPUTTED_EVENT</td>
+<td></td>
+</tr>
+<tr>
+<td valign="top">_GAMEPAD_AXIS_MINUS_RELEASED_EVENT</td>
+<td></td>
+</tr>
+<tr>
+<td valign="top">_GAMEPAD_AXIS_PLUS_INPUTTED_EVENT</td>
+<td></td>
+</tr>
+<tr>
+<td valign="top">_GAMEPAD_AXIS_PLUS_RELEASED_EVENT</td>
+<td></td>
+</tr>
+</table>
+</div></p>
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>コンストラクタ</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>_Gamepad</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>_Gamepad</b>()<br/>
+<p>_Gamepad コンストラクタです。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="3" cellspacing="0">
+<tr bgcolor="#cccccc">
+<td><font size="+2"><b>メソッド</b></font></td>
+</tr>
+</table>
+</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>setTolerance</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>setTolerance</b>(min,max)</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">min</td><td>0.0～1.0 の値を指定します。</td></tr>
+<tr><td valign="top">max</td><td>0.0～1.0 の値を指定します。</td></tr>
+</table>
+</div></p>
+<!--
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>fetch</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>fetch</b>(index)</p>
+<p>指定したインデックスのゲームパッドの接続を確認します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">index</td><td>ゲームパッドのインデックスを指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+ゲームパッドが認識できない場合、null を返します。</p>
+<!--
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>id</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>id</b>()</p>
+<p>コントローラーに関する識別情報を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+コントローラーに関する識別情報を返します。</p>
+<p><b>補足説明：</b><br/>
+fetch() で認識されたゲームパッドが対象です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>axisNum</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>axisNum</b>()</p>
+<p>軸の数を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+軸の数を返します。</p>
+<p><b>補足説明：</b><br/>
+fetch() で認識されたゲームパッドが対象です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>axisValue</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>axisValue</b>(axisIndex)</p>
+<p>軸の浮動小数点数値を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">axisIndex</td><td>軸のインデックスを指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+-1.0～1.0 の値を返します。</p>
+<p><b>補足説明：</b><br/>
+fetch() で認識されたゲームパッドが対象です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>buttonNum</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>buttonNum</b>()</p>
+<p>ボタンの数を取得します。</p>
+<!--
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+-->
+<p><b>戻り値：</b><br/>
+ボタンの数を返します。</p>
+<p><b>補足説明：</b><br/>
+fetch() で認識されたゲームパッドが対象です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>isButtonPressed</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>isButtonPressed</b>(buttonIndex)</p>
+<p>ボタンが押されているかどうかチェックします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">buttonIndex</td><td>ボタンのインデックスを指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+ボタンが押されている場合 true、押されていない場合 false を返します。</p>
+<p><b>補足説明：</b><br/>
+fetch() で認識されたゲームパッドが対象です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>isButtonTouched</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>isButtonTouched</b>(buttonIndex)</p>
+<p>ボタンがタッチされているかどうかチェックします。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">buttonIndex</td><td>ボタンのインデックスを指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+ボタンがタッチされている場合 true、タッチされていない場合 false を返します。</p>
+<p><b>補足説明：</b><br/>
+fetch() で認識されたゲームパッドが対象です。</p>
+
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b>buttonValue</b>
+</font></td></tr>
+</table>
+</p>
+<p><b>buttonValue</b>(buttonIndex)</p>
+<p>ボタンの浮動小数点数値を取得します。</p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top">buttonIndex</td><td>ボタンのインデックスを指定します。</td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+アナログボタンの場合は 0.0～1.0 の値を返します。アナログボタンでない場合は 0.0 または 1.0 の値が返されます。</p>
+<p><b>補足説明：</b><br/>
+fetch() で認識されたゲームパッドが対象です。</p>
+
+<!--
+<p>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr><td bgcolor="#888888" width="4" height="4"></td><td bgcolor="#888888"></td></tr>
+<tr><td bgcolor="#888888"></td><td width="99%"><font size="+1">
+<b></b>
+</font></td></tr>
+</table>
+</p>
+<p><b></b>()</p>
+<p></p>
+<p><div><b>パラメータ：</b><br/>
+<table border="1" cellpadding="3" cellspacing="0">
+<tr><td valign="top"></td><td></td></tr>
+</table>
+</div></p>
+<p><b>戻り値：</b><br/>
+</p>
+<p><b>補足説明：</b><br/>
+</p>
+-->
+
+</body>
+</html>

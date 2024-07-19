@@ -6,6 +6,8 @@
 #include "_Global.h"
 
 function _ScalableGraphics(){
+	this.x = 0;
+	this.y = 0;
 	this.f = _FLIP_NONE;
 	this.s = 1.0;
 }
@@ -25,6 +27,9 @@ _ScalableGraphics.prototype = {
 	},
 	getColorOfRGB : function( r, g, b ){
 		return "rgb(" + r + "," + g + "," + b + ")";
+	},
+	getColorOfRGBA : function( r, g, b, a ){
+		return "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
 	},
 	setStrokeWidth : function( width ){
 		_context.lineWidth = width * this.s;
