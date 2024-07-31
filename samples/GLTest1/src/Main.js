@@ -72,12 +72,6 @@ function paint( g ){
 }
 
 var shader;
-var aVertexPosition;
-var aVertexColor = null;
-var aTextureCoord = null;
-var uProjectionMatrix;
-var uModelViewMatrix;
-var uSampler = null;
 
 var positionBuffer;
 var colorBuffer;
@@ -172,30 +166,16 @@ function init3D( gl, glu ){
 	// シェーダープログラムを初期化する
 	// （ここで頂点へのライティングなどがすべて確立される）
 	if( use_texture ){
-		shader = new _GLShader( vsSourceTexture, fsSourceTexture );
-
-		aVertexPosition = shader.attrib( "aVertexPosition" );
-		aTextureCoord = shader.attrib( "aTextureCoord" );
-
-		uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
-		uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
-
-		uSampler = shader.uniform( "uSampler" );
+		shader = new _GLShader( vsSourceTexture, fsSourceTexture, true );
 	} else {
-		shader = new _GLShader( vsSource, fsSource );
-
-		aVertexPosition = shader.attrib( "aVertexPosition" );
-		aVertexColor = shader.attrib( "aVertexColor" );
-
-		uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
-		uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
+		shader = new _GLShader( vsSource, fsSource, true );
 	}
 
 	// WebGLに、描写に使用するプログラムを伝える
 	shader.use();
 
-	if( uSampler != null ){
-		gl.uniform1i( uSampler, 0 );
+	if( shader.vars.uSampler != undefined ){
+		gl.uniform1i( shader.vars.uSampler, 0 );
 	}
 
 	const positions = [
@@ -207,11 +187,11 @@ function init3D( gl, glu ){
 	positionBuffer = gl.createBuffer();
 	gl.bindBuffer( gl.ARRAY_BUFFER, positionBuffer );
 	gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( positions ), gl.STATIC_DRAW );
-	gl.vertexAttribPointer( aVertexPosition, 3, gl.FLOAT, false, 0, 0 );
-	gl.enableVertexAttribArray( aVertexPosition );
+	gl.vertexAttribPointer( shader.vars.aVertexPosition, 3, gl.FLOAT, false, 0, 0 );
+	gl.enableVertexAttribArray( shader.vars.aVertexPosition );
 	gl.bindBuffer( gl.ARRAY_BUFFER, null );
 
-	if( aVertexColor != null ){
+	if( shader.vars.aVertexColor != undefined ){
 		const colors = [
 			0.0, 0.0, 1.0, 1.0,	// 左下：青
 			0.0, 1.0, 0.0, 1.0,	// 右下：緑
@@ -221,12 +201,12 @@ function init3D( gl, glu ){
 		colorBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, colorBuffer );
 		gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( colors ), gl.STATIC_DRAW );
-		gl.vertexAttribPointer( aVertexColor, 4, gl.FLOAT, false, 0, 0 );
-		gl.enableVertexAttribArray( aVertexColor );
+		gl.vertexAttribPointer( shader.vars.aVertexColor, 4, gl.FLOAT, false, 0, 0 );
+		gl.enableVertexAttribArray( shader.vars.aVertexColor );
 		gl.bindBuffer( gl.ARRAY_BUFFER, null );
 	}
 
-	if( aTextureCoord != null ){
+	if( shader.vars.aTextureCoord != undefined ){
 		var tmp = 240.0 / 256.0;
 		const textureCoordinates = [
 			0.0, tmp,	// 左下
@@ -237,8 +217,8 @@ function init3D( gl, glu ){
 		textureCoordBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, textureCoordBuffer );
 		gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( textureCoordinates ), gl.STATIC_DRAW );
-		gl.vertexAttribPointer( aTextureCoord, 2, gl.FLOAT, false, 0, 0 );
-		gl.enableVertexAttribArray( aTextureCoord );
+		gl.vertexAttribPointer( shader.vars.aTextureCoord, 2, gl.FLOAT, false, 0, 0 );
+		gl.enableVertexAttribArray( shader.vars.aTextureCoord );
 		gl.bindBuffer( gl.ARRAY_BUFFER, null );
 	}
 
@@ -272,13 +252,13 @@ function paint3D( gl, glu ){
 	var l = -r;
 	glu.setIdentity();
 	glu.frustum( l, r, b, t, zNear, zFar );
-	gl.uniformMatrix4fv( uProjectionMatrix, false, glu.glMatrix() );
+	gl.uniformMatrix4fv( shader.vars.uProjectionMatrix, false, glu.glMatrix() );
 
 	glu.setIdentity();
 	glu.translate( -0.0, 0.0, -6.0 );
 	squareRotation += 1.5;
 	glu.rotate( squareRotation, 0, 0, 1 );
-	gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+	gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, glu.glMatrix() );
 
 	if( use_texture ){
 		gl.enable( gl.BLEND );

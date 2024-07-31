@@ -72,17 +72,6 @@ function paint( g ){
 }
 
 var shader;
-var aVertexPosition;
-var aVertexColor = null;
-var aVertexNormal = null;
-var aTextureCoord = null;
-var uProjectionMatrix;
-var uModelViewMatrix;
-var uNormalMatrix = null;
-var uDirectionalLightColor;
-var uDirectionalLightPosition;
-var uAmbientLightColor;
-var uSampler = null;
 
 var positionBuffer;
 var colorBuffer;
@@ -229,42 +218,19 @@ function init3D( gl, glu ){
 	// （ここで頂点へのライティングなどがすべて確立される）
 	if( use_texture ){
 		if( use_lighting ){
-			shader = new _GLShader( vsSourceLighting, fsSourceLighting );
+			shader = new _GLShader( vsSourceLighting, fsSourceLighting, true );
 		} else {
-			shader = new _GLShader( vsSourceTexture, fsSourceTexture );
+			shader = new _GLShader( vsSourceTexture, fsSourceTexture, true );
 		}
-
-		aVertexPosition = shader.attrib( "aVertexPosition" );
-		if( use_lighting ){
-			aVertexNormal = shader.attrib( "aVertexNormal" );
-		}
-		aTextureCoord = shader.attrib( "aTextureCoord" );
-
-		uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
-		uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
-		if( use_lighting ){
-			uNormalMatrix = shader.uniform( "uNormalMatrix" );
-			uDirectionalLightColor = shader.uniform( "uDirectionalLightColor" );
-			uDirectionalLightPosition = shader.uniform( "uDirectionalLightPosition" );
-			uAmbientLightColor = shader.uniform( "uAmbientLightColor" );
-		}
-
-		uSampler = shader.uniform( "uSampler" );
 	} else {
-		shader = new _GLShader( vsSource, fsSource );
-
-		aVertexPosition = shader.attrib( "aVertexPosition" );
-		aVertexColor = shader.attrib( "aVertexColor" );
-
-		uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
-		uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
+		shader = new _GLShader( vsSource, fsSource, true );
 	}
 
 	// WebGLに、描写に使用するプログラムを伝える
 	shader.use();
 
-	if( uSampler != null ){
-		gl.uniform1i( uSampler, 0 );
+	if( shader.vars.uSampler != undefined ){
+		gl.uniform1i( shader.vars.uSampler, 0 );
 	}
 
 	const positions = [
@@ -278,11 +244,11 @@ function init3D( gl, glu ){
 	positionBuffer = gl.createBuffer();
 	gl.bindBuffer( gl.ARRAY_BUFFER, positionBuffer );
 	gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( positions ), gl.STATIC_DRAW );
-	gl.vertexAttribPointer( aVertexPosition, 3, gl.FLOAT, false, 0, 0 );
-	gl.enableVertexAttribArray( aVertexPosition );
+	gl.vertexAttribPointer( shader.vars.aVertexPosition, 3, gl.FLOAT, false, 0, 0 );
+	gl.enableVertexAttribArray( shader.vars.aVertexPosition );
 	gl.bindBuffer( gl.ARRAY_BUFFER, null );
 
-	if( aVertexColor != null ){
+	if( shader.vars.aVertexColor != undefined ){
 		const colors = [
 			[1.0, 1.0, 1.0, 1.0],	// 前面：白
 			[1.0, 0.0, 0.0, 1.0],	// 背面：赤
@@ -301,12 +267,12 @@ function init3D( gl, glu ){
 		colorBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, colorBuffer );
 		gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( generatedColors ), gl.STATIC_DRAW );
-		gl.vertexAttribPointer( aVertexColor, 4, gl.FLOAT, false, 0, 0 );
-		gl.enableVertexAttribArray( aVertexColor );
+		gl.vertexAttribPointer( shader.vars.aVertexColor, 4, gl.FLOAT, false, 0, 0 );
+		gl.enableVertexAttribArray( shader.vars.aVertexColor );
 		gl.bindBuffer( gl.ARRAY_BUFFER, null );
 	}
 
-	if( aVertexNormal != null ){
+	if( shader.vars.aVertexNormal != undefined ){
 		const vertexNormals = [
 			 0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,  0.0,  0.0,  1.0,	// 前面
 			 0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,  0.0,  0.0, -1.0,	// 背面
@@ -318,12 +284,12 @@ function init3D( gl, glu ){
 		normalBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, normalBuffer );
 		gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( vertexNormals ), gl.STATIC_DRAW );
-		gl.vertexAttribPointer( aVertexNormal, 3, gl.FLOAT, false, 0, 0 );
-		gl.enableVertexAttribArray( aVertexNormal );
+		gl.vertexAttribPointer( shader.vars.aVertexNormal, 3, gl.FLOAT, false, 0, 0 );
+		gl.enableVertexAttribArray( shader.vars.aVertexNormal );
 		gl.bindBuffer( gl.ARRAY_BUFFER, null );
 	}
 
-	if( aTextureCoord != null ){
+	if( shader.vars.aTextureCoord != undefined ){
 		var tmp = 240.0 / 256.0;
 		const textureCoordinates = [
 			0.0, tmp, tmp, tmp, 0.0, 0.0, tmp, 0.0,	// 前面
@@ -336,8 +302,8 @@ function init3D( gl, glu ){
 		textureCoordBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, textureCoordBuffer );
 		gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( textureCoordinates ), gl.STATIC_DRAW );
-		gl.vertexAttribPointer( aTextureCoord, 2, gl.FLOAT, false, 0, 0 );
-		gl.enableVertexAttribArray( aTextureCoord );
+		gl.vertexAttribPointer( shader.vars.aTextureCoord, 2, gl.FLOAT, false, 0, 0 );
+		gl.enableVertexAttribArray( shader.vars.aTextureCoord );
 		gl.bindBuffer( gl.ARRAY_BUFFER, null );
 	}
 
@@ -384,7 +350,7 @@ function paint3D( gl, glu ){
 	var l = -r;
 	glu.setIdentity();
 	glu.frustum( l, r, b, t, zNear, zFar );
-	gl.uniformMatrix4fv( uProjectionMatrix, false, glu.glMatrix() );
+	gl.uniformMatrix4fv( shader.vars.uProjectionMatrix, false, glu.glMatrix() );
 
 	glu.setIdentity();
 	glu.translate( -0.0, 0.0, -6.0 );
@@ -393,17 +359,17 @@ function paint3D( gl, glu ){
 	glu.rotate( (cubeRotation * 0.7) * 180 / Math.PI, 0, 1, 0 );	// Y軸回転
 	glu.rotate( (cubeRotation * 0.3) * 180 / Math.PI, 1, 0, 0 );	// X軸回転
 	var modelViewMatrix = glu.glMatrix();
-	gl.uniformMatrix4fv( uModelViewMatrix, false, modelViewMatrix );
+	gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, modelViewMatrix );
 
-	if( uNormalMatrix != null ){
+	if( shader.vars.uNormalMatrix != undefined ){
 		glu.set( glu.utMatrix( modelViewMatrix ) );
 		glu.invert();
 		glu.transpose();
-		gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+		gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
 
-		gl.uniform3fv(uDirectionalLightColor, directionalLightColor);
-		gl.uniform3fv(uDirectionalLightPosition, directionalLightPosition);
-		gl.uniform3fv(uAmbientLightColor, ambientLightColor);
+		gl.uniform3fv(shader.vars.uDirectionalLightColor, directionalLightColor);
+		gl.uniform3fv(shader.vars.uDirectionalLightPosition, directionalLightPosition);
+		gl.uniform3fv(shader.vars.uAmbientLightColor, ambientLightColor);
 	}
 
 	if( use_texture ){

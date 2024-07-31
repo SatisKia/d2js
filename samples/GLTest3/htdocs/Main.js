@@ -1566,22 +1566,6 @@ function paint( g ){
  setCurrent3D( "canvas1", "canvas0" );
 }
 var shader;
-var aVertexPosition;
-var aVertexColor = null;
-var aVertexNormal = null;
-var uProjectionMatrix;
-var uModelViewMatrix;
-var uNormalMatrix;
-var uInvMatrix;
-var uDirectionalLightColor;
-var uDirectionalLightPosition;
-var uAmbientLightColor;
-var uEyeDirection;
-var uSpecularLightColor;
-var uDiffuse;
-var uAmbient;
-var uSpecular;
-var uShininess;
 var modelViewMatrix;
 var rotation = 0.0;
 function rotate( glu ){
@@ -1658,31 +1642,11 @@ function init3D( gl, _glu ){
   }
  `;
  if( useLighting ){
-  shader = new _GLShader( vsSourceLighting, fsSourceLighting );
+  shader = new _GLShader( vsSourceLighting, fsSourceLighting, true );
  } else {
-  shader = new _GLShader( vsSource, fsSource );
+  shader = new _GLShader( vsSource, fsSource, true );
  }
  shader.use();
- aVertexPosition = shader.attrib( "aVertexPosition" );
- if( useLighting ){
-  aVertexNormal = shader.attrib( "aVertexNormal" );
- }
- aVertexColor = shader.attrib( "aVertexColor" );
- uProjectionMatrix = shader.uniform( "uProjectionMatrix" );
- uModelViewMatrix = shader.uniform( "uModelViewMatrix" );
- if( useLighting ){
-  uNormalMatrix = shader.uniform( "uNormalMatrix" );
-  uInvMatrix = shader.uniform( "uInvMatrix" );
-  uAmbientLightColor = shader.uniform( "uAmbientLightColor" );
-  uDirectionalLightColor = shader.uniform( "uDirectionalLightColor" );
-  uDirectionalLightPosition = shader.uniform( "uDirectionalLightPosition" );
-  uEyeDirection = shader.uniform( "uEyeDirection" );
-  uSpecularLightColor = shader.uniform( "uSpecularLightColor" );
-  uDiffuse = shader.uniform( "uDiffuse" );
-  uAmbient = shader.uniform( "uAmbient" );
-  uSpecular = shader.uniform( "uSpecular" );
-  uShininess = shader.uniform( "uShininess" );
- }
  model_sphere = new Array( 3 );
  model_sphere[0] = createGLModel( MODEL_SPHERE, 0.015, 0, true, useLighting );
  model_sphere[1] = createGLModel( MODEL_SPHERE, 0.015, 1, true, useLighting );
@@ -1716,7 +1680,7 @@ function paint3D( gl, glu ){
  rotate( glu );
  glu.translate( 0.0, -1.0, 15.0 );
  var projectionMatrix = glu.glMatrix();
- gl.uniformMatrix4fv( uProjectionMatrix, false, projectionMatrix );
+ gl.uniformMatrix4fv( shader.vars.uProjectionMatrix, false, projectionMatrix );
  if( useProject ){
   glu.setProjMatrix( glu.utMatrix( projectionMatrix ) );
   var camera_x = 0.0;
@@ -1735,11 +1699,11 @@ function paint3D( gl, glu ){
   glu.setViewMatrix( glu.utMatrix( modelViewMatrix ) );
  }
  if( useLighting ){
-  gl.uniform3fv(uAmbientLightColor, ambientLightColor);
-  gl.uniform3fv(uDirectionalLightColor, directionalLightColor);
-  gl.uniform3fv(uDirectionalLightPosition, directionalLightPosition);
-  gl.uniform3fv(uSpecularLightColor, specularLightColor);
-  gl.uniform3fv(uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
+  gl.uniform3fv(shader.vars.uAmbientLightColor, ambientLightColor);
+  gl.uniform3fv(shader.vars.uDirectionalLightColor, directionalLightColor);
+  gl.uniform3fv(shader.vars.uDirectionalLightPosition, directionalLightPosition);
+  gl.uniform3fv(shader.vars.uSpecularLightColor, specularLightColor);
+  gl.uniform3fv(shader.vars.uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
  }
  if( useStereo ){
   stereo.draw();
@@ -1805,12 +1769,12 @@ g.drawString( "[2]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.project
   gld.draw();
  } else {
   glu.set( glu.utMatrix( modelViewMatrix ) );
-  gl.uniformMatrix4fv( uModelViewMatrix, false, glu.glMatrix() );
+  gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, glu.glMatrix() );
   if( useLighting ){
    glu.invert();
-   gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
+   gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
    glu.transpose();
-   gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+   gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
   }
   for ( i = model_sphere[0].stripNum() - 1; i >= 0; i-- ) {
    model_sphere[0].draw( null, i, -1, false );
@@ -1827,12 +1791,12 @@ g.drawString( "[0]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.project
   glu.set( glu.utMatrix( modelViewMatrix ) );
   glu.translate( -5.0, 0.0, 0.0 );
   matrix = glu.glMatrix();
-  gl.uniformMatrix4fv( uModelViewMatrix, false, matrix );
+  gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, matrix );
   if( useLighting ){
    glu.invert();
-   gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
+   gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
    glu.transpose();
-   gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+   gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
   }
   for ( i = model_sphere[1].stripNum() - 1; i >= 0; i-- ) {
    model_sphere[1].draw( null, i, -1, false );
@@ -1850,12 +1814,12 @@ g.drawString( "[1]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.project
   glu.set( glu.utMatrix( modelViewMatrix ) );
   glu.translate( 5.0, 0.0, 0.0 );
   matrix = glu.glMatrix();
-  gl.uniformMatrix4fv( uModelViewMatrix, false, matrix );
+  gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, matrix );
   if( useLighting ){
    glu.invert();
-   gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
+   gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
    glu.transpose();
-   gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+   gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
   }
   for ( i = model_sphere[2].stripNum() - 1; i >= 0; i-- ) {
    model_sphere[2].draw( null, i, -1, false );
@@ -1886,16 +1850,16 @@ function glModelActiveTexture( gl, id ){
  return gl.TEXTURE0;
 }
 function glModelBindPositionBuffer( gl ){
- _GLShader.bindPositionBuffer( aVertexPosition );
+ _GLShader.bindPositionBuffer( shader.vars.aVertexPosition );
 }
 function glModelBindNormalBuffer( gl ){
- if( aVertexNormal != null ){
-  _GLShader.bindNormalBuffer( aVertexNormal );
+ if( shader.vars.aVertexNormal != undefined ){
+  _GLShader.bindNormalBuffer( shader.vars.aVertexNormal );
  }
 }
 function glModelBindColorBuffer( gl ){
- if( aVertexColor != null ){
-  _GLShader.bindColorBuffer( aVertexColor );
+ if( shader.vars.aVertexColor != undefined ){
+  _GLShader.bindColorBuffer( shader.vars.aVertexColor );
  }
 }
 function glModelBindTextureCoordBuffer( gl ){
@@ -1905,10 +1869,10 @@ function glModelSetTexture( gl, glt , index, tex_index ){
 }
 function glModelBeginDraw( gl, glt , index, tex_index, id, lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ){
  if( lighting ){
-  gl.uniform3fv(uDiffuse, diffuse[id]);
-  gl.uniform3fv(uAmbient, ambient[id]);
-  gl.uniform3fv(uSpecular, specular[id]);
-  gl.uniform1f(uShininess, shininess[id]);
+  gl.uniform3fv(shader.vars.uDiffuse, diffuse[id]);
+  gl.uniform3fv(shader.vars.uAmbient, ambient[id]);
+  gl.uniform3fv(shader.vars.uSpecular, specular[id]);
+  gl.uniform1f(shader.vars.uShininess, shininess[id]);
  } else {
  }
  if( material_diffuse != null ){
@@ -1934,12 +1898,12 @@ function glDrawSetModelViewMatrix( gl, mat ){
   glu.push();
   glu.set( glu.utMatrix( mat ) );
   glu.invert();
-  gl.uniformMatrix4fv( uInvMatrix, false, glu.glMatrix() );
+  gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
   glu.transpose();
-  gl.uniformMatrix4fv( uNormalMatrix, false, glu.glMatrix() );
+  gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
   glu.pop();
  }
- gl.uniformMatrix4fv( uModelViewMatrix, false, mat );
+ gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, mat );
 }
 function glStereoSetProjectionMatrix( gl, mat ){
 }
@@ -1954,7 +1918,7 @@ function glStereoDraw( gl, glu, leftFlag ){
  rotate( glu );
  rotation -= angle;
  glu.translate( 0.0, -1.0, 15.0 );
- gl.uniformMatrix4fv( uProjectionMatrix, false, glu.glMatrix() );
+ gl.uniformMatrix4fv( shader.vars.uProjectionMatrix, false, glu.glMatrix() );
  glu.pop();
  myDraw( gl, glu );
 }
