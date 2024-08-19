@@ -99,7 +99,7 @@ void word(char** buf, char* str) {
 	}
 
 	end = top;
-	while ( (*end != ' ') && (*end != ')') && (*end != '\t') && (*end != '\r') && (*end != '\n') ) {
+	while ( (*end != '\0') && (*end != ' ') && (*end != ')') && (*end != '\t') && (*end != '\r') && (*end != '\n') ) {
 		end++;
 	}
 
