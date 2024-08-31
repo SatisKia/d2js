@@ -18,6 +18,8 @@ window._USE_LAYOUTTOUCH				= false;
 
 window._USE_REQUESTANIMATIONFRAME	= false;
 
+window._USE_SKIPFRAME				= false;
+
 function canUseCanvas(){
 	return (!!document.createElement( "canvas" ).getContext);
 }
@@ -26,6 +28,8 @@ var _kill_timer = false;
 var _start_time;
 var _end_time;
 var _sleep_time;
+var _over_time = 0;
+var _need_skip_count = 0;
 
 var _canvas = null;
 var _context;
@@ -168,13 +172,25 @@ function setRepaintFunc( func ){
 }
 
 function _getSleepTime(){
-	_sleep_time = frameTime() - (_end_time - _start_time);
+	if( _USE_SKIPFRAME ){
+		_sleep_time = frameTime() * (_need_skip_count + 1) - (_over_time + (_end_time - _start_time));
+	} else {
+		_sleep_time = frameTime() - (_end_time - _start_time);
+	}
 	if( _sleep_time < 0 ){
+		_over_time = 0 - _sleep_time;
 		_sleep_time = 0;
+		_need_skip_count++;
+	} else {
+		_over_time = 0;
+		_need_skip_count = 0;
 	}
 	if( _sleep_time > frameTime() ){
 		_sleep_time = frameTime();
 	}
+}
+function needSkipCount(){
+	return _need_skip_count;
 }
 function _sleep(){
 	while( (_end_time > _start_time) && ((_end_time - _start_time) < frameTime()) ){
