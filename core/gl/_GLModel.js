@@ -3,7 +3,7 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
-#include "_GLPrimitive.h"
+#include "_GLGlobal.h"
 
 function _GLModel( id, depth, lighting ){
 	this._glp = new _GLPrimitive();
@@ -50,11 +50,11 @@ function _GLModel( id, depth, lighting ){
 	this._texture_env_mode_flag = false;
 	this._texture_env_mode = 0;
 
-	this._position_buffer = null;
-	this._normal_buffer = null;
-	this._color_buffer = null;
-	this._texture_coord_buffer = null;
-	this._strip_buffer = null;
+	this._position_buffer = _gl.createBuffer();
+	this._normal_buffer = _gl.createBuffer();
+	this._color_buffer = _gl.createBuffer();
+	this._texture_coord_buffer = _gl.createBuffer();
+	this._strip_buffer = _gl.createBuffer();
 }
 
 _GLModel.prototype = {
@@ -173,7 +173,6 @@ _GLModel.prototype = {
 		}
 
 		if( this._strip_coord[index] >= 0 ){
-			this._position_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, this._position_buffer );
 			_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._coord[this._strip_coord[index]] ), _gl.STATIC_DRAW );
 			glModelBindPositionBuffer( _gl, this._id, this._lighting );
@@ -181,7 +180,6 @@ _GLModel.prototype = {
 		}
 
 		if( (this._normal != null) && (this._strip_normal[index] >= 0) ){
-			this._normal_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, this._normal_buffer );
 			_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._normal[this._strip_normal[index]] ), _gl.STATIC_DRAW );
 			glModelBindNormalBuffer( _gl, this._id, this._lighting );
@@ -203,7 +201,6 @@ _GLModel.prototype = {
 			} else {
 				color = this._color[this._strip_color[index]];
 			}
-			this._color_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, this._color_buffer );
 			_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( color ), _gl.STATIC_DRAW );
 			glModelBindColorBuffer( _gl, this._id, this._lighting );
@@ -217,7 +214,6 @@ _GLModel.prototype = {
 			if( (this._map != null) && (this._strip_map[index] >= 0) && (tex_index >= 0) ){
 				_gl.activeTexture( glModelActiveTexture( _gl, this._id ) );
 				glt.bindTexture( _gl.TEXTURE_2D, glt.id( tex_index ) );
-				this._texture_coord_buffer = _gl.createBuffer();
 				_gl.bindBuffer( _gl.ARRAY_BUFFER, this._texture_coord_buffer );
 				_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._map[this._strip_map[index]] ), _gl.STATIC_DRAW );
 				glModelBindTextureCoordBuffer( _gl, this._id, this._lighting );
@@ -284,7 +280,6 @@ _GLModel.prototype = {
 //		}
 
 		if( glModelBeginDraw( _gl, glt, index, tex_index, this._id, this._lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ) ){
-			this._strip_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, this._strip_buffer );
 			_gl.bufferData( _gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( this._strip[index] ), _gl.STATIC_DRAW );
 			var count = _gl.getBufferParameter( _gl.ELEMENT_ARRAY_BUFFER, _gl.BUFFER_SIZE ) / 2/*UNSIGNED_SHORT*/;

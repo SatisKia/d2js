@@ -13,7 +13,7 @@ cd ..\..
 
 function %TMP%\tmp1.js %TMP%\function.js
 
-define core\gl\_GLPrimitive.h %TMP%\define.js
+define core\gl\_GLGlobal.h %TMP%\define.js
 
 string %TMP%\tmp1.js %TMP%\string.js %TMP%\strrep.bat strrep 1 1
 call %TMP%\strrep.bat > %TMP%\tmp2.js

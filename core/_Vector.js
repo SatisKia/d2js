@@ -31,16 +31,17 @@ _Vector.prototype = {
 	},
 	removeElementAt : function( index ){
 		if( (index >= 0) && (index < this.n) ){
-			for( this.i = index; this.i < this.n - 1; this.i++ ){
-				this.o[this.i] = this.o[this.i + 1];
+			this.o[index] = null;
+			for( var i = index; i < this.n - 1; i++ ){
+				this.o[i] = this.o[i + 1];
 			}
 			this.n--;
 		}
 	},
 	insertElementAt : function( obj, index ){
 		if( (index >= 0) && (index < this.n) ){
-			for( this.i = this.n - 1; this.i >= index; this.i-- ){
-				this.o[this.i + 1] = this.o[this.i];
+			for( var i = this.n - 1; i >= index; i-- ){
+				this.o[i + 1] = this.o[i];
 			}
 			this.o[index] = obj;
 			this.n++;
@@ -51,6 +52,9 @@ _Vector.prototype = {
 		this.n++;
 	},
 	removeAllElements : function(){
+		for( var i = 0; i < this.n; i++ ){
+			this.o[i] = null;
+		}
 		this.n = 0;
 	}
 };

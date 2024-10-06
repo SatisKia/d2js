@@ -5,7 +5,11 @@
 
 // コンストラクタ
 function _GLShader( vsSource, fsSource, useVars ){
-	this._program = createShaderProgram( vsSource, fsSource );
+	if( typeof glShaderError != 'undefined' ){
+		this._program = createShaderProgram( vsSource, fsSource, glShaderError );
+	} else {
+		this._program = createShaderProgram( vsSource, fsSource );
+	}
 
 	if( (useVars != undefined) && (useVars == true) ){
 		var i, j;
@@ -101,3 +105,5 @@ _GLShader.bindTextureCoordBuffer = function( attrib ){
 	_gl.vertexAttribPointer( attrib, 2, _gl.FLOAT, false, 0, 0 );
 	_gl.enableVertexAttribArray( attrib );
 };
+
+//function glShaderError( type, info ){}

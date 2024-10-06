@@ -3,7 +3,7 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
-#include "_GLPrimitive.h"
+#include "_GLGlobal.h"
 
 function _GLPrimitive(){
 	this._type = _GLPRIMITIVE_TYPE_MODEL;

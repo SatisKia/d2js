@@ -3,6 +3,8 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
+#include "_GLGlobal.h"
+
 function canUseWebGL(){
 	var canvas = document.createElement( "canvas" );
 	var context = canvas.getContext( "webgl" );
@@ -90,7 +92,7 @@ function setCanvas3DSize( _width, _height ){
 }
 
 // シェーダーの作成
-function _loadShader( type, source ){
+function _loadShader( type, source, errorFunc ){
 	var shader = _gl.createShader( type );
 
 	// シェーダーオブジェクトにソースを送信
@@ -101,15 +103,18 @@ function _loadShader( type, source ){
 
 	// コンパイルが成功したか確認する
 	if( !_gl.getShaderParameter( shader, _gl.COMPILE_STATUS ) ){
+		if( errorFunc != undefined ){
+			errorFunc( _GLSHADER_ERROR_COMPILE, _gl.getShaderInfoLog( shader ) );
+		}
 		_gl.deleteShader( shader );
 		return null;
 	}
 
 	return shader;
 }
-function createShaderProgram( vsSource, fsSource ){
-	var vertexShader = _loadShader( _gl.VERTEX_SHADER, vsSource );
-	var fragmentShader = _loadShader( _gl.FRAGMENT_SHADER, fsSource );
+function createShaderProgram( vsSource, fsSource, errorFunc ){
+	var vertexShader = _loadShader( _gl.VERTEX_SHADER, vsSource, errorFunc );
+	var fragmentShader = _loadShader( _gl.FRAGMENT_SHADER, fsSource, errorFunc );
 
 	// シェーダーの作成
 	var shaderProgram = _gl.createProgram();
@@ -119,6 +124,9 @@ function createShaderProgram( vsSource, fsSource ){
 
 	// シェーダーの作成に失敗した場合、nullを返す
 	if( !_gl.getProgramParameter( shaderProgram, _gl.LINK_STATUS ) ){
+		if( errorFunc != undefined ){
+			errorFunc( _GLSHADER_ERROR_LINK, _gl.getProgramInfoLog( shaderProgram ) );
+		}
 		return null;
 	}
 

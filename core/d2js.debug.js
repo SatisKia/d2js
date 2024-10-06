@@ -24,7 +24,7 @@ var _start_time;
 var _end_time;
 var _sleep_time;
 var _over_time = 0;
-var _need_skip_count = 0;
+var _frame_count = 1;
 var _canvas = null;
 var _context;
 var _lock;
@@ -133,24 +133,30 @@ function setRepaintFunc( func ){
 }
 function _getSleepTime(){
 	if( _USE_SKIPFRAME ){
-		_sleep_time = frameTime() * (_need_skip_count + 1) - (_over_time + (_end_time - _start_time));
+		_sleep_time = frameTime() * _frame_count - (_over_time + (_end_time - _start_time));
 	} else {
 		_sleep_time = frameTime() - (_end_time - _start_time);
 	}
 	if( _sleep_time < 0 ){
 		_over_time = 0 - _sleep_time;
 		_sleep_time = 0;
-		_need_skip_count++;
+		if( _USE_SKIPFRAME ){
+			_frame_count++;
+		}
 	} else {
 		_over_time = 0;
-		_need_skip_count = 0;
+		_frame_count = 1;
 	}
 	if( _sleep_time > frameTime() ){
 		_sleep_time = frameTime();
 	}
 }
-function needSkipCount(){
-	return _need_skip_count;
+function frameCount(){
+	return _frame_count;
+}
+function resetFrameCount(){
+	_over_time = 0;
+	_frame_count = 1;
 }
 function _sleep(){
 	while( (_end_time > _start_time) && ((_end_time - _start_time) < frameTime()) ){
@@ -1599,16 +1605,17 @@ _Vector.prototype = {
 	},
 	removeElementAt : function( index ){
 		if( (index >= 0) && (index < this.n) ){
-			for( this.i = index; this.i < this.n - 1; this.i++ ){
-				this.o[this.i] = this.o[this.i + 1];
+			this.o[index] = null;
+			for( var i = index; i < this.n - 1; i++ ){
+				this.o[i] = this.o[i + 1];
 			}
 			this.n--;
 		}
 	},
 	insertElementAt : function( obj, index ){
 		if( (index >= 0) && (index < this.n) ){
-			for( this.i = this.n - 1; this.i >= index; this.i-- ){
-				this.o[this.i + 1] = this.o[this.i];
+			for( var i = this.n - 1; i >= index; i-- ){
+				this.o[i + 1] = this.o[i];
 			}
 			this.o[index] = obj;
 			this.n++;
@@ -1619,6 +1626,9 @@ _Vector.prototype = {
 		this.n++;
 	},
 	removeAllElements : function(){
+		for( var i = 0; i < this.n; i++ ){
+			this.o[i] = null;
+		}
 		this.n = 0;
 	}
 };
@@ -2001,7 +2011,8 @@ window.d2js_onresize = d2js_onresize;
 window.setTimer = setTimer;
 window.killTimer = killTimer;
 window.setRepaintFunc = setRepaintFunc;
-window.needSkipCount = needSkipCount;
+window.frameCount = frameCount;
+window.resetFrameCount = resetFrameCount;
 window.removeMouseEvent = removeMouseEvent;
 window.addMouseEvent = addMouseEvent;
 window.setCurrent = setCurrent;

@@ -3,18 +3,19 @@
  * Copyright (C) SatisKia. All rights reserved.
  */
 
-#include "_GLPrimitive.h"
+#include "_GLGlobal.h"
 
-function _GLDrawPrimitive( p, index, tex_index, mat, trans, sort, x, y, z ){
+function _GLDrawPrimitive( p, index, tex_index, mat/*Float32Array*/, trans, sort, x, y, z ){
 	this._p = p;
 	this._index = index;
 	this._tex_index = tex_index;
-	this._mat = new Array( 16 );
-	if( mat != null ){
-		for( var i = 0; i < 16; i++ ){
-			this._mat[i] = mat[i];
-		}
-	}
+//	this._mat = new Float32Array( 16 );
+//	if( mat != null ){
+//		for( var i = 0; i < 16; i++ ){
+//			this._mat[i] = mat[i];
+//		}
+//	}
+	this._mat = mat;
 	this._trans = (trans >= 0.0) ? trans : p.transparency();
 	this._distance = 0.0;
 	if( sort ){
@@ -39,24 +40,29 @@ _GLDrawPrimitive.prototype = {
 	}
 };
 
-function _GLDraw( proj_mat ){
-	var i;
-	this._proj_mat = new Array( 16 );
-	if( proj_mat != null ){
-		for( i = 0; i < 16; i++ ){
-			this._proj_mat[i] = proj_mat[i];
-		}
-	}
+function _GLDraw( proj_mat/*Float32Array*/ ){
+//	this._proj_mat = new Float32Array( 16 );
+//	if( proj_mat != null ){
+//		for( var i = 0; i < 16; i++ ){
+//			this._proj_mat[i] = proj_mat[i];
+//		}
+//	}
+	this._proj_mat = proj_mat;
 	this._draw = new Array();
 }
 
 _GLDraw.prototype = {
 
 	clear : function(){
-		this._draw = new Array();
+		for( var i = this._draw.length - 1; i >= 0; i-- ){
+			if( this._draw[i] != null ){
+				this._draw[i] = null;
+			}
+		}
+		this._draw.length = 0;
 	},
 
-	add : function( p, index, tex_index, mat, trans ){
+	add : function( p, index, tex_index, mat/*Float32Array*/, trans ){
 		if( (p.type() == _GLPRIMITIVE_TYPE_MODEL) && (index < 0) ){
 			for( var i = p.stripNum() - 1; i >= 0; i-- ){
 				this._draw[this._draw.length] = new _GLDrawPrimitive( p, i, tex_index, mat, trans, false );
@@ -125,6 +131,11 @@ _GLDraw.prototype = {
 			glDrawSetModelViewMatrix( _gl, tmp._mat, tmp._p, tmp._index );
 			tmp.draw( glt, true );
 		}
+
+		for( i = 0; i < count; i++ ){
+			draw[i] = null;
+		}
+		draw = null;
 	}
 
 };

@@ -659,6 +659,9 @@ _GLUtility.prototype = {
 		return _matrix;
 	},
 	setViewMatrix : function( matrix ){
+		if( (matrix == null) || (matrix == undefined) ){
+			matrix = this.util_mat;
+		}
 		for( var i = 0; i < 16; i++ ){
 			this.view_mat[i] = matrix[i];
 		}

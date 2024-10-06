@@ -4,16 +4,11 @@
  */
 (function( window, undefined ){
 var document = window.document;
-function _GLDrawPrimitive( p, index, tex_index, mat, trans, sort, x, y, z ){
+function _GLDrawPrimitive( p, index, tex_index, mat , trans, sort, x, y, z ){
 	this._p = p;
 	this._index = index;
 	this._tex_index = tex_index;
-	this._mat = new Array( 16 );
-	if( mat != null ){
-		for( var i = 0; i < 16; i++ ){
-			this._mat[i] = mat[i];
-		}
-	}
+	this._mat = mat;
 	this._trans = (trans >= 0.0) ? trans : p.transparency();
 	this._distance = 0.0;
 	if( sort ){
@@ -38,20 +33,19 @@ _GLDrawPrimitive.prototype = {
 	}
 };
 function _GLDraw( proj_mat ){
-	var i;
-	this._proj_mat = new Array( 16 );
-	if( proj_mat != null ){
-		for( i = 0; i < 16; i++ ){
-			this._proj_mat[i] = proj_mat[i];
-		}
-	}
+	this._proj_mat = proj_mat;
 	this._draw = new Array();
 }
 _GLDraw.prototype = {
 	clear : function(){
-		this._draw = new Array();
+		for( var i = this._draw.length - 1; i >= 0; i-- ){
+			if( this._draw[i] != null ){
+				this._draw[i] = null;
+			}
+		}
+		this._draw.length = 0;
 	},
-	add : function( p, index, tex_index, mat, trans ){
+	add : function( p, index, tex_index, mat , trans ){
 		if( (p.type() == 0) && (index < 0) ){
 			for( var i = p.stripNum() - 1; i >= 0; i-- ){
 				this._draw[this._draw.length] = new _GLDrawPrimitive( p, i, tex_index, mat, trans, false );
@@ -111,6 +105,10 @@ _GLDraw.prototype = {
 			glDrawSetModelViewMatrix( _gl, tmp._mat, tmp._p, tmp._index );
 			tmp.draw( glt, true );
 		}
+		for( i = 0; i < count; i++ ){
+			draw[i] = null;
+		}
+		draw = null;
 	}
 };
 function canUseWebGL(){
@@ -179,24 +177,30 @@ function setCanvas3DSize( _width, _height ){
 	getCurrent3D().width = _width;
 	getCurrent3D().height = _height;
 }
-function _loadShader( type, source ){
+function _loadShader( type, source, errorFunc ){
 	var shader = _gl.createShader( type );
 	_gl.shaderSource( shader, source );
 	_gl.compileShader( shader );
 	if( !_gl.getShaderParameter( shader, _gl.COMPILE_STATUS ) ){
+		if( errorFunc != undefined ){
+			errorFunc( 0, _gl.getShaderInfoLog( shader ) );
+		}
 		_gl.deleteShader( shader );
 		return null;
 	}
 	return shader;
 }
-function createShaderProgram( vsSource, fsSource ){
-	var vertexShader = _loadShader( _gl.VERTEX_SHADER, vsSource );
-	var fragmentShader = _loadShader( _gl.FRAGMENT_SHADER, fsSource );
+function createShaderProgram( vsSource, fsSource, errorFunc ){
+	var vertexShader = _loadShader( _gl.VERTEX_SHADER, vsSource, errorFunc );
+	var fragmentShader = _loadShader( _gl.FRAGMENT_SHADER, fsSource, errorFunc );
 	var shaderProgram = _gl.createProgram();
 	_gl.attachShader( shaderProgram, vertexShader );
 	_gl.attachShader( shaderProgram, fragmentShader );
 	_gl.linkProgram( shaderProgram );
 	if( !_gl.getProgramParameter( shaderProgram, _gl.LINK_STATUS ) ){
+		if( errorFunc != undefined ){
+			errorFunc( 1, _gl.getProgramInfoLog( shaderProgram ) );
+		}
 		return null;
 	}
 	return shaderProgram;
@@ -237,11 +241,11 @@ function _GLModel( id, depth, lighting ){
 	this._strip_oz = null;
 	this._texture_env_mode_flag = false;
 	this._texture_env_mode = 0;
-	this._position_buffer = null;
-	this._normal_buffer = null;
-	this._color_buffer = null;
-	this._texture_coord_buffer = null;
-	this._strip_buffer = null;
+	this._position_buffer = _gl.createBuffer();
+	this._normal_buffer = _gl.createBuffer();
+	this._color_buffer = _gl.createBuffer();
+	this._texture_coord_buffer = _gl.createBuffer();
+	this._strip_buffer = _gl.createBuffer();
 }
 _GLModel.prototype = {
 	type : function(){
@@ -344,14 +348,12 @@ _GLModel.prototype = {
 			return;
 		}
 		if( this._strip_coord[index] >= 0 ){
-			this._position_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, this._position_buffer );
 			_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._coord[this._strip_coord[index]] ), _gl.STATIC_DRAW );
 			glModelBindPositionBuffer( _gl, this._id, this._lighting );
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
 		}
 		if( (this._normal != null) && (this._strip_normal[index] >= 0) ){
-			this._normal_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, this._normal_buffer );
 			_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._normal[this._strip_normal[index]] ), _gl.STATIC_DRAW );
 			glModelBindNormalBuffer( _gl, this._id, this._lighting );
@@ -372,7 +374,6 @@ _GLModel.prototype = {
 			} else {
 				color = this._color[this._strip_color[index]];
 			}
-			this._color_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ARRAY_BUFFER, this._color_buffer );
 			_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( color ), _gl.STATIC_DRAW );
 			glModelBindColorBuffer( _gl, this._id, this._lighting );
@@ -385,7 +386,6 @@ _GLModel.prototype = {
 			if( (this._map != null) && (this._strip_map[index] >= 0) && (tex_index >= 0) ){
 				_gl.activeTexture( glModelActiveTexture( _gl, this._id ) );
 				glt.bindTexture( _gl.TEXTURE_2D, glt.id( tex_index ) );
-				this._texture_coord_buffer = _gl.createBuffer();
 				_gl.bindBuffer( _gl.ARRAY_BUFFER, this._texture_coord_buffer );
 				_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( this._map[this._strip_map[index]] ), _gl.STATIC_DRAW );
 				glModelBindTextureCoordBuffer( _gl, this._id, this._lighting );
@@ -434,7 +434,6 @@ _GLModel.prototype = {
 			_gl.depthMask( false );
 		}
 		if( glModelBeginDraw( _gl, glt, index, tex_index, this._id, this._lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ) ){
-			this._strip_buffer = _gl.createBuffer();
 			_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, this._strip_buffer );
 			_gl.bufferData( _gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( this._strip[index] ), _gl.STATIC_DRAW );
 			var count = _gl.getBufferParameter( _gl.ELEMENT_ARRAY_BUFFER, _gl.BUFFER_SIZE ) / 2 ;
@@ -698,7 +697,11 @@ _GLPrimitive.prototype = {
 	}
 };
 function _GLShader( vsSource, fsSource, useVars ){
-	this._program = createShaderProgram( vsSource, fsSource );
+	if( typeof glShaderError != 'undefined' ){
+		this._program = createShaderProgram( vsSource, fsSource, glShaderError );
+	} else {
+		this._program = createShaderProgram( vsSource, fsSource );
+	}
 	if( (useVars != undefined) && (useVars == true) ){
 		var i, j;
 		var tmp, tmp2, tmp3, tmp4, tmp5;
@@ -1948,6 +1951,9 @@ _GLUtility.prototype = {
 		return _matrix;
 	},
 	setViewMatrix : function( matrix ){
+		if( (matrix == null) || (matrix == undefined) ){
+			matrix = this.util_mat;
+		}
 		for( var i = 0; i < 16; i++ ){
 			this.view_mat[i] = matrix[i];
 		}
@@ -2202,4 +2208,6 @@ window._GLUtilitySave = _GLUtilitySave;
 window._GLUtility = _GLUtility;
 window._GLPRIMITIVE_TYPE_MODEL = 0;
 window._GLPRIMITIVE_TYPE_SPRITE = 1;
+window._GLSHADER_ERROR_COMPILE = 0;
+window._GLSHADER_ERROR_LINK = 1;
 })( window );
