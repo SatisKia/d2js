@@ -937,11 +937,23 @@ _GLStereo.prototype = {
 		_gl.clear( mask );
 		_gl.disable( _gl.SCISSOR_TEST );
 	},
-	viewport : function(){
+	viewport : function( x, y, width, height ){
+		if( x == undefined ){
+			x = this._x;
+		}
+		if( y == undefined ){
+			y = this._y;
+		}
+		if( width == undefined ){
+			width = this._width;
+		}
+		if( height == undefined ){
+			height = this._height;
+		}
 		if( this._left ){
-			_glu.viewport( this._x, this._y, this._width / 2, this._height );
+			_glu.viewport( x, y, width / 2, height );
 		} else {
-			_glu.viewport( this._x + this._width / 2, this._y, this._width / 2, this._height );
+			_glu.viewport( x + width / 2, y, width / 2, height );
 		}
 	},
 	draw : function(){

@@ -16,6 +16,7 @@ window._USE_LAYOUTMOUSE = false;
 window._USE_LAYOUTTOUCH = false;
 window._USE_REQUESTANIMATIONFRAME = false;
 window._USE_SKIPFRAME = false;
+window._MAX_FRAMECOUNT = -1;
 function canUseCanvas(){
 	return (!!document.createElement( "canvas" ).getContext);
 }
@@ -142,10 +143,12 @@ function _getSleepTime(){
 		_sleep_time = 0;
 		if( _USE_SKIPFRAME ){
 			_frame_count++;
+			if( (_MAX_FRAMECOUNT >= 0) && (_frame_count > _MAX_FRAMECOUNT) ){
+				resetFrameCount();
+			}
 		}
 	} else {
-		_over_time = 0;
-		_frame_count = 1;
+		resetFrameCount();
 	}
 	if( _sleep_time > frameTime() ){
 		_sleep_time = frameTime();
