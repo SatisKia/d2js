@@ -960,36 +960,63 @@ _GLStereo.prototype = {
 		if( this._view_mat != null ){
 			_glu.set( _glu.utMatrix( this._view_mat ) );
 			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
-			var mat = _glu.glMatrix();
-			glStereoSetViewMatrix( _gl, mat );
-			_glu.set( _glu.utMatrix( mat ) );
+			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+			_glu.setViewMatrix();
+			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
 			_glu.translate( this._position_x, this._position_y, this._position_z );
-			_glu.setLookMatrix( _glu.get() );
+			_glu.transpose();
+			_glu.setLookMatrix();
 		}
 		this._left = true;
 		glStereoDraw( _gl, _glu, this._left );
 		if( this._view_mat != null ){
 			_glu.set( _glu.utMatrix( this._view_mat ) );
 			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
-			var mat = _glu.glMatrix();
-			glStereoSetViewMatrix( _gl, mat );
-			_glu.set( _glu.utMatrix( mat ) );
+			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+			_glu.setViewMatrix();
+			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
 			_glu.translate( this._position_x, this._position_y, this._position_z );
-			_glu.setLookMatrix( _glu.get() );
+			_glu.transpose();
+			_glu.setLookMatrix();
 		}
 		this._left = false;
 		glStereoDraw( _gl, _glu, this._left );
 	},
-	getGraphics : function( clip ){
+	getGraphics : function( originFlag ){
+		var width = this._width / 2;
 		var g = getGraphics();
-		if( clip ){
+		if( originFlag != undefined ){
 			if( this._left ){
-				g.setClip( 0, 0, this._width / 2, this._height );
+				g.setOrigin( 0, 0 );
+				g.setClip( 0, 0, width, this._height );
 			} else {
-				g.setClip( this._width / 2, 0, this._width / 2, this._height );
+				if( originFlag ){
+					g.setOrigin( width, 0 );
+					g.setClip( 0, 0, width, this._height );
+				} else {
+					g.setOrigin( 0, 0 );
+					g.setClip( width, 0, width, this._height );
+				}
+			}
+		} else {
+			g.setOrigin( 0, 0 );
+			if( this._left ){
+				g.setClip( 0, 0, width, this._height );
+			} else {
+				g.setClip( width, 0, width, this._height );
 			}
 		}
 		return g;
+	},
+	draw2D : function( g ){
+		var width = this._width / 2;
+		g.setOrigin( 0, 0 );
+		g.setClip( 0, 0, width, this._height );
+		glStereoDraw2D( g, width );
+		g.setOrigin( width, 0 );
+		g.setClip( 0, 0, width, this._height );
+		glStereoDraw2D( g, width );
+		g.setOrigin( 0, 0 );
 	}
 };
 function _GLTexture( img_array, gen_num ){
@@ -1971,6 +1998,9 @@ _GLUtility.prototype = {
 		}
 	},
 	setLookMatrix : function( matrix ){
+		if( (matrix == null) || (matrix == undefined) ){
+			matrix = this.util_mat;
+		}
 		for( var i = 0; i < 16; i++ ){
 			this.look_mat[i] = matrix[i];
 		}
