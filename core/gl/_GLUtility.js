@@ -674,8 +674,15 @@ _GLUtility.prototype = {
 			this.look_mat[i] = matrix[i];
 		}
 	},
-	spriteMatrix : function( x, y, z ){
-		this.set( this.view_mat );
+	spriteMatrix : function( x, y, z, view_flag ){
+		if( view_flag == undefined ){
+			view_flag = true;
+		}
+		if( view_flag ){
+			this.set( this.view_mat );
+		} else {
+			this.setIdentity();
+		}
 		this.translate( x, y, z );
 		this.multiply( this.look_mat );
 		return this.glMatrix();

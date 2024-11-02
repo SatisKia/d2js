@@ -126,6 +126,21 @@ _GLModel.prototype = {
 		this._texture_env_mode = mode;
 	},
 
+	colorNum : function(){
+		if( this._color == null ){
+			return 0;
+		}
+		return this._color.length;
+	},
+	setColor : function( index, r, g, b, a ){
+		for( var i = 0; i < this._color[index].length / 4; i++ ){
+			this._color[index][i * 4    ] = r;
+			this._color[index][i * 4 + 1] = g;
+			this._color[index][i * 4 + 2] = b;
+			this._color[index][i * 4 + 3] = a;
+		}
+	},
+
 	stripNum : function(){
 		return this._strip_num;
 	},

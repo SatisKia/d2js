@@ -32,8 +32,9 @@ _GLDrawPrimitive.prototype = {
 		}
 	}
 };
-function _GLDraw( proj_mat ){
+function _GLDraw( proj_mat , sprite_view_flag ){
 	this._proj_mat = proj_mat;
+	this._sprite_view_flag = (sprite_view_flag == undefined) ? true : sprite_view_flag;
 	this._draw = new Array();
 }
 _GLDraw.prototype = {
@@ -56,12 +57,12 @@ _GLDraw.prototype = {
 	},
 	addSprite : function( p, tex_index, x, y, z, trans ){
 		var index = this._draw.length;
-		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
+		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z, this._sprite_view_flag ), trans, true, x, y, z );
 		return this._draw[index]._distance;
 	},
 	addSpriteScale : function( p, tex_index, x, y, z, scale_x, scale_y, scale_z, trans ){
 		var index = this._draw.length;
-		_glu.spriteMatrix( x, y, z );
+		_glu.spriteMatrix( x, y, z, this._sprite_view_flag );
 		_glu.scale( scale_x, scale_y, scale_z );
 		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.glMatrix(), trans, true, x, y, z );
 		return this._draw[index]._distance;
@@ -307,6 +308,20 @@ _GLModel.prototype = {
 	setTextureEnvMode : function( mode ){
 		this._texture_env_mode_flag = true;
 		this._texture_env_mode = mode;
+	},
+	colorNum : function(){
+		if( this._color == null ){
+			return 0;
+		}
+		return this._color.length;
+	},
+	setColor : function( index, r, g, b, a ){
+		for( var i = 0; i < this._color[index].length / 4; i++ ){
+			this._color[index][i * 4 ] = r;
+			this._color[index][i * 4 + 1] = g;
+			this._color[index][i * 4 + 2] = b;
+			this._color[index][i * 4 + 3] = a;
+		}
 	},
 	stripNum : function(){
 		return this._strip_num;
@@ -2005,8 +2020,15 @@ _GLUtility.prototype = {
 			this.look_mat[i] = matrix[i];
 		}
 	},
-	spriteMatrix : function( x, y, z ){
-		this.set( this.view_mat );
+	spriteMatrix : function( x, y, z, view_flag ){
+		if( view_flag == undefined ){
+			view_flag = true;
+		}
+		if( view_flag ){
+			this.set( this.view_mat );
+		} else {
+			this.setIdentity();
+		}
 		this.translate( x, y, z );
 		this.multiply( this.look_mat );
 		return this.glMatrix();

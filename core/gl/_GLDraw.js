@@ -40,7 +40,7 @@ _GLDrawPrimitive.prototype = {
 	}
 };
 
-function _GLDraw( proj_mat/*Float32Array*/ ){
+function _GLDraw( proj_mat/*Float32Array*/, sprite_view_flag ){
 //	this._proj_mat = new Float32Array( 16 );
 //	if( proj_mat != null ){
 //		for( var i = 0; i < 16; i++ ){
@@ -48,6 +48,7 @@ function _GLDraw( proj_mat/*Float32Array*/ ){
 //		}
 //	}
 	this._proj_mat = proj_mat;
+	this._sprite_view_flag = (sprite_view_flag == undefined) ? true : sprite_view_flag;
 	this._draw = new Array();
 }
 
@@ -74,12 +75,12 @@ _GLDraw.prototype = {
 
 	addSprite : function( p, tex_index, x, y, z, trans ){
 		var index = this._draw.length;
-		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z ), trans, true, x, y, z );
+		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.spriteMatrix( x, y, z, this._sprite_view_flag ), trans, true, x, y, z );
 		return this._draw[index]._distance;
 	},
 	addSpriteScale : function( p, tex_index, x, y, z, scale_x, scale_y, scale_z, trans ){
 		var index = this._draw.length;
-		_glu.spriteMatrix( x, y, z );
+		_glu.spriteMatrix( x, y, z, this._sprite_view_flag );
 		_glu.scale( scale_x, scale_y, scale_z );
 		this._draw[index] = new _GLDrawPrimitive( p, -1, tex_index, _glu.glMatrix(), trans, true, x, y, z );
 		return this._draw[index]._distance;
