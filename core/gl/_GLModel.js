@@ -569,3 +569,88 @@ function createGLModel( _data, scale, id, depth, lighting ){
 //function glModelSetTexture( gl, glt/*_GLTexture*/, index, tex_index, id, lighting ){ return false; }
 //function glModelBeginDraw( gl, glt/*_GLTexture*/, index, tex_index, id, lighting, material_diffuse, material_ambient, material_emission, material_specular, material_shininess ){ return true; }
 //function glModelEndDraw( gl, glt/*_GLTexture*/, index, tex_index, id, lighting ){}
+
+/*
+■createGLModel関数に渡すデータのフォーマット
+
+;テクスチャ
+texture_num	;テクスチャの数
+REPEAT texture_num
+	texture_index	;テクスチャ・インデックス
+	material_diffuse	;0.0～1.0
+	material_ambient	;0.0～1.0
+	material_emission	;0.0～1.0
+	material_spcular	;0.0～1.0
+	material_shininess	;0.0～100.0（_GLModel内では0.0～128.0に変換される）
+END
+;モデルの平行移動
+translate_x
+translate_y
+translate_z
+;モデルの回転
+rotate_r
+rotate_x
+rotate_y
+rotate_z
+;頂点
+coord_num	;頂点のグループ数
+REPEAT coord_num
+	coord_count	;グループ毎の数
+	REPEAT coord_count
+		coord_x
+		coord_y
+		coord_z
+	END
+END
+;法線
+num	;法線のグループ数（coord_numと一致）
+REPEAT coord_num
+	normal_count	;グループ毎の数（coord_countと一致）
+	REPEAT normal_count
+		normal_x
+		normal_y
+		normal_z
+	END
+END
+;頂点カラー
+num	;頂点カラーのグループ数（coord_numと一致）
+REPEAT coord_num
+	color_count	;グループ毎の数（coord_countと一致）
+	REPEAT color_count
+		color_r	;0.0～1.0
+		color_g	;0.0～1.0
+		color_b	;0.0～1.0
+	END
+END
+;テクスチャマップ
+num	;テクスチャマップのグループ数（coord_numと一致）
+REPEAT coord_num
+	map_count	;グループ毎の数（coord_countと一致）
+	REPEAT map_count
+		map_u
+		map_v
+	END
+END
+;三角形ストリップ
+strip_num	;三角形ストリップの数
+REPEAT strip_num
+	translate_x	;三角形ストリップ毎の平行移動
+	translate_y	;三角形ストリップ毎の平行移動
+	translate_z	;三角形ストリップ毎の平行移動
+	rotate_r	;三角形ストリップ毎の回転
+	rotate_x	;三角形ストリップ毎の回転
+	rotate_y	;三角形ストリップ毎の回転
+	rotate_z	;三角形ストリップ毎の回転
+	texture_index	;テクスチャ・インデックス
+	coord_index	;頂点のグループ・インデックス
+	normal_index	;法線のグループ・インデックス（coord_indexと一致）
+	color_index	;頂点カラーのグループ・インデックス（coord_indexと一致）
+	map_index	;テクスチャマップのグループ・インデックス（coord_indexと一致）
+	length	;三角形ストリップ毎の頂点数
+	REPEAT length
+		strip_index	;頂点インデックス
+	END
+END
+tri_num	;三角形の数（createGLModelでは未参照）
+
+*/
