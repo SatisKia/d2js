@@ -10,6 +10,20 @@ function canUseWebGL(){
 	var context = canvas.getContext( "webgl" );
 	return (context != null);
 }
+function canUseWebGLDepthTexture(context){
+	if( context == undefined ){
+		var canvas = document.createElement( "canvas" );
+		context = canvas.getContext( "webgl" );
+	}
+	return (context.getExtension( "WEBGL_depth_texture" ) != null);
+}
+function canUseWebGLTextureFloat(context){
+	if( context == undefined ){
+		var canvas = document.createElement( "canvas" );
+		context = canvas.getContext( "webgl" );
+	}
+	return (context.getExtension( "OES_texture_float" ) != null);
+}
 
 var _gl;
 var _glu;

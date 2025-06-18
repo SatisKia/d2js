@@ -117,6 +117,20 @@ function canUseWebGL(){
 	var context = canvas.getContext( "webgl" );
 	return (context != null);
 }
+function canUseWebGLDepthTexture(context){
+	if( context == undefined ){
+		var canvas = document.createElement( "canvas" );
+		context = canvas.getContext( "webgl" );
+	}
+	return (context.getExtension( "WEBGL_depth_texture" ) != null);
+}
+function canUseWebGLTextureFloat(context){
+	if( context == undefined ){
+		var canvas = document.createElement( "canvas" );
+		context = canvas.getContext( "webgl" );
+	}
+	return (context.getExtension( "OES_texture_float" ) != null);
+}
 var _gl;
 var _glu;
 var _3d = null;
@@ -2254,6 +2268,8 @@ _GLUtility.prototype = {
 window._GLDrawPrimitive = _GLDrawPrimitive;
 window._GLDraw = _GLDraw;
 window.canUseWebGL = canUseWebGL;
+window.canUseWebGLDepthTexture = canUseWebGLDepthTexture;
+window.canUseWebGLTextureFloat = canUseWebGLTextureFloat;
 window.setCurrent3D = setCurrent3D;
 window.getCurrent3D = getCurrent3D;
 window.getCurrentContext3D = getCurrentContext3D;
