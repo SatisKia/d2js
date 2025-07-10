@@ -105,5 +105,21 @@ _GLShader.bindTextureCoordBuffer = function( attrib ){
 	_gl.vertexAttribPointer( attrib, 2, _gl.FLOAT, false, 0, 0 );
 	_gl.enableVertexAttribArray( attrib );
 };
+_GLShader.setIndexBuffer = function( buffer, indices ){
+	_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, buffer );
+	_gl.bufferData( _gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( indices ), _gl.STATIC_DRAW );
+	_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, null);
+};
+_GLShader.setArrayBuffer = function( buffer, data ){
+	_gl.bindBuffer( _gl.ARRAY_BUFFER, buffer );
+	_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( data ), _gl.STATIC_DRAW );
+	_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
+};
+_GLShader.bindArrayBuffer = function( attrib, buffer, stride ){
+	_gl.bindBuffer( _gl.ARRAY_BUFFER, buffer );
+	_gl.vertexAttribPointer( attrib, stride, _gl.FLOAT, false, 0, 0 );
+	_gl.enableVertexAttribArray( attrib );
+	_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
+};
 
 //function glShaderError( type, info ){}

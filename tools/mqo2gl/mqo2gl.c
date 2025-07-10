@@ -29,9 +29,244 @@ int face_num;
 int tri_num;
 int v_num;
 short* face;
-int last_index;
-int last_vertex;
-int next_reverse;
+
+// 三角形
+typedef struct {
+	int a, b, c;
+} triangle_t;
+
+// 三角形ストリップ
+typedef struct {
+	int* data;
+	int size;
+	int capacity;
+} strip_t;
+
+strip_t* strip;
+void init_strip(strip_t* strip) {
+	strip->size = 0;
+	strip->capacity = 16;
+	strip->data = (int*)malloc(sizeof(int) * strip->capacity);
+}
+void push(strip_t* strip, int value) {
+	if ( strip->size >= strip->capacity ) {
+		strip->capacity *= 2;
+		strip->data = (int*)realloc(strip->data, sizeof(int) * strip->capacity);
+	}
+	strip->data[strip->size++] = value;
+}
+void free_strip(strip_t* strip) {
+	free(strip->data);
+}
+
+void make_strip1(short* face, int face_num, int group_num, int material_num, strip_t* strip) {
+	int i;
+	int last_index = -1;
+	int last_vertex = -1;
+	int next_reverse = 0;
+	for ( i = 0; i < face_num; i++ ) {
+		if ( (face[i * 7] == group_num) && (face[i * 7 + 1] == material_num) ) {
+			if ( last_index >= 0 ) {
+				// インデックスを2個追加
+				push(strip, last_index);
+				push(strip, face[i * 7 + 3]);
+			}
+			if ( face[i * 7 + 2] == 4 ) {
+				if ( (last_vertex == 4) && (next_reverse == 1) ) {
+					// 前回が反転させた四角形の場合、反転させる
+					last_index = face[i * 7 + 3    ]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 1]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 3]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 2]; push(strip, last_index);
+					next_reverse = 1;
+				} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
+					// 前回が反転でない三角形の場合、反転させる
+					last_index = face[i * 7 + 3    ]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 1]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 3]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 2]; push(strip, last_index);
+					next_reverse = 1;
+				} else {
+					last_index = face[i * 7 + 3    ]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 3]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 1]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 2]; push(strip, last_index);
+					next_reverse = 0;
+				}
+				tri_num += 2;
+				last_vertex = 4;
+			} else {
+				if ( (last_vertex == 4) && (next_reverse == 1) ) {
+					// 前回が反転させた四角形の場合、反転させる
+					last_index = face[i * 7 + 3    ]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 1]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 2]; push(strip, last_index);
+					next_reverse = 0;
+				} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
+					// 前回が反転でない三角形の場合、反転させる
+					last_index = face[i * 7 + 3    ]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 1]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 2]; push(strip, last_index);
+					next_reverse = 0;
+				} else {
+					last_index = face[i * 7 + 3    ]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 2]; push(strip, last_index);
+					last_index = face[i * 7 + 3 + 1]; push(strip, last_index);
+					next_reverse = 1;
+				}
+				tri_num++;
+				last_vertex = 3;
+			}
+		}
+	}
+}
+
+void make_strip2(short* face, int face_num, int group_num, int material_num, strip_t* result) {
+	int i, j, k;
+
+	// まず三角形数を数える
+	int num = 0;
+	for ( i = 0; i < face_num; i++ ) {
+		if ( (face[i * 7] == group_num) && (face[i * 7 + 1] == material_num) ) {
+			int n = face[i * 7 + 2];
+			if ( n == 3 ) {
+				num++;
+			} else if ( n == 4 ) {
+				num += 2;
+			}
+		}
+	}
+
+	// 三角形リストを作成（時計回り→反時計回り）
+	triangle_t** triangles = (triangle_t**)malloc(sizeof(triangle_t*) * num);
+	num = 0;
+	for ( i = 0; i < face_num; i++ ) {
+		if ( (face[i * 7] == group_num) && (face[i * 7 + 1] == material_num) ) {
+			int n = face[i * 7 + 2];
+			if ( n == 3 ) {
+				triangles[num] = (triangle_t*)malloc(sizeof(triangle_t));
+				triangles[num]->a = face[i * 7 + 3    ];
+				triangles[num]->b = face[i * 7 + 3 + 2];
+				triangles[num]->c = face[i * 7 + 3 + 1];
+				num++;
+			} else if ( n == 4 ) {
+				int a = face[i * 7 + 3    ];
+				int b = face[i * 7 + 3 + 3];
+				int c = face[i * 7 + 3 + 2];
+				int d = face[i * 7 + 3 + 1];
+				triangles[num] = (triangle_t*)malloc(sizeof(triangle_t));
+				triangles[num]->a = a;
+				triangles[num]->b = b;
+				triangles[num]->c = c;
+				num++;
+				triangles[num] = (triangle_t*)malloc(sizeof(triangle_t));
+				triangles[num]->a = a;
+				triangles[num]->b = c;
+				triangles[num]->c = d;
+				num++;
+			}
+		}
+	}
+	tri_num += num;
+
+	// 複数ストリップ構築
+	char* used = (char*)calloc(num, sizeof(char));
+	strip_t** strips = (strip_t**)malloc(sizeof(strip_t*) * num);
+	int strips_count = 0;
+	for ( k = 0; k < num; k++ ) {
+		if ( used[k] == 1 ) {
+			continue;
+		}
+		int cur_index = k;
+		triangle_t* cur = triangles[cur_index];
+		used[cur_index] = 1;
+		strips[strips_count] = (strip_t*)malloc(sizeof(strip_t));
+		init_strip(strips[strips_count]);
+		push(strips[strips_count], cur->a);
+		push(strips[strips_count], cur->b);
+		push(strips[strips_count], cur->c);
+		// ストリップを伸ばす
+		char extended = 1;
+		while ( extended == 1 ) {
+			extended = 0;
+			// 末尾2頂点
+			int last2[2];
+			last2[0] = strips[strips_count]->data[strips[strips_count]->size - 2];
+			last2[1] = strips[strips_count]->data[strips[strips_count]->size - 1];
+			// 末尾2頂点を共有する未使用三角形を探す
+			for ( i = 0; i < num; i++ ) {
+				if ( used[i] == 1 || i == cur_index ) {
+					continue;
+				}
+				// 新しい三角形
+				int next_triangle[3];
+				next_triangle[0] = triangles[i]->a;
+				next_triangle[1] = triangles[i]->b;
+				next_triangle[2] = triangles[i]->c;
+				for ( j = 0; j < 3; j++ ) {
+					int a = next_triangle[j];
+					int b = next_triangle[(j + 1) % 3];
+					if ( (a == last2[0] && b == last2[1]) || (a == last2[1] && b == last2[0]) ) {
+						// last2の順に並ぶように新三角形の頂点を並び変える
+						int next[3];
+						if ( a == last2[0] && b == last2[1] ) {
+							next[0] = next_triangle[j];
+							next[1] = next_triangle[(j + 1) % 3];
+							next[2] = next_triangle[(j + 2) % 3];
+						} else {
+							next[0] = next_triangle[(j + 1) % 3];
+							next[1] = next_triangle[j];
+							next[2] = next_triangle[(j + 2) % 3];
+						}
+						// 追加
+						push(strips[strips_count], next[2]);
+						used[i] = 1;
+						cur_index = i;
+						cur = triangles[cur_index];
+						cur->a = next[0];
+						cur->b = next[1];
+						cur->c = next[2];
+						extended = 1;
+						break;
+					}
+				}
+				if ( extended == 1 ) {
+					break;
+				}
+			}
+		}
+		strips_count++;
+	}
+
+	// 複数ストリップを繋げる
+	for ( i = 0; i < strips_count; i++ ) {
+		if ( i > 0 ) {
+			// 前ストリップの最後の頂点
+			int prev = result->data[result->size - 1];
+			// 今ストリップの最初の頂点
+			int next = strips[i]->data[0];
+			// 縮退三角形を挟む
+			push(result, prev);
+			push(result, next);
+			// 前ストリップの長さが奇数なら、もう1つ縮退三角形を挟む
+			if ( (strips[i - 1]->size % 2) == 1 ) {
+				push(result, next);
+			}
+		}
+		for ( j = 0; j < strips[i]->size; j++ ) {
+			push(result, strips[i]->data[j]);
+		}
+		free_strip(strips[i]);
+	}
+
+	// 後始末
+	for ( i = 0; i < num; i++ ) {
+		free(triangles[i]);
+	}
+	free(triangles);
+	free(used);
+	free(strips);
+}
 
 char* progName(char* argv0) {
 	char* szTop;
@@ -281,26 +516,33 @@ int main(int argc, char* argv[]) {
 
 	int col;
 
+	int optimize_level;
 	int enter_f;
 //	int string_f;
 	int offset;
 
+	optimize_level = 0;
 	enter_f = 0;
 	string_f = 0;
 	offset = 0;
-	if ( argc > 1 ) {
-		if ( stricmp(argv[1], "-e") == 0 ) {
-			enter_f = 1;
-			offset = 1;
+	if ( argc > offset + 1 ) {
+		if ( stricmp(argv[offset + 1], "-o") == 0 ) {
+			optimize_level = 1;
+			offset++;
 		}
-		if ( stricmp(argv[1], "-s") == 0 ) {
+	}
+	if ( argc > offset + 1 ) {
+		if ( stricmp(argv[offset + 1], "-e") == 0 ) {
+			enter_f = 1;
+			offset++;
+		} else if ( stricmp(argv[offset + 1], "-s") == 0 ) {
 			string_f = 1;
-			offset = 1;
+			offset++;
 		}
 	}
 
 	if ( argc < 6 + offset ) {
-		printf("usage: %s [-e | -s] <mqo_file> <keta> <scale> <texture_file_list> <max_face_num>\n", progName(argv[0]));
+		printf("usage: %s [-o] [-e|-s] <mqo_file> <keta> <scale> <texture_file_list> <max_face_num>\n", progName(argv[0]));
 		return 0;
 	}
 
@@ -701,19 +943,15 @@ print_bc(group_num); if ( enter_f == 1 ) { printf("\n"); }
 			word(&cur, tmp2);
 			word(&cur, tmp3);
 			word(&cur, tmp4);
+			strip = (strip_t*)malloc(sizeof(strip_t));
 			for ( j = -1; j < material_num; j++ ) {
-				cnt = 0;
-				last_index = -1;
-				for ( k = 0; k < face_cnt; k++ ) {
-					if ( (face[k * 7] == i) && (face[k * 7 + 1] == j) ) {
-						if ( last_index >= 0 ) {
-							cnt += 2;
-						}
-						last_index = 0;
-						cnt += face[k * 7 + 2];
-					}
+				init_strip(strip);
+				if ( optimize_level == 0 ) {
+					make_strip1(face, face_cnt, i, j, strip);
+				} else {
+					make_strip2(face, face_cnt, i, j, strip);
 				}
-				if ( cnt > 0 ) {
+				if ( strip->size > 0 ) {
 #if 0
 					printf("%s,%s,%s,", tmp2, tmp3, tmp4); if ( enter_f == 1 ) { printf("\n"); }
 					printf("%s,0,1,0,", tmp1); if ( enter_f == 1 ) { printf("\n"); }
@@ -736,89 +974,15 @@ if ( string_f == 1 ) {
 } else {
 					printf("%d,%d,%d,%d,", i, i, i, i); if ( enter_f == 1 ) { printf("\n"); }
 }
-					print(cnt);
-					last_index = -1;
-					last_vertex = -1;
-					next_reverse = 0;
-					for ( k = 0; k < face_cnt; k++ ) {
-						if ( (face[k * 7] == i) && (face[k * 7 + 1] == j) ) {
-							if ( last_index >= 0 ) {
-								// インデックスを2個追加
-								print_fc(last_index);
-								print_fc(face[k * 7 + 3]);
-							}
-							if ( face[k * 7 + 2] == 4 ) {
-								if ( (last_vertex == 4) && (next_reverse == 1) ) {
-									// 前回が反転させた四角形の場合、反転させる
-									last_index = face[k * 7 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 1];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 2];
-									print_fc(last_index);
-									next_reverse = 1;
-								} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
-									// 前回が反転でない三角形の場合、反転させる
-									last_index = face[k * 7 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 1];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 2];
-									print_fc(last_index);
-									next_reverse = 1;
-								} else {
-									last_index = face[k * 7 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 1];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 2];
-									print_fc(last_index);
-									next_reverse = 0;
-								}
-								tri_num += 2;
-								last_vertex = 4;
-							} else {
-								if ( (last_vertex == 4) && (next_reverse == 1) ) {
-									// 前回が反転させた四角形の場合、反転させる
-									last_index = face[k * 7 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 1];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 2];
-									print_fc(last_index);
-									next_reverse = 0;
-								} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
-									// 前回が反転でない三角形の場合、反転させる
-									last_index = face[k * 7 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 1];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 2];
-									print_fc(last_index);
-									next_reverse = 0;
-								} else {
-									last_index = face[k * 7 + 3];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 2];
-									print_fc(last_index);
-									last_index = face[k * 7 + 3 + 1];
-									print_fc(last_index);
-									next_reverse = 1;
-								}
-								tri_num++;
-								last_vertex = 3;
-							}
-						}
+					print(strip->size);
+					for ( k = 0; k < strip->size; k++ ) {
+						print_fc(strip->data[k]);
 					}
 					printf(","); if ( enter_f == 1 ) { printf("\n"); }
 				}
+				free_strip(strip);
 			}
+			free(strip);
 			i++;
 		}
 
