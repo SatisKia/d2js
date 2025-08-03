@@ -314,7 +314,7 @@ void string(char** buf, char* str) {
 	}
 
 	end = top;
-	while ( *end != '"' ) {
+	while ( (*end != '\0') && (*end != '"') ) {
 		end++;
 	}
 
@@ -626,31 +626,51 @@ printf(",");
 				cur2 = line;
 				if ( find_line(&cur2, "dif(") ) {	// 拡散光 0～1
 					word(&cur2, tmp);
-					printf("%s", f(tmp, scale));
+					printf("%s", f(tmp, 1.0f));
+				} else {
+if ( string_f != 1 ) {
+	printf("0");
+}
 				}
 printf(",");
 				cur2 = line;
 				if ( find_line(&cur2, "amb(") ) {	// 周囲光 0～1
 					word(&cur2, tmp);
-					printf("%s", f(tmp, scale));
+					printf("%s", f(tmp, 1.0f));
+				} else {
+if ( string_f != 1 ) {
+	printf("0");
+}
 				}
 printf(",");
 				cur2 = line;
 				if ( find_line(&cur2, "emi(") ) {	// 自己照明 0～1
 					word(&cur2, tmp);
-					printf("%s", f(tmp, scale));
+					printf("%s", f(tmp, 1.0f));
+				} else {
+if ( string_f != 1 ) {
+	printf("0");
+}
 				}
 printf(",");
 				cur2 = line;
 				if ( find_line(&cur2, "spc(") ) {	// 反射光 0～1
 					word(&cur2, tmp);
-					printf("%s", f(tmp, scale));
+					printf("%s", f(tmp, 1.0f));
+				} else {
+if ( string_f != 1 ) {
+	printf("0");
+}
 				}
 printf(",");
 				cur2 = line;
 				if ( find_line(&cur2, "power(") ) {	// 反射光の強さ 0～100
 					word(&cur2, tmp);
-					printf("%s", f(tmp, scale));
+					printf("%s", f(tmp, 1.0f));
+				} else {
+if ( string_f != 1 ) {
+	printf("0");
+}
 				}
 printf(","); if ( enter_f == 1 ) { printf("\n"); }
 
@@ -862,7 +882,7 @@ print_bc(group_num); if ( enter_f == 1 ) { printf("\n"); }
 					sprintf(tmp1, "%f", normal_x);
 					sprintf(tmp2, "%f", normal_y);
 					sprintf(tmp3, "%f", normal_z);
-					printf("%s,%s,%s,", f(tmp1, scale), f(tmp2, scale), f(tmp3, scale)); if ( enter_f == 1 ) { printf("\n"); }
+					printf("%s,%s,%s,", f(tmp1, 1.0f), f(tmp2, 1.0f), f(tmp3, 1.0f)); if ( enter_f == 1 ) { printf("\n"); }
 				}
 				vertex_top += vertex_num;
 			}
@@ -887,7 +907,7 @@ print_bc(group_num); if ( enter_f == 1 ) { printf("\n"); }
 						sprintf(tmp1, "%f", color[vertex_top * 3 + i * 3    ]);
 						sprintf(tmp2, "%f", color[vertex_top * 3 + i * 3 + 1]);
 						sprintf(tmp3, "%f", color[vertex_top * 3 + i * 3 + 2]);
-						printf("%s,%s,%s,", f(tmp1, scale), f(tmp2, scale), f(tmp3, scale)); if ( enter_f == 1 ) { printf("\n"); }
+						printf("%s,%s,%s,", f(tmp1, 1.0f), f(tmp2, 1.0f), f(tmp3, 1.0f)); if ( enter_f == 1 ) { printf("\n"); }
 //					} else {
 //						printf("%s,%s,%s,", tmp1, tmp2, tmp3); if ( enter_f == 1 ) { printf("\n"); }
 //					}

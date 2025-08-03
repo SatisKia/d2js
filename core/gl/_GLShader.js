@@ -115,8 +115,12 @@ _GLShader.setArrayBuffer = function( buffer, data ){
 	_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( data ), _gl.STATIC_DRAW );
 	_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
 };
-_GLShader.bindArrayBuffer = function( attrib, buffer, stride ){
+_GLShader.bindArrayBuffer = function( attrib, buffer, param1, param2 ){
+	var stride = (param2 == undefined) ? param1 : param2;
 	_gl.bindBuffer( _gl.ARRAY_BUFFER, buffer );
+	if( param2 != undefined ){
+		_gl.bufferData( _gl.ARRAY_BUFFER, new Float32Array( param1 ), _gl.STATIC_DRAW );
+	}
 	_gl.vertexAttribPointer( attrib, stride, _gl.FLOAT, false, 0, 0 );
 	_gl.enableVertexAttribArray( attrib );
 	_gl.bindBuffer( _gl.ARRAY_BUFFER, null );
