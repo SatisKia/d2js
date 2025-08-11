@@ -624,7 +624,7 @@ printf("-1");
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "dif(") ) {	// 拡散光 0～1
+				if ( find_line(&cur2, "dif(") ) {	// 拡散光 0.0～1.0
 					word(&cur2, tmp);
 					printf("%s", f(tmp, 1.0f));
 				} else {
@@ -634,7 +634,7 @@ if ( string_f != 1 ) {
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "amb(") ) {	// 周囲光 0～1
+				if ( find_line(&cur2, "amb(") ) {	// 周囲光 0.0～1.0
 					word(&cur2, tmp);
 					printf("%s", f(tmp, 1.0f));
 				} else {
@@ -644,7 +644,7 @@ if ( string_f != 1 ) {
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "emi(") ) {	// 自己照明 0～1
+				if ( find_line(&cur2, "emi(") ) {	// 自己照明 0.0～1.0
 					word(&cur2, tmp);
 					printf("%s", f(tmp, 1.0f));
 				} else {
@@ -654,7 +654,7 @@ if ( string_f != 1 ) {
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "spc(") ) {	// 反射光 0～1
+				if ( find_line(&cur2, "spc(") ) {	// 反射光 0.0～1.0
 					word(&cur2, tmp);
 					printf("%s", f(tmp, 1.0f));
 				} else {
@@ -664,7 +664,7 @@ if ( string_f != 1 ) {
 				}
 printf(",");
 				cur2 = line;
-				if ( find_line(&cur2, "power(") ) {	// 反射光の強さ 0～100
+				if ( find_line(&cur2, "power(") ) {	// 反射の強さ 0.0～100.0
 					word(&cur2, tmp);
 					printf("%s", f(tmp, 1.0f));
 				} else {
