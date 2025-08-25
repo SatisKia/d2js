@@ -428,7 +428,7 @@ _GLUtility.prototype = {
 	},
 
 	/*
-	 * 三角形を検索
+	 * 三角形を検索（_GLModelオブジェクトの_stripが三角形ストリップの場合）
 	 */
 	beginGetTriangle : function(){
 		this.seek_len = 2;

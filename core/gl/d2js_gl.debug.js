@@ -247,6 +247,7 @@ function _GLModel( id, depth, lighting ){
 	this._strip_map = null;
 	this._strip_len = null;
 	this._strip = null;
+	this._strip_type = 2;
 	this._strip_tx = null;
 	this._strip_ty = null;
 	this._strip_tz = null;
@@ -298,7 +299,10 @@ _GLModel.prototype = {
 		this._map = map;
 		this._radius = radius;
 	},
-	setStrip : function( num, material , coord , normal , color , map , len , strip ){
+	setStrip : function( num, material , coord , normal , color , map , len , strip , strip_type ){
+		if( strip_type == undefined ){
+			strip_type = 2;
+		}
 		this._strip_num = num;
 		this._strip_material = material;
 		this._strip_coord = coord;
@@ -307,6 +311,7 @@ _GLModel.prototype = {
 		this._strip_map = map;
 		this._strip_len = len;
 		this._strip = strip;
+		this._strip_type = strip_type;
 	},
 	setStripTranslate : function( tx, ty, tz ){
 		this._strip_tx = tx;
@@ -466,7 +471,13 @@ _GLModel.prototype = {
 			_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, this._strip_buffer );
 			_gl.bufferData( _gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( this._strip[index] ), _gl.STATIC_DRAW );
 			var count = _gl.getBufferParameter( _gl.ELEMENT_ARRAY_BUFFER, _gl.BUFFER_SIZE ) / 2 ;
-			_gl.drawElements( _gl.TRIANGLE_STRIP, count, _gl.UNSIGNED_SHORT, 0 );
+			if( this._strip_type == 0 ){
+				_gl.drawElements( _gl.LINE_STRIP, count, _gl.UNSIGNED_SHORT, 0 );
+			} else if( this._strip_type == 1 ){
+				_gl.drawElements( _gl.LINES, count, _gl.UNSIGNED_SHORT, 0 );
+			} else if( this._strip_type == 2 ){
+				_gl.drawElements( _gl.TRIANGLE_STRIP, count, _gl.UNSIGNED_SHORT, 0 );
+			}
 			_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, null );
 			glModelEndDraw( _gl, glt, index, tex_index, this._id, this._lighting );
 		}
@@ -510,7 +521,7 @@ _GLModelData.prototype = {
 		return this._data[this._cur++];
 	}
 };
-function createGLModel( _data, scale, id, depth, lighting ){
+function createGLModel( _data, scale, id, depth, lighting, strip_type ){
 	var data;
 	if( _data instanceof _GLModelData ){
 		data = _data;
@@ -695,7 +706,7 @@ function createGLModel( _data, scale, id, depth, lighting ){
 			strip[j][k] = data.get();
 		}
 	}
-	model.setStrip(strip_num, strip_texture, strip_coord, strip_normal, strip_color, strip_map, strip_len, strip);
+	model.setStrip(strip_num, strip_texture, strip_coord, strip_normal, strip_color, strip_map, strip_len, strip, strip_type);
 	model.setStripTranslate( strip_tx, strip_ty, strip_tz );
 	model.setStripRotate( strip_or, strip_ox, strip_oy, strip_oz );
 	return model;
@@ -2308,6 +2319,9 @@ window._GLUtilitySave = _GLUtilitySave;
 window._GLUtility = _GLUtility;
 window._GLPRIMITIVE_TYPE_MODEL = 0;
 window._GLPRIMITIVE_TYPE_SPRITE = 1;
+window._GLSTRIP_TYPE_LINE_STRIP = 0;
+window._GLSTRIP_TYPE_LINES = 1;
+window._GLSTRIP_TYPE_TRIANGLE_STRIP = 2;
 window._GLSHADER_ERROR_COMPILE = 0;
 window._GLSHADER_ERROR_LINK = 1;
 })( window );

@@ -257,6 +257,7 @@ void make_strip2(short* face, int face_num, int group_num, int material_num, str
 			push(result, strips[i]->data[j]);
 		}
 		free_strip(strips[i]);
+		free(strips[i]);
 	}
 
 	// 後始末
@@ -1027,59 +1028,3 @@ if ( string_f == 1 ) {
 
 	return 0;
 }
-
-/*
-■三角形・四角形リストから三角形ストリップを作成するメモ
-
-①反転でない三角形から、三角形または四角形に繋げる場合
-
-A B C  /  D E F
- ↓        ↓反転させる
-A B C c d D F E
-A B C c d D F E G
-
-【結果】
-
-A B C / C B c / C c d / c d D / d D F / F D E
-        ~~~~~   ~~~~~   ~~~~~   ~~~~~    ↓同じ
-                 縮退三角形             D E F
-
-②反転させた三角形から、三角形または四角形に繋げる場合（①の続き）
-
-D E F  /  G H I
- ↓反転    ↓
-D F E e g G H I
-D F E e g G H I J
-
-【結果】
-
-F D E / F E e / e E g / e g G / G g H / G H I
-        ~~~~~   ~~~~~   ~~~~~   ~~~~~
-                 縮退三角形
-
-③反転させた四角形から、四角形または三角形に繋げる場合（①の続き）
-
-D E F G  /  H I J K
-  ↓反転      ↓反転させる
-D F E G g h H J I K
-D F E G g h H J I
-
-【結果】
-
-F D E / F E G / G E g / G g h / h g H / h H J / J H I
-                ~~~~~   ~~~~~   ~~~~~   ~~~~~    ↓同じ
-                         縮退三角形             H I J
-
-④反転でない四角形から、四角形または三角形に繋げる場合
-
-A B C D  /  E F G H
-  ↓          ↓
-A B C D d e E F G H
-A B C D d e E F G
-
-【結果】
-
-A B C / C B D / C D d / d D e / d e E / E e F / E F G
-                ~~~~~   ~~~~~   ~~~~~   ~~~~~
-                         縮退三角形
-*/

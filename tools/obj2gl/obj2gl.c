@@ -39,6 +39,10 @@ typedef struct {
 	double material_emission;
 	double material_spcular;
 	double material_shininess;
+
+	double color_r;
+	double color_g;
+	double color_b;
 } object_t;
 object_t** object;
 int object_num;
@@ -67,6 +71,10 @@ void new_object(object_t** data) {
 	(*data)->material_emission = 0.0f;
 	(*data)->material_spcular = 0.0f;
 	(*data)->material_shininess = 0.0f;
+
+	(*data)->color_r = 1.0f;
+	(*data)->color_g = 1.0f;
+	(*data)->color_b = 1.0f;
 }
 void free_object(object_t** data) {
 	if ( (*data)->coord != NULL ) {
@@ -213,6 +221,250 @@ void add_normal_index(char* data) {
 	object[object_num - 1]->normal_index[object[object_num - 1]->normal_index_size - 1] = atoi(data);
 }
 
+int tri_num;
+
+// 三角形
+typedef struct {
+	int a, b, c;
+} triangle_t;
+
+// 三角形ストリップ
+typedef struct {
+	int* data;
+	int size;
+	int capacity;
+} strip_t;
+
+void init_strip(strip_t* strip) {
+	strip->size = 0;
+	strip->capacity = 16;
+	strip->data = (int*)malloc(sizeof(int) * strip->capacity);
+}
+void push(strip_t* strip, int value) {
+	if ( strip->size >= strip->capacity ) {
+		strip->capacity *= 2;
+		strip->data = (int*)realloc(strip->data, sizeof(int) * strip->capacity);
+	}
+	strip->data[strip->size++] = value;
+}
+void free_strip(strip_t* strip) {
+	free(strip->data);
+}
+
+void make_strip1(int* coord_index, int coord_index_size, int coord_offset, strip_t* strip) {
+	int i = 0;
+	int last_index = -1;
+	int last_vertex = -1;
+	int next_reverse = 0;
+	while ( i < coord_index_size ) {
+		if ( last_index >= 0 ) {
+			// インデックスを2個追加
+			push(strip, last_index);
+			push(strip, coord_index[i] - 1 - coord_offset);
+		}
+		if ( coord_index[i + 2] < 0 ) {
+			if ( (last_vertex == 4) && (next_reverse == 1) ) {
+				// 前回が反転させた四角形の場合、反転させる
+				last_index =  coord_index[i    ] - 1 - coord_offset; push(strip, last_index);
+				last_index = -coord_index[i + 2] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 1] - 1 - coord_offset; push(strip, last_index);
+				i += 3;
+				next_reverse = 0;
+			} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
+				// 前回が反転でない三角形の場合、反転させる
+				last_index =  coord_index[i    ] - 1 - coord_offset; push(strip, last_index);
+				last_index = -coord_index[i + 2] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 1] - 1 - coord_offset; push(strip, last_index);
+				i += 3;
+				next_reverse = 0;
+			} else {
+				last_index =  coord_index[i    ] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 1] - 1 - coord_offset; push(strip, last_index);
+				last_index = -coord_index[i + 2] - 1 - coord_offset; push(strip, last_index);
+				i += 3;
+				next_reverse = 1;
+			}
+			tri_num++;
+			last_vertex = 3;
+		} else {
+			if ( (last_vertex == 4) && (next_reverse == 1) ) {
+				// 前回が反転させた四角形の場合、反転させる
+				last_index =  coord_index[i    ] - 1 - coord_offset; push(strip, last_index);
+				last_index = -coord_index[i + 3] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 1] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 2] - 1 - coord_offset; push(strip, last_index);
+				i += 4;
+				next_reverse = 1;
+			} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
+				// 前回が反転でない三角形の場合、反転させる
+				last_index =  coord_index[i    ] - 1 - coord_offset; push(strip, last_index);
+				last_index = -coord_index[i + 3] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 1] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 2] - 1 - coord_offset; push(strip, last_index);
+				i += 4;
+				next_reverse = 1;
+			} else {
+				last_index =  coord_index[i    ] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 1] - 1 - coord_offset; push(strip, last_index);
+				last_index = -coord_index[i + 3] - 1 - coord_offset; push(strip, last_index);
+				last_index =  coord_index[i + 2] - 1 - coord_offset; push(strip, last_index);
+				i += 4;
+				next_reverse = 0;
+			}
+			tri_num += 2;
+			last_vertex = 4;
+		}
+	}
+}
+
+void make_strip2(int* coord_index, int coord_index_size, int coord_offset, strip_t* result) {
+	int i, j, k;
+
+	// まず三角形数を数える
+	int num = 0;
+	i = 0;
+	while ( i < coord_index_size ) {
+		if ( coord_index[i + 2] < 0 ) {
+			num++;
+			i += 3;
+		} else {
+			num += 2;
+			i += 4;
+		}
+	}
+
+	// 三角形リストを作成
+	triangle_t** triangles = (triangle_t**)malloc(sizeof(triangle_t*) * num);
+	num = 0;
+	i = 0;
+	while ( i < coord_index_size ) {
+		if ( coord_index[i + 2] < 0 ) {
+			triangles[num] = (triangle_t*)malloc(sizeof(triangle_t));
+			triangles[num]->a =  coord_index[i    ] - 1 - coord_offset;
+			triangles[num]->b =  coord_index[i + 1] - 1 - coord_offset;
+			triangles[num]->c = -coord_index[i + 2] - 1 - coord_offset;
+			num++;
+			i += 3;
+		} else {
+			int a =  coord_index[i    ] - 1 - coord_offset;
+			int b =  coord_index[i + 1] - 1 - coord_offset;
+			int c = -coord_index[i + 3] - 1 - coord_offset;
+			int d =  coord_index[i + 2] - 1 - coord_offset;
+			triangles[num] = (triangle_t*)malloc(sizeof(triangle_t));
+			triangles[num]->a = a;
+			triangles[num]->b = b;
+			triangles[num]->c = c;
+			num++;
+			triangles[num] = (triangle_t*)malloc(sizeof(triangle_t));
+			triangles[num]->a = a;
+			triangles[num]->b = c;
+			triangles[num]->c = d;
+			num++;
+			i += 4;
+		}
+	}
+	tri_num += num;
+
+	// 複数ストリップ構築
+	char* used = (char*)calloc(num, sizeof(char));
+	strip_t** strips = (strip_t**)malloc(sizeof(strip_t*) * num);
+	int strips_count = 0;
+	for ( k = 0; k < num; k++ ) {
+		if ( used[k] == 1 ) {
+			continue;
+		}
+		int cur_index = k;
+		triangle_t* cur = triangles[cur_index];
+		used[cur_index] = 1;
+		strips[strips_count] = (strip_t*)malloc(sizeof(strip_t));
+		init_strip(strips[strips_count]);
+		push(strips[strips_count], cur->a);
+		push(strips[strips_count], cur->b);
+		push(strips[strips_count], cur->c);
+		// ストリップを伸ばす
+		char extended = 1;
+		while ( extended == 1 ) {
+			extended = 0;
+			// 末尾2頂点
+			int last2[2];
+			last2[0] = strips[strips_count]->data[strips[strips_count]->size - 2];
+			last2[1] = strips[strips_count]->data[strips[strips_count]->size - 1];
+			// 末尾2頂点を共有する未使用三角形を探す
+			for ( i = 0; i < num; i++ ) {
+				if ( used[i] == 1 || i == cur_index ) {
+					continue;
+				}
+				// 新しい三角形
+				int next_triangle[3];
+				next_triangle[0] = triangles[i]->a;
+				next_triangle[1] = triangles[i]->b;
+				next_triangle[2] = triangles[i]->c;
+				for ( j = 0; j < 3; j++ ) {
+					int a = next_triangle[j];
+					int b = next_triangle[(j + 1) % 3];
+					if ( (a == last2[0] && b == last2[1]) || (a == last2[1] && b == last2[0]) ) {
+						// last2の順に並ぶように新三角形の頂点を並び変える
+						int next[3];
+						if ( a == last2[0] && b == last2[1] ) {
+							next[0] = next_triangle[j];
+							next[1] = next_triangle[(j + 1) % 3];
+							next[2] = next_triangle[(j + 2) % 3];
+						} else {
+							next[0] = next_triangle[(j + 1) % 3];
+							next[1] = next_triangle[j];
+							next[2] = next_triangle[(j + 2) % 3];
+						}
+						// 追加
+						push(strips[strips_count], next[2]);
+						used[i] = 1;
+						cur_index = i;
+						cur = triangles[cur_index];
+						cur->a = next[0];
+						cur->b = next[1];
+						cur->c = next[2];
+						extended = 1;
+						break;
+					}
+				}
+				if ( extended == 1 ) {
+					break;
+				}
+			}
+		}
+		strips_count++;
+	}
+
+	// 複数ストリップを繋げる
+	for ( i = 0; i < strips_count; i++ ) {
+		if ( i > 0 ) {
+			// 前ストリップの最後の頂点
+			int prev = result->data[result->size - 1];
+			// 今ストリップの最初の頂点
+			int next = strips[i]->data[0];
+			// 縮退三角形を挟む
+			push(result, prev);
+			push(result, next);
+			// 前ストリップの長さが奇数なら、もう1つ縮退三角形を挟む
+			if ( (strips[i - 1]->size % 2) == 1 ) {
+				push(result, next);
+			}
+		}
+		for ( j = 0; j < strips[i]->size; j++ ) {
+			push(result, strips[i]->data[j]);
+		}
+		free_strip(strips[i]);
+		free(strips[i]);
+	}
+
+	// 後始末
+	for ( i = 0; i < num; i++ ) {
+		free(triangles[i]);
+	}
+	free(triangles);
+	free(used);
+	free(strips);
+}
+
 char* progName(char* argv0) {
 	char* szTop;
 	char* szTmp;
@@ -330,77 +582,11 @@ void print_bc(int val) {
 	}
 }
 
-int tri_num;
-void make_strip(int* coord_index, int coord_index_size, int offset) {
-	int i = 0;
-	int last_index = -1;
-	int last_vertex = -1;
-	int next_reverse = 0;
-	while ( i < coord_index_size ) {
-		if ( last_index >= 0 ) {
-			// インデックスを2個追加
-			print_fc(last_index);
-			print_fc(coord_index[i] - 1 - offset);
-		}
-		if ( coord_index[i + 2] < 0 ) {
-			if ( (last_vertex == 4) && (next_reverse == 1) ) {
-				// 前回が反転させた四角形の場合、反転させる
-				last_index = face[i    ] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 2] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 1] - 1 - offset; print_fc(last_index);
-				i += 3;
-				next_reverse = 0;
-			} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
-				// 前回が反転でない三角形の場合、反転させる
-				last_index = face[i    ] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 2] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 1] - 1 - offset; print_fc(last_index);
-				i += 3;
-				next_reverse = 0;
-			} else {
-				last_index = face[i    ] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 1] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 2] - 1 - offset; print_fc(last_index);
-				i += 3;
-				next_reverse = 1;
-			}
-			tri_num++;
-			last_vertex = 3;
-		} else {
-			if ( (last_vertex == 4) && (next_reverse == 1) ) {
-				// 前回が反転させた四角形の場合、反転させる
-				last_index = face[i    ] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 3] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 1] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 2] - 1 - offset; print_fc(last_index);
-				i += 4;
-				next_reverse = 1;
-			} else if ( (last_vertex == 3) && (next_reverse == 1) ) {
-				// 前回が反転でない三角形の場合、反転させる
-				last_index = face[i    ] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 3] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 1] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 2] - 1 - offset; print_fc(last_index);
-				i += 4;
-				next_reverse = 1;
-			} else {
-				last_index = face[i    ] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 1] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 3] - 1 - offset; print_fc(last_index);
-				last_index = face[i + 2] - 1 - offset; print_fc(last_index);
-				i += 4;
-				next_reverse = 0;
-			}
-			tri_num += 2;
-			last_vertex = 4;
-		}
-	}
-}
-
 int main(int argc, char* argv[]) {
-	int i, j;
+	int i, j, k, l;
 
 	double scale;
+	double ambient;
 
 	char material_file[256];
 	FILE* material_fp;
@@ -416,45 +602,62 @@ int main(int argc, char* argv[]) {
 
 	int step;
 
-	int index;
-	int offset;
+	int src_index;
+	int dst_index;
+	int tmp_size;
+	double* tmp_map;
+	double* tmp_normal;
+	int coord_offset;
+	int map_offset;
+	int normal_offset;
 
+	strip_t** strips;
+
+	int optimize_level;
 	int debug_f;
 	int enter_f;
 //	int string_f;
-	int arg_offset;
+	int offset;
 
+	optimize_level = 0;
 	debug_f = 0;
 	enter_f = 0;
 	string_f = 0;
-	arg_offset = 0;
-	if ( argc > arg_offset + 1 ) {
-		if ( strcmp(argv[arg_offset + 1], "-E") == 0 ) {
+	offset = 0;
+	if ( argc > offset + 1 ) {
+		if ( stricmp(argv[offset + 1], "-o") == 0 ) {
+			optimize_level = 1;
+			offset++;
+		}
+	}
+	if ( argc > offset + 1 ) {
+		if ( strcmp(argv[offset + 1], "-E") == 0 ) {
 			debug_f = 1;
 			enter_f = 1;
-			arg_offset++;
-		} else if ( stricmp(argv[arg_offset + 1], "-e") == 0 ) {
+			offset++;
+		} else if ( stricmp(argv[offset + 1], "-e") == 0 ) {
 			enter_f = 1;
-			arg_offset++;
-		} else if ( stricmp(argv[arg_offset + 1], "-s") == 0 ) {
+			offset++;
+		} else if ( stricmp(argv[offset + 1], "-s") == 0 ) {
 			string_f = 1;
-			arg_offset++;
+			offset++;
 		}
 	}
 
-	if ( argc < 4 + arg_offset ) {
-		printf("usage: %s [-E|-e|-s] <obj_file> <keta> <scale>\n", progName(argv[0]));
+	if ( argc < 5 + offset ) {
+		printf("usage: %s [-o] [-E|-e|-s] <obj_file> <keta> <scale> <ambient>\n", progName(argv[0]));
 		return 0;
 	}
 
-	sprintf(keta, "%%.%df", atoi(argv[2 + arg_offset]));
-	scale = atof(argv[3 + arg_offset]);
+	sprintf(keta, "%%.%df", atoi(argv[2 + offset]));
+	scale = atof(argv[3 + offset]);
+	ambient = atof(argv[4 + offset]);
 
 	object = NULL;
 	object_num = 0;
 
 	material_file[0] = '\0';
-	if ( (in = fopen(argv[1 + arg_offset], "rt")) != NULL ) {
+	if ( (in = fopen(argv[1 + offset], "rt")) != NULL ) {
 		while ( fgets2(line, 255, in) != NULL ) {
 			if ( strncmp(line, "mtllib ", 7) == 0 ) {	// mtlファイル名
 				strcpy(material_file, &line[7]);
@@ -496,6 +699,15 @@ int main(int argc, char* argv[]) {
 									add_object();
 								}
 								object[object_num - 1]->material_ambient = atof(top);
+
+								object[object_num - 1]->color_r = atof(top) / ambient;
+								top = end + 1;
+								if ( (end = strchr(top, ' ')) != NULL ) {
+									*end = '\0';
+									object[object_num - 1]->color_g = atof(top) / ambient;
+									top = end + 1;
+									object[object_num - 1]->color_b = atof(top) / ambient;
+								}
 							} else if ( strncmp(line, "Ke ", 3) == 0 ) {	// material_emission
 								top = &line[3];
 								if ( (end = strchr(top, ' ')) != NULL ) {
@@ -721,6 +933,7 @@ if ( debug_f == 1 ) {
 		printf("material_emission[%d] %f\n", i, object[i]->material_emission);
 		printf("material_spcular[%d] %f\n", i, object[i]->material_spcular);
 		printf("material_shininess[%d] %f\n", i, object[i]->material_shininess);
+		printf("color[%d] %f %f %f\n", i, object[i]->color_r, object[i]->color_g, object[i]->color_b);
 	}
 	printf("*/\n");
 }
@@ -766,82 +979,261 @@ if ( string_f == 1 ) {
 	}
 }
 
-	// 頂点
-	print_bc(object_num);
-	if ( enter_f == 1 ) {
-		printf("\n");
+	if ( g_map != NULL ) {
+		g_map_size = g_coord_size / 3 * 2;
+		tmp_map = (double*)malloc(sizeof(double) * g_map_size);
+		for ( i = 0; i < object_num; i++ ) {
+			for ( j = 0; j < object[i]->coord_index_size; j++ ) {
+				src_index = object[i]->map_index[j] - 1;
+				dst_index = abs(object[i]->coord_index[j]) - 1;
+				tmp_map[dst_index * 2    ] = g_map[src_index * 2    ];
+				tmp_map[dst_index * 2 + 1] = g_map[src_index * 2 + 1];
+			}
+		}
+		free(g_map);
+		g_map = tmp_map;
+	}
+	if ( g_normal != NULL ) {
+		g_normal_size = g_coord_size / 3 * 3;
+		tmp_normal = (double*)malloc(sizeof(double) * g_normal_size);
+		for ( i = 0; i < object_num; i++ ) {
+			for ( j = 0; j < object[i]->coord_index_size; j++ ) {
+				src_index = object[i]->normal_index[j] - 1;
+				dst_index = abs(object[i]->coord_index[j]) - 1;
+				tmp_normal[dst_index * 3    ] = g_normal[src_index * 3    ];
+				tmp_normal[dst_index * 3 + 1] = g_normal[src_index * 3 + 1];
+				tmp_normal[dst_index * 3 + 2] = g_normal[src_index * 3 + 2];
+			}
+		}
+		free(g_normal);
+		g_normal = tmp_normal;
 	}
 	for ( i = 0; i < object_num; i++ ) {
-		print_bc(object[i]->coord_size / 3);
-		for ( j = 0; j < object[i]->coord_size / 3; j++ ) {
-			sprintf(tmp, "%f", object[i]->coord[j * 3    ]); printf("%s,", f(tmp, 1.0f));
-			sprintf(tmp, "%f", object[i]->coord[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
-			sprintf(tmp, "%f", object[i]->coord[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
+		if ( object[i]->map_size > 0 ) {
+			tmp_size = object[i]->coord_size / 3 * 2;
+			tmp_map = (double*)malloc(sizeof(double) * tmp_size);
+			coord_offset = 0;
+			map_offset = 0;
+			for ( j = i - 1; j >= 0; j-- ) {
+				coord_offset += object[j]->coord_size / 3;
+				map_offset += object[j]->map_size / 2;
+			}
+			for ( j = 0; j < object[i]->coord_index_size; j++ ) {
+				src_index = object[i]->map_index[j] - 1 - map_offset;
+				dst_index = abs(object[i]->coord_index[j]) - 1 - coord_offset;
+				tmp_map[dst_index * 2    ] = object[i]->map[src_index * 2    ];
+				tmp_map[dst_index * 2 + 1] = object[i]->map[src_index * 2 + 1];
+			}
+			free(object[i]->map);
+			object[i]->map = tmp_map;
+		}
+	}
+	for ( i = 0; i < object_num; i++ ) {
+		if ( object[i]->map_size > 0 ) {
+			object[i]->map_size = object[i]->coord_size / 3 * 2;
+		}
+	}
+	for ( i = 0; i < object_num; i++ ) {
+		if ( object[i]->normal_size > 0 ) {
+			tmp_size = object[i]->coord_size / 3 * 3;
+			tmp_normal = (double*)malloc(sizeof(double) * tmp_size);
+			coord_offset = 0;
+			normal_offset = 0;
+			for ( j = i - 1; j >= 0; j-- ) {
+				coord_offset += object[j]->coord_size / 3;
+				normal_offset += object[j]->normal_size / 3;
+			}
+			for ( j = 0; j < object[i]->coord_index_size; j++ ) {
+				src_index = object[i]->normal_index[j] - 1 - normal_offset;
+				dst_index = abs(object[i]->coord_index[j]) - 1 - coord_offset;
+				tmp_normal[dst_index * 3    ] = object[i]->normal[src_index * 3    ];
+				tmp_normal[dst_index * 3 + 1] = object[i]->normal[src_index * 3 + 1];
+				tmp_normal[dst_index * 3 + 2] = object[i]->normal[src_index * 3 + 2];
+			}
+			free(object[i]->normal);
+			object[i]->normal = tmp_normal;
+		}
+	}
+	for ( i = 0; i < object_num; i++ ) {
+		if ( object[i]->normal_size > 0 ) {
+			object[i]->normal_size = object[i]->coord_size / 3 * 3;
+		}
+	}
+
+	strips = (strip_t**)malloc(sizeof(strip_t*) * object_num);
+	tri_num = 0;
+	for ( i = 0; i < object_num; i++ ) {
+		coord_offset = 0;
+		for ( j = i - 1; j >= 0; j-- ) {
+			coord_offset += object[j]->coord_size / 3;
+		}
+		strips[i] = (strip_t*)malloc(sizeof(strip_t));
+		init_strip(strips[i]);
+		if ( optimize_level == 0 ) {
+			make_strip1(object[i]->coord_index, object[i]->coord_index_size, coord_offset, strips[i]);
+		} else {
+			make_strip2(object[i]->coord_index, object[i]->coord_index_size, coord_offset, strips[i]);
+		}
+	}
+
+	// 頂点
+	if ( g_coord_size > 0 ) {
+		print_bc(1);
+		if ( enter_f == 1 ) {
+			printf("\n");
+		}
+		print_bc(g_coord_size / 3);
+		for ( j = 0; j < g_coord_size / 3; j++ ) {
+			sprintf(tmp, "%f", g_coord[j * 3    ]); printf("%s,", f(tmp, 1.0f));
+			sprintf(tmp, "%f", g_coord[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
+			sprintf(tmp, "%f", g_coord[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
 		}
 		if ( enter_f == 1 ) {
 			printf("\n");
+		}
+	} else {
+		print_bc(object_num);
+		if ( enter_f == 1 ) {
+			printf("\n");
+		}
+		for ( i = 0; i < object_num; i++ ) {
+			print_bc(object[i]->coord_size / 3);
+			for ( j = 0; j < object[i]->coord_size / 3; j++ ) {
+				sprintf(tmp, "%f", object[i]->coord[j * 3    ]); printf("%s,", f(tmp, 1.0f));
+				sprintf(tmp, "%f", object[i]->coord[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
+				sprintf(tmp, "%f", object[i]->coord[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
+			}
+			if ( enter_f == 1 ) {
+				printf("\n");
+			}
 		}
 	}
 
 	// 法線
-	print_bc(object_num);
-	if ( enter_f == 1 ) {
-		printf("\n");
-	}
-	for ( i = 0; i < object_num; i++ ) {
-		print_bc(object[i]->normal_size / 3);
-		for ( j = 0; j < object[i]->normal_size / 3; j++ ) {
-			sprintf(tmp, "%f", object[i]->normal[j * 3    ]); printf("%s,", f(tmp, 1.0f));
-			sprintf(tmp, "%f", object[i]->normal[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
-			sprintf(tmp, "%f", object[i]->normal[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
+	if ( g_normal_size > 0 ) {
+		print_bc(1);
+		if ( enter_f == 1 ) {
+			printf("\n");
+		}
+		print_bc(g_normal_size / 3);
+		for ( j = 0; j < g_normal_size / 3; j++ ) {
+			sprintf(tmp, "%f", g_normal[j * 3    ]); printf("%s,", f(tmp, 1.0f));
+			sprintf(tmp, "%f", g_normal[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
+			sprintf(tmp, "%f", g_normal[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
 		}
 		if ( enter_f == 1 ) {
 			printf("\n");
 		}
+	} else {
+		print_bc(object_num);
+		if ( enter_f == 1 ) {
+			printf("\n");
+		}
+		for ( i = 0; i < object_num; i++ ) {
+			print_bc(object[i]->normal_size / 3);
+			for ( j = 0; j < object[i]->normal_size / 3; j++ ) {
+				sprintf(tmp, "%f", object[i]->normal[j * 3    ]); printf("%s,", f(tmp, 1.0f));
+				sprintf(tmp, "%f", object[i]->normal[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
+				sprintf(tmp, "%f", object[i]->normal[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
+			}
+			if ( enter_f == 1 ) {
+				printf("\n");
+			}
+		}
 	}
 
 	// 頂点カラー
-	print_bc(object_num);
-	if ( enter_f == 1 ) {
-		printf("\n");
-	}
-	for ( i = 0; i < object_num; i++ ) {
-		print_bc(object[i]->coord_size / 3);
-		for ( j = 0; j < object[i]->coord_size / 3; j++ ) {
-			if ( object[i]->color_size == 0 ) {
-				// グレー
-				sprintf(tmp, "%f", 0.5f); printf("%s,", f(tmp, 1.0f));
-				sprintf(tmp, "%f", 0.5f); printf("%s,", f(tmp, 1.0f));
-				sprintf(tmp, "%f", 0.5f); printf("%s,", f(tmp, 1.0f));
+	if ( g_coord_size > 0 ) {
+		print_bc(1);
+		if ( enter_f == 1 ) {
+			printf("\n");
+		}
+		print_bc(g_coord_size / 3);
+		for ( j = 0; j < g_coord_size / 3; j++ ) {
+			if ( g_color_size == 0 ) {
+				for ( k = 0; k < object_num; k++ ) {
+					for ( l = 0; l < object[k]->coord_index_size; l++ ) {
+						if ( j == abs(object[k]->coord_index[l]) - 1 ) {
+							sprintf(tmp, "%f", object[k]->color_r); printf("%s,", f(tmp, 1.0f));
+							sprintf(tmp, "%f", object[k]->color_g); printf("%s,", f(tmp, 1.0f));
+							sprintf(tmp, "%f", object[k]->color_b); printf("%s,", f(tmp, 1.0f));
+							break;
+						}
+					}
+					if ( l < object[k]->coord_index_size ) {
+						break;
+					}
+				}
+				if ( k >= object_num ) {
+					sprintf(tmp, "%f", 0.0f); printf("%s,", f(tmp, 1.0f));
+					sprintf(tmp, "%f", 0.0f); printf("%s,", f(tmp, 1.0f));
+					sprintf(tmp, "%f", 0.0f); printf("%s,", f(tmp, 1.0f));
+				}
 			} else {
-				sprintf(tmp, "%f", object[i]->color[j * 3    ]); printf("%s,", f(tmp, 1.0f));
-				sprintf(tmp, "%f", object[i]->color[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
-				sprintf(tmp, "%f", object[i]->color[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
+				sprintf(tmp, "%f", g_color[j * 3    ]); printf("%s,", f(tmp, 1.0f));
+				sprintf(tmp, "%f", g_color[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
+				sprintf(tmp, "%f", g_color[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
 			}
 		}
 		if ( enter_f == 1 ) {
 			printf("\n");
 		}
+	} else {
+		print_bc(object_num);
+		if ( enter_f == 1 ) {
+			printf("\n");
+		}
+		for ( i = 0; i < object_num; i++ ) {
+			print_bc(object[i]->coord_size / 3);
+			for ( j = 0; j < object[i]->coord_size / 3; j++ ) {
+				if ( object[i]->color_size == 0 ) {
+					sprintf(tmp, "%f", object[i]->color_r); printf("%s,", f(tmp, 1.0f));
+					sprintf(tmp, "%f", object[i]->color_g); printf("%s,", f(tmp, 1.0f));
+					sprintf(tmp, "%f", object[i]->color_b); printf("%s,", f(tmp, 1.0f));
+				} else {
+					sprintf(tmp, "%f", object[i]->color[j * 3    ]); printf("%s,", f(tmp, 1.0f));
+					sprintf(tmp, "%f", object[i]->color[j * 3 + 1]); printf("%s,", f(tmp, 1.0f));
+					sprintf(tmp, "%f", object[i]->color[j * 3 + 2]); printf("%s,", f(tmp, 1.0f));
+				}
+			}
+			if ( enter_f == 1 ) {
+				printf("\n");
+			}
+		}
 	}
 
 	// テクスチャマップ
-	print_bc(object_num);
-	if ( enter_f == 1 ) {
-		printf("\n");
-	}
-	for ( i = 0; i < object_num; i++ ) {
-		print_bc(object[i]->map_size / 2);
-		for ( j = 0; j < object[i]->map_size / 2; j++ ) {
-			sprintf(tmp, "%f", object[i]->map[j * 2    ]); printf("%s,", f(tmp, 1.0f));
-			sprintf(tmp, "%f", object[i]->map[j * 2 + 1]); printf("%s,", f(tmp, 1.0f));
+	if ( g_map_size > 0 ) {
+		print_bc(1);
+		if ( enter_f == 1 ) {
+			printf("\n");
+		}
+		print_bc(g_map_size / 2);
+		for ( j = 0; j < g_map_size / 2; j++ ) {
+			sprintf(tmp, "%f", g_map[j * 2    ]); printf("%s,", f(tmp, 1.0f));
+			sprintf(tmp, "%f", g_map[j * 2 + 1]); printf("%s,", f(tmp, 1.0f));
 		}
 		if ( enter_f == 1 ) {
 			printf("\n");
 		}
+	} else {
+		print_bc(object_num);
+		if ( enter_f == 1 ) {
+			printf("\n");
+		}
+		for ( i = 0; i < object_num; i++ ) {
+			print_bc(object[i]->map_size / 2);
+			for ( j = 0; j < object[i]->map_size / 2; j++ ) {
+				sprintf(tmp, "%f", object[i]->map[j * 2    ]); printf("%s,", f(tmp, 1.0f));
+				sprintf(tmp, "%f", object[i]->map[j * 2 + 1]); printf("%s,", f(tmp, 1.0f));
+			}
+			if ( enter_f == 1 ) {
+				printf("\n");
+			}
+		}
 	}
 
 	// 三角形ストリップ
-	tri_num = 0;
 	print_bc(object_num);
 	if ( enter_f == 1 ) {
 		printf("\n");
@@ -874,21 +1266,58 @@ if ( string_f == 1 ) {
 if ( (string_f == 1) && (i == 0) ) {
 		printf(",,,,");
 } else {
-		printf("%d,", i);	// 頂点のグループ・インデックス
-		printf("%d,", i);	// 法線のグループ・インデックス
-		printf("%d,", i);	// 頂点カラーのグループ・インデックス
-		printf("%d,", i);	// テクスチャマップのグループ・インデックス
+		// 頂点のグループ・インデックス
+		if ( g_coord_size > 0 ) {
+			if ( string_f == 1 ) {
+				printf(",");
+			} else {
+				printf("0,");
+			}
+		} else {
+			printf("%d,", i);
+		}
+
+		// 法線のグループ・インデックス
+		if ( g_normal_size > 0 ) {
+			if ( string_f == 1 ) {
+				printf(",");
+			} else {
+				printf("0,");
+			}
+		} else {
+			printf("%d,", i);
+		}
+
+		// 頂点カラーのグループ・インデックス
+		if ( g_coord_size > 0 ) {
+			if ( string_f == 1 ) {
+				printf(",");
+			} else {
+				printf("0,");
+			}
+		} else {
+			printf("%d,", i);
+		}
+
+		// テクスチャマップのグループ・インデックス
+		if ( g_map_size > 0 ) {
+			if ( string_f == 1 ) {
+				printf(",");
+			} else {
+				printf("0,");
+			}
+		} else {
+			printf("%d,", i);
+		}
 }
 		if ( enter_f == 1 ) {
 			printf("\n");
 		}
 
-		print(object[i]->coord_size / 3);
-		offset = 0;
-		for ( j = i - 1; j >= 0; j-- ) {
-			offset += object[j]->coord_size / 3;
+		print(strips[i]->size);
+		for ( j = 0; j < strips[i]->size; j++ ) {
+			print_fc(strips[i]->data[j]);
 		}
-		make_strip(object[i]->coord_index, object[i]->coord_index_size, offset);
 		printf(",");
 		if ( enter_f == 1 ) {
 			printf("\n");
@@ -905,8 +1334,11 @@ if ( string_f == 1 ) {
 	// オブジェクト
 	for ( i = 0; i < object_num; i++ ) {
 		free_object(&object[i]);
+		free_strip(strips[i]);
+		free(strips[i]);
 	}
 	free(object);
+	free(strips);
 
 	// グローバル
 	if ( g_coord != NULL ) {

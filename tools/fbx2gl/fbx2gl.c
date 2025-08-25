@@ -543,27 +543,23 @@ void make_strip1(strip_t* face, strip_t* strip) {
 			last_index = face->data[i * 3 + 2]; push(strip, last_index);
 			next_reverse = 1;
 		}
-		tri_num++;
 	}
+	tri_num += face_num;
 }
 
 void make_strip2(strip_t* face, strip_t* result) {
 	int face_num = face->size / 3;
 	int i, j, k;
 
-	int num;
-
 	// 三角形リストを作成
 	triangle_t** triangles = (triangle_t**)malloc(sizeof(triangle_t*) * face_num);
-	num = 0;
 	for ( i = 0; i < face_num; i++ ) {
 		triangles[i] = (triangle_t*)malloc(sizeof(triangle_t));
 		triangles[i]->a = face->data[i * 3    ];
 		triangles[i]->b = face->data[i * 3 + 1];
 		triangles[i]->c = face->data[i * 3 + 2];
-		num++;
 	}
-	tri_num += num;
+	tri_num += face_num;
 
 	// 複数ストリップ構築
 	char* used = (char*)calloc(face_num, sizeof(char));
@@ -653,6 +649,7 @@ void make_strip2(strip_t* face, strip_t* result) {
 			push(result, strips[i]->data[j]);
 		}
 		free_strip(strips[i]);
+		free(strips[i]);
 	}
 
 	// 後始末
@@ -809,6 +806,7 @@ int main(int argc, char* argv[]) {
 	int mode;
 	int mode_sub;
 	int a_f;
+	int a_mode;
 
 	int texture_index;
 
@@ -863,6 +861,7 @@ int main(int argc, char* argv[]) {
 
 	if ( (in = fopen(argv[1 + offset], "rt")) != NULL ) {
 		mode = -1;
+		a_mode = -1;
 		while ( fgets2(line, line_len - 1, in) != NULL ) {
 			if ( strncmp(line, "\tGeometry: ", 11) == 0 ) {
 				mode = 0; // Geometry取り込みモード
@@ -930,222 +929,131 @@ int main(int argc, char* argv[]) {
 						mode_sub = -1;
 					} else {
 						if ( strstr(line, "Colors: ") != NULL ) {
-							a_f = 0;
-							while ( fgets2(line, line_len - 1, in) != NULL ) {
-								if ( strncmp(line, "\t\t\t}", 4) == 0 ) {
-									break;
-								}
-								if ( (top = strstr(line, "a: ")) != NULL ) {
-									a_f = 1;
-									top += 3;
-								} else {
-									top = line;
-								}
-								if ( a_f == 1 ) {
-									while ( 1 ) {
-										if ( (end = strchr(top, ',')) != NULL ) {
-											*end = '\0';
-											strncpy(tmp1, top, 63); tmp1[63] = '\0';
-											add_geometry_colors(tmp1);
-											top = &end[1];
-											if ( *top == '\0' ) {
-												break;
-											}
-										} else {
-											strncpy(tmp1, top, 63); tmp1[63] = '\0';
-											if ( strchr(tmp1, '}') != NULL ) {
-												break;
-											}
-											add_geometry_colors(tmp1);
-											break;
-										}
-									}
-								}
-							}
+							a_mode = 2;
 						}
 						if ( strstr(line, "ColorIndex: ") != NULL ) {
-							a_f = 0;
-							while ( fgets2(line, line_len - 1, in) != NULL ) {
-								if ( strncmp(line, "\t\t\t}", 4) == 0 ) {
-									break;
-								}
-								if ( (top = strstr(line, "a: ")) != NULL ) {
-									a_f = 1;
-									top += 3;
-								} else {
-									top = line;
-								}
-								if ( a_f == 1 ) {
-									while ( 1 ) {
-										if ( (end = strchr(top, ',')) != NULL ) {
-											*end = '\0';
-											strncpy(tmp1, top, 63); tmp1[63] = '\0';
-											add_geometry_color_index(tmp1);
-											top = &end[1];
-											if ( *top == '\0' ) {
-												break;
-											}
-										} else {
-											strncpy(tmp1, top, 63); tmp1[63] = '\0';
-											if ( strchr(tmp1, '}') != NULL ) {
-												break;
-											}
-											add_geometry_color_index(tmp1);
-											break;
-										}
-									}
-								}
-							}
+							a_mode = 3;
 						}
 					}
-				}
-				if ( mode_sub == 1 ) { // LayerElementUV取り込みサブモード
+				} else if ( mode_sub == 1 ) { // LayerElementUV取り込みサブモード
 					if ( strncmp(line, "\t\t}", 3) == 0 ) {
 						mode_sub = -1;
 					} else {
 						if ( strstr(line, "UV: ") != NULL ) {
-							a_f = 0;
-							while ( fgets2(line, line_len - 1, in) != NULL ) {
-								if ( strncmp(line, "\t\t\t}", 4) == 0 ) {
-									break;
-								}
-								if ( (top = strstr(line, "a: ")) != NULL ) {
-									a_f = 1;
-									top += 3;
-								} else {
-									top = line;
-								}
-								if ( a_f == 1 ) {
-									while ( 1 ) {
-										if ( (end = strchr(top, ',')) != NULL ) {
-											*end = '\0';
-											strncpy(tmp1, top, 63); tmp1[63] = '\0';
-											add_geometry_uv(tmp1);
-											top = &end[1];
-											if ( *top == '\0' ) {
-												break;
-											}
-										} else {
-											strncpy(tmp1, top, 63); tmp1[63] = '\0';
-											if ( strchr(tmp1, '}') != NULL ) {
-												break;
-											}
-											add_geometry_uv(tmp1);
-											break;
-										}
-									}
-								}
-							}
+							a_mode = 4;
 						}
 						if ( strstr(line, "UVIndex: ") != NULL ) {
-							a_f = 0;
-							while ( fgets2(line, line_len - 1, in) != NULL ) {
-								if ( strncmp(line, "\t\t\t}", 4) == 0 ) {
-									break;
-								}
-								if ( (top = strstr(line, "a: ")) != NULL ) {
-									a_f = 1;
-									top += 3;
-								} else {
-									top = line;
-								}
-								if ( a_f == 1 ) {
-									while ( 1 ) {
-										if ( (end = strchr(top, ',')) != NULL ) {
-											*end = '\0';
-											strncpy(tmp1, top, 63); tmp1[63] = '\0';
-											add_geometry_uv_index(tmp1);
-											top = &end[1];
-											if ( *top == '\0' ) {
-												break;
-											}
-										} else {
-											strncpy(tmp1, top, 63); tmp1[63] = '\0';
-											if ( strchr(tmp1, '}') != NULL ) {
-												break;
-											}
-											add_geometry_uv_index(tmp1);
-											break;
-										}
-									}
-								}
-							}
+							a_mode = 5;
 						}
 					}
 				}
 				if ( strstr(line, "Vertices: ") != NULL ) {
-					a_f = 0;
-					while ( fgets2(line, line_len - 1, in) != NULL ) {
-						if ( strncmp(line, "\t\t}", 3) == 0 ) {
-							break;
-						}
-						if ( (top = strstr(line, "a: ")) != NULL ) {
-							a_f = 1;
-							top += 3;
-						} else {
-							top = line;
-						}
-						if ( a_f == 1 ) {
-							while ( 1 ) {
-								if ( (end = strchr(top, ',')) != NULL ) {
-									*end = '\0';
-									strncpy(tmp1, top, 63); tmp1[63] = '\0';
-									add_geometry_vertices(tmp1);
-									top = &end[1];
-									if ( *top == '\0' ) {
-										break;
-									}
-								} else {
-									strncpy(tmp1, top, 63); tmp1[63] = '\0';
-									if ( strchr(tmp1, '}') != NULL ) {
-										break;
-									}
-									add_geometry_vertices(tmp1);
-									break;
-								}
-							}
-						}
-					}
+					a_mode = 0;
 				}
 				if ( strstr(line, "PolygonVertexIndex: ") != NULL ) {
-					a_f = 0;
-					while ( fgets2(line, line_len - 1, in) != NULL ) {
-						if ( strncmp(line, "\t\t}", 3) == 0 ) {
-							break;
-						}
-						if ( (top = strstr(line, "a: ")) != NULL ) {
-							a_f = 1;
-							top += 3;
-						} else {
-							top = line;
-						}
-						if ( a_f == 1 ) {
-							while ( 1 ) {
-								if ( (end = strchr(top, ',')) != NULL ) {
-									*end = '\0';
-									strncpy(tmp1, top, 63); tmp1[63] = '\0';
-									add_geometry_vertex_index(tmp1);
-									top = &end[1];
-									if ( *top == '\0' ) {
-										break;
-									}
-								} else {
-									strncpy(tmp1, top, 63); tmp1[63] = '\0';
-									if ( strchr(tmp1, '}') != NULL ) {
-										break;
-									}
-									add_geometry_vertex_index(tmp1);
-									break;
-								}
-							}
-						}
-					}
+					a_mode = 1;
 				}
 				if ( strstr(line, "LayerElementColor: ") != NULL ) {
 					mode_sub = 0; // LayerElementColor取り込みサブモード
 				}
 				if ( strstr(line, "LayerElementUV: ") != NULL ) {
 					mode_sub = 1; // LayerElementUV取り込みサブモード
+				}
+				if ( a_mode >= 0 ) {
+					a_f = 0;
+					while ( fgets2(line, line_len - 1, in) != NULL ) {
+						if ( a_mode == 0 ) { // Vertices
+							if ( strncmp(line, "\t\t}", 3) == 0 ) {
+								break;
+							}
+						}
+						if ( a_mode == 1 ) { // PolygonVertexIndex
+							if ( strncmp(line, "\t\t}", 3) == 0 ) {
+								break;
+							}
+						}
+						if ( a_mode == 2 ) { // Colors
+							if ( strncmp(line, "\t\t\t}", 4) == 0 ) {
+								break;
+							}
+						}
+						if ( a_mode == 3 ) { // ColorIndex
+							if ( strncmp(line, "\t\t\t}", 4) == 0 ) {
+								break;
+							}
+						}
+						if ( a_mode == 4 ) { // UV
+							if ( strncmp(line, "\t\t\t}", 4) == 0 ) {
+								break;
+							}
+						}
+						if ( a_mode == 5 ) { // UVIndex
+							if ( strncmp(line, "\t\t\t}", 4) == 0 ) {
+								break;
+							}
+						}
+						if ( (top = strstr(line, "a: ")) != NULL ) {
+							a_f = 1;
+							top += 3;
+						} else {
+							top = line;
+						}
+						if ( a_f == 1 ) {
+							while ( 1 ) {
+								if ( (end = strchr(top, ',')) != NULL ) {
+									*end = '\0';
+									strncpy(tmp1, top, 63); tmp1[63] = '\0';
+									if ( a_mode == 0 ) { // Vertices
+										add_geometry_vertices(tmp1);
+									}
+									if ( a_mode == 1 ) { // PolygonVertexIndex
+										add_geometry_vertex_index(tmp1);
+									}
+									if ( a_mode == 2 ) { // Colors
+										add_geometry_colors(tmp1);
+									}
+									if ( a_mode == 3 ) { // ColorIndex
+										add_geometry_color_index(tmp1);
+									}
+									if ( a_mode == 4 ) { // UV
+										add_geometry_uv(tmp1);
+									}
+									if ( a_mode == 5 ) { // UVIndex
+										add_geometry_uv_index(tmp1);
+									}
+									top = &end[1];
+									if ( *top == '\0' ) {
+										break;
+									}
+								} else {
+									strncpy(tmp1, top, 63); tmp1[63] = '\0';
+									if ( strchr(tmp1, '}') != NULL ) {
+										break;
+									}
+									if ( a_mode == 0 ) { // Vertices
+										add_geometry_vertices(tmp1);
+									}
+									if ( a_mode == 1 ) { // PolygonVertexIndex
+										add_geometry_vertex_index(tmp1);
+									}
+									if ( a_mode == 2 ) { // Colors
+										add_geometry_colors(tmp1);
+									}
+									if ( a_mode == 3 ) { // ColorIndex
+										add_geometry_color_index(tmp1);
+									}
+									if ( a_mode == 4 ) { // UV
+										add_geometry_uv(tmp1);
+									}
+									if ( a_mode == 5 ) { // UVIndex
+										add_geometry_uv_index(tmp1);
+									}
+									break;
+								}
+							}
+						}
+					}
+					a_mode = -1;
 				}
 			} else if ( mode == 1 ) { // Model取り込みモード
 				if ( (top = strstr(line, "P: ")) != NULL ) {
@@ -1547,9 +1455,9 @@ if ( string_f == 1 ) {
 		int color_index  = 0;
 		int uv_index     = 0;
 		for ( j = 0; j < geometry[i]->vertex_index_size; j++ ) {
-			int vertex_index = abs(geometry[i]->vertex_index[j]);
-			if ( vertex_index >= geometry[i]->vertices_size / 3 ) {
-				vertex_index = 0;
+			int vertex_index = geometry[i]->vertex_index[j];
+			if ( vertex_index < 0 ) {
+				vertex_index = -vertex_index - 1;
 			}
 
 			// 法線
@@ -1570,6 +1478,11 @@ if ( string_f == 1 ) {
 				colors[i][vertex_index * 4 + 2] = geometry[i]->colors[geometry[i]->color_index[color_index] * 4 + 2];
 				colors[i][vertex_index * 4 + 3] = geometry[i]->colors[geometry[i]->color_index[color_index] * 4 + 3];
 				color_index++;
+			} else {
+				colors[i][vertex_index * 4    ] = 0.5f;
+				colors[i][vertex_index * 4 + 1] = 0.5f;
+				colors[i][vertex_index * 4 + 2] = 0.5f;
+				colors[i][vertex_index * 4 + 3] = 1.0f;
 			}
 
 			// UV
@@ -1586,9 +1499,9 @@ if ( string_f == 1 ) {
 		strip_t* poly = (strip_t*)malloc(sizeof(strip_t));
 		init_strip(poly);
 		for ( j = 0; j < geometry[i]->vertex_index_size; j++ ) {
-			int vertex_index = abs(geometry[i]->vertex_index[j]);
-			if ( vertex_index >= geometry[i]->vertices_size / 3 ) {
-				vertex_index = 0;
+			int vertex_index = geometry[i]->vertex_index[j];
+			if ( vertex_index < 0 ) {
+				vertex_index = -vertex_index - 1;
 			}
 			push(poly, vertex_index);
 			if (geometry[i]->vertex_index[j] < 0) {
@@ -1852,9 +1765,10 @@ if ( string_f == 1 ) {
 
 	for ( i = 0; i < geometry_num; i++ ) {
 		free(normals[i]);
-		free(colors [i]);
-		free(uv     [i]);
-		free(strips [i]);
+		free(colors[i]);
+		free(uv[i]);
+		free_strip(strips[i]);
+		free(strips[i]);
 	}
 	free(normals);
 	free(colors);
