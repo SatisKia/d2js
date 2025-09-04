@@ -385,23 +385,52 @@ function createGLModel( _data, scale, id, depth, lighting, strip_type ){
 	var material_emi = new Array(texture_num * 4);
 	var material_spc = new Array(texture_num * 4);
 	var material_power = new Array(texture_num);
+	var material_val;
 	for ( i = 0; i < texture_num; i++ ) {
 		texture_index[i] = data.get();
-		material_dif[i * 4] = data.get();
-		material_dif[i * 4 + 1] = material_dif[i * 4];
-		material_dif[i * 4 + 2] = material_dif[i * 4];
+		material_val = data.get();
+		if ( material_val < 0.0 ) {
+			material_dif[i * 4    ] = data.get();
+			material_dif[i * 4 + 1] = data.get();
+			material_dif[i * 4 + 2] = data.get();
+		} else {
+			material_dif[i * 4    ] = material_val;
+			material_dif[i * 4 + 1] = material_dif[i * 4];
+			material_dif[i * 4 + 2] = material_dif[i * 4];
+		}
 		material_dif[i * 4 + 3] = 1.0;
-		material_amb[i * 4] = data.get();
-		material_amb[i * 4 + 1] = material_amb[i * 4];
-		material_amb[i * 4 + 2] = material_amb[i * 4];
+		material_val = data.get();
+		if ( material_val < 0.0 ) {
+			material_amb[i * 4    ] = data.get();
+			material_amb[i * 4 + 1] = data.get();
+			material_amb[i * 4 + 2] = data.get();
+		} else {
+			material_amb[i * 4    ] = material_val;
+			material_amb[i * 4 + 1] = material_amb[i * 4];
+			material_amb[i * 4 + 2] = material_amb[i * 4];
+		}
 		material_amb[i * 4 + 3] = 1.0;
-		material_emi[i * 4] = data.get();
-		material_emi[i * 4 + 1] = material_emi[i * 4];
-		material_emi[i * 4 + 2] = material_emi[i * 4];
+		material_val = data.get();
+		if ( material_val < 0.0 ) {
+			material_emi[i * 4    ] = data.get();
+			material_emi[i * 4 + 1] = data.get();
+			material_emi[i * 4 + 2] = data.get();
+		} else {
+			material_emi[i * 4    ] = material_val;
+			material_emi[i * 4 + 1] = material_emi[i * 4];
+			material_emi[i * 4 + 2] = material_emi[i * 4];
+		}
 		material_emi[i * 4 + 3] = 1.0;
-		material_spc[i * 4] = data.get();
-		material_spc[i * 4 + 1] = material_spc[i * 4];
-		material_spc[i * 4 + 2] = material_spc[i * 4];
+		material_val = data.get();
+		if ( material_val < 0.0 ) {
+			material_spc[i * 4    ] = data.get();
+			material_spc[i * 4 + 1] = data.get();
+			material_spc[i * 4 + 2] = data.get();
+		} else {
+			material_spc[i * 4    ] = material_val;
+			material_spc[i * 4 + 1] = material_spc[i * 4];
+			material_spc[i * 4 + 2] = material_spc[i * 4];
+		}
 		material_spc[i * 4 + 3] = 1.0;
 		material_power[i] = data.get() * 128.0 / 100.0;
 	}

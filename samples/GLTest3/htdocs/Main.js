@@ -1693,6 +1693,12 @@ function paint3D( gl, glu ){
  } else {
   glu.setIdentity();
  }
+ var viewMatrix = glu.glMatrix();
+ glu.push();
+ glu.set(glu.utMatrix(projectionMatrix));
+ glu.multiply(glu.utMatrix(viewMatrix));
+ var viewProjMatrix = glu.glMatrix();
+ glu.pop();
  glu.translate( 0.0, 1.0, -15.0 );
  modelViewMatrix = glu.glMatrix();
  if( useProject ){
@@ -1703,7 +1709,8 @@ function paint3D( gl, glu ){
   gl.uniform3fv(shader.vars.uDirectionalLightColor, directionalLightColor);
   gl.uniform3fv(shader.vars.uDirectionalLightPosition, directionalLightPosition);
   gl.uniform3fv(shader.vars.uSpecularLightColor, specularLightColor);
-  gl.uniform3fv(shader.vars.uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
+  glu.normalize(-viewProjMatrix[2], -viewProjMatrix[6], -viewProjMatrix[10]);
+  gl.uniform3fv(shader.vars.uEyeDirection, [glu.normalize_x, glu.normalize_y, glu.normalize_z]);
  }
  if( useStereo ){
   stereo.draw();

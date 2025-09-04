@@ -207,6 +207,12 @@ function paint3D( gl, glu ){
 	} else {
 		glu.setIdentity();
 	}
+	var viewMatrix = glu.glMatrix();	// ビュー座標変換行列
+	glu.push();
+	glu.set(glu.utMatrix(projectionMatrix));
+	glu.multiply(glu.utMatrix(viewMatrix));
+	var viewProjMatrix = glu.glMatrix();	// ビュー×プロジェクション座標変換行列
+	glu.pop();
 	glu.translate( 0.0, 1.0, -15.0 );
 	modelViewMatrix = glu.glMatrix();	// モデル座標変換行列
 	if( useProject ){
@@ -228,25 +234,8 @@ function paint3D( gl, glu ){
 		gl.uniform3fv(shader.vars.uDirectionalLightPosition, directionalLightPosition);
 		gl.uniform3fv(shader.vars.uSpecularLightColor, specularLightColor);
 
-		/*
-		 * OpenGL用行列の配列データ
-		 * [m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15]
-		 * の並びは次のようになっている
-		 * | m0 m4 m8  m12 |
-		 * | m1 m5 m9  m13 |
-		 * | m2 m6 m10 m14 |
-		 * | m3 m7 m11 m15 |
-		 * 視線ベクトルは(-m2,-m6,-m10)
-		 */
-/*
-		glu.push();
-		glu.setIdentity();
-		rotate( glu );
-		var matrix = glu.glMatrix();
-		glu.pop();
-		gl.uniform3fv(shader.vars.uEyeDirection, [matrix[2], matrix[6], matrix[10]]);
-*/
-		gl.uniform3fv(shader.vars.uEyeDirection, [-projectionMatrix[2], -projectionMatrix[6], -projectionMatrix[10]]);
+		glu.normalize(-viewProjMatrix[2], -viewProjMatrix[6], -viewProjMatrix[10]);
+		gl.uniform3fv(shader.vars.uEyeDirection, [glu.normalize_x, glu.normalize_y, glu.normalize_z]);
 	}
 
 	if( useStereo ){

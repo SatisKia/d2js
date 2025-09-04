@@ -181,10 +181,18 @@ void print_model() {
 // Material
 typedef struct {
 	char* material_id;
-	double emissive;
-	double ambient;
-	double diffuse;
-	double specular;
+	double emissive_r;
+	double emissive_g;
+	double emissive_b;
+	double ambient_r;
+	double ambient_g;
+	double ambient_b;
+	double diffuse_r;
+	double diffuse_g;
+	double diffuse_b;
+	double specular_r;
+	double specular_g;
+	double specular_b;
 	double shininess;
 } material_t;
 material_t** material;
@@ -192,10 +200,18 @@ int material_num;
 void new_material(material_t** data) {
 	*data = (material_t*)malloc(sizeof(material_t));
 	(*data)->material_id = NULL;
-	(*data)->emissive = 0.0f;
-	(*data)->ambient = 0.0f;
-	(*data)->diffuse = 0.0f;
-	(*data)->specular = 0.0f;
+	(*data)->emissive_r = 0.0f;
+	(*data)->emissive_g = 0.0f;
+	(*data)->emissive_b = 0.0f;
+	(*data)->ambient_r = 0.0f;
+	(*data)->ambient_g = 0.0f;
+	(*data)->ambient_b = 0.0f;
+	(*data)->diffuse_r = 0.0f;
+	(*data)->diffuse_g = 0.0f;
+	(*data)->diffuse_b = 0.0f;
+	(*data)->specular_r = 0.0f;
+	(*data)->specular_g = 0.0f;
+	(*data)->specular_b = 0.0f;
 	(*data)->shininess = 0.0f;
 }
 void free_material(material_t** data) {
@@ -210,10 +226,10 @@ void print_material() {
 		if ( material[i]->material_id != NULL ) {
 			printf("material_id[%d] %s\n", i, material[i]->material_id);
 		}
-		printf("emissive[%d] %f\n", i, material[i]->emissive);
-		printf("ambient[%d] %f\n", i, material[i]->ambient);
-		printf("diffuse[%d] %f\n", i, material[i]->diffuse);
-		printf("specular[%d] %f\n", i, material[i]->specular);
+		printf("emissive[%d] %f,%f,%f\n", i, material[i]->emissive_r, material[i]->emissive_g, material[i]->emissive_b);
+		printf("ambient[%d] %f,%f,%f\n", i, material[i]->ambient_r, material[i]->ambient_g, material[i]->ambient_b);
+		printf("diffuse[%d] %f,%f,%f\n", i, material[i]->diffuse_r, material[i]->diffuse_g, material[i]->diffuse_b);
+		printf("specular[%d] %f,%f,%f\n", i, material[i]->specular_r, material[i]->specular_g, material[i]->specular_b);
 		printf("shininess[%d] %f\n", i, material[i]->shininess);
 	}
 }
@@ -1150,23 +1166,65 @@ int main(int argc, char* argv[]) {
 									top = &end[1];
 									if ( (end = strchr(top, ',')) != NULL ) {
 										*end = '\0';
-									}
-									switch ( mode_sub ) {
-									case 0:
-										material[material_num - 1]->emissive = atof(top);
-										break;
-									case 1:
-										material[material_num - 1]->ambient = atof(top);
-										break;
-									case 2:
-										material[material_num - 1]->diffuse = atof(top);
-										break;
-									case 3:
-										material[material_num - 1]->specular = atof(top);
-										break;
-									case 4:
-										material[material_num - 1]->shininess = atof(top);
-										break;
+										switch ( mode_sub ) {
+										case 0:
+											material[material_num - 1]->emissive_r = atof(top);
+											break;
+										case 1:
+											material[material_num - 1]->ambient_r = atof(top);
+											break;
+										case 2:
+											material[material_num - 1]->diffuse_r = atof(top);
+											break;
+										case 3:
+											material[material_num - 1]->specular_r = atof(top);
+											break;
+										case 4:
+											material[material_num - 1]->shininess = atof(top);
+											break;
+										}
+										top = &end[1];
+										if ( (end = strchr(top, ',')) != NULL ) {
+											*end = '\0';
+											switch ( mode_sub ) {
+											case 0:
+												material[material_num - 1]->emissive_g = atof(top);
+												break;
+											case 1:
+												material[material_num - 1]->ambient_g = atof(top);
+												break;
+											case 2:
+												material[material_num - 1]->diffuse_g = atof(top);
+												break;
+											case 3:
+												material[material_num - 1]->specular_g = atof(top);
+												break;
+											}
+											top = &end[1];
+											if ( (end = strchr(top, ',')) != NULL ) {
+												*end = '\0';
+											}
+											switch ( mode_sub ) {
+											case 0:
+												material[material_num - 1]->emissive_b = atof(top);
+												break;
+											case 1:
+												material[material_num - 1]->ambient_b = atof(top);
+												break;
+											case 2:
+												material[material_num - 1]->diffuse_b = atof(top);
+												break;
+											case 3:
+												material[material_num - 1]->specular_b = atof(top);
+												break;
+											}
+										}
+									} else {
+										switch ( mode_sub ) {
+										case 4:
+											material[material_num - 1]->shininess = atof(top);
+											break;
+										}
 									}
 								}
 							}
@@ -1407,11 +1465,23 @@ if ( string_f == 1 ) {
 			}
 		}
 		print_bc(texture_index);
-		sprintf(tmp1, "%f", material[i]->diffuse  ); printf("%s,", f(tmp1, 1.0f));
-		sprintf(tmp1, "%f", material[i]->ambient  ); printf("%s,", f(tmp1, 1.0f));
-		sprintf(tmp1, "%f", material[i]->emissive ); printf("%s,", f(tmp1, 1.0f));
-		sprintf(tmp1, "%f", material[i]->specular ); printf("%s,", f(tmp1, 1.0f));
-		sprintf(tmp1, "%f", material[i]->shininess); printf("%s,", f(tmp1, 1.0f));
+		printf("-1,");
+		sprintf(tmp1, "%f", material[i]->diffuse_r ); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->diffuse_g ); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->diffuse_b ); printf("%s,", f(tmp1, 1.0f));
+		printf("-1,");
+		sprintf(tmp1, "%f", material[i]->ambient_r ); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->ambient_g ); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->ambient_b ); printf("%s,", f(tmp1, 1.0f));
+		printf("-1,");
+		sprintf(tmp1, "%f", material[i]->emissive_r); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->emissive_g); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->emissive_b); printf("%s,", f(tmp1, 1.0f));
+		printf("-1,");
+		sprintf(tmp1, "%f", material[i]->specular_r); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->specular_g); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->specular_b); printf("%s,", f(tmp1, 1.0f));
+		sprintf(tmp1, "%f", material[i]->shininess ); printf("%s,", f(tmp1, 1.0f));
 		if ( enter_f == 1 ) {
 			printf("\n");
 		}

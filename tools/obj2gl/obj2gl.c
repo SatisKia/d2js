@@ -34,10 +34,18 @@ typedef struct {
 	int normal_index_size;
 
 	char* material_name;
-	double material_diffuse;
-	double material_ambient;
-	double material_emission;
-	double material_spcular;
+	double material_diffuse_r;
+	double material_diffuse_g;
+	double material_diffuse_b;
+	double material_ambient_r;
+	double material_ambient_g;
+	double material_ambient_b;
+	double material_emission_r;
+	double material_emission_g;
+	double material_emission_b;
+	double material_spcular_r;
+	double material_spcular_g;
+	double material_spcular_b;
 	double material_shininess;
 
 	double color_r;
@@ -66,10 +74,18 @@ void new_object(object_t** data) {
 	(*data)->normal_index_size = 0;
 
 	(*data)->material_name = NULL;
-	(*data)->material_diffuse = 0.0f;
-	(*data)->material_ambient = 0.0f;
-	(*data)->material_emission = 0.0f;
-	(*data)->material_spcular = 0.0f;
+	(*data)->material_diffuse_r = 0.0f;
+	(*data)->material_diffuse_g = 0.0f;
+	(*data)->material_diffuse_b = 0.0f;
+	(*data)->material_ambient_r = 0.0f;
+	(*data)->material_ambient_g = 0.0f;
+	(*data)->material_ambient_b = 0.0f;
+	(*data)->material_emission_r = 0.0f;
+	(*data)->material_emission_g = 0.0f;
+	(*data)->material_emission_b = 0.0f;
+	(*data)->material_spcular_r = 0.0f;
+	(*data)->material_spcular_g = 0.0f;
+	(*data)->material_spcular_b = 0.0f;
 	(*data)->material_shininess = 0.0f;
 
 	(*data)->color_r = 1.0f;
@@ -689,7 +705,14 @@ int main(int argc, char* argv[]) {
 								if ( object_num == 0 ) {
 									add_object();
 								}
-								object[object_num - 1]->material_diffuse = atof(top);
+								object[object_num - 1]->material_diffuse_r = atof(top);
+								top = end + 1;
+								if ( (end = strchr(top, ' ')) != NULL ) {
+									*end = '\0';
+									object[object_num - 1]->material_diffuse_g = atof(top);
+									top = end + 1;
+									object[object_num - 1]->material_diffuse_b = atof(top);
+								}
 							} else if ( strncmp(line, "Ka ", 3) == 0 ) {	// material_ambient
 								top = &line[3];
 								if ( (end = strchr(top, ' ')) != NULL ) {
@@ -698,16 +721,18 @@ int main(int argc, char* argv[]) {
 								if ( object_num == 0 ) {
 									add_object();
 								}
-								object[object_num - 1]->material_ambient = atof(top);
-
-								object[object_num - 1]->color_r = atof(top) / ambient;
+								object[object_num - 1]->material_ambient_r = atof(top);
 								top = end + 1;
 								if ( (end = strchr(top, ' ')) != NULL ) {
 									*end = '\0';
-									object[object_num - 1]->color_g = atof(top) / ambient;
+									object[object_num - 1]->material_ambient_g = atof(top);
 									top = end + 1;
-									object[object_num - 1]->color_b = atof(top) / ambient;
+									object[object_num - 1]->material_ambient_b = atof(top);
 								}
+
+								object[object_num - 1]->color_r = object[object_num - 1]->material_ambient_r / ambient;
+								object[object_num - 1]->color_g = object[object_num - 1]->material_ambient_g / ambient;
+								object[object_num - 1]->color_b = object[object_num - 1]->material_ambient_b / ambient;
 							} else if ( strncmp(line, "Ke ", 3) == 0 ) {	// material_emission
 								top = &line[3];
 								if ( (end = strchr(top, ' ')) != NULL ) {
@@ -716,7 +741,14 @@ int main(int argc, char* argv[]) {
 								if ( object_num == 0 ) {
 									add_object();
 								}
-								object[object_num - 1]->material_emission = atof(top);
+								object[object_num - 1]->material_emission_r = atof(top);
+								top = end + 1;
+								if ( (end = strchr(top, ' ')) != NULL ) {
+									*end = '\0';
+									object[object_num - 1]->material_emission_g = atof(top);
+									top = end + 1;
+									object[object_num - 1]->material_emission_b = atof(top);
+								}
 							} else if ( strncmp(line, "Ks ", 3) == 0 ) {	// material_spcular
 								top = &line[3];
 								if ( (end = strchr(top, ' ')) != NULL ) {
@@ -725,7 +757,14 @@ int main(int argc, char* argv[]) {
 								if ( object_num == 0 ) {
 									add_object();
 								}
-								object[object_num - 1]->material_spcular = atof(top);
+								object[object_num - 1]->material_spcular_r = atof(top);
+								top = end + 1;
+								if ( (end = strchr(top, ' ')) != NULL ) {
+									*end = '\0';
+									object[object_num - 1]->material_spcular_g = atof(top);
+									top = end + 1;
+									object[object_num - 1]->material_spcular_b = atof(top);
+								}
 							} else if ( strncmp(line, "Ns ", 3) == 0 ) {	// material_shininess
 								top = &line[3];
 								if ( (end = strchr(top, ' ')) != NULL ) {
@@ -928,10 +967,10 @@ if ( debug_f == 1 ) {
 		}
 		printf("\n");
 		printf("material_name[%d] %s\n", i, (object[i]->material_name == NULL) ? "NULL" : object[i]->material_name);
-		printf("material_diffuse[%d] %f\n", i, object[i]->material_diffuse);
-		printf("material_ambient[%d] %f\n", i, object[i]->material_ambient);
-		printf("material_emission[%d] %f\n", i, object[i]->material_emission);
-		printf("material_spcular[%d] %f\n", i, object[i]->material_spcular);
+		printf("material_diffuse[%d] %f %f %f\n", i, object[i]->material_diffuse_r, object[i]->material_diffuse_g, object[i]->material_diffuse_b);
+		printf("material_ambient[%d] %f %f %f\n", i, object[i]->material_ambient_r, object[i]->material_ambient_g, object[i]->material_ambient_b);
+		printf("material_emission[%d] %f %f %f\n", i, object[i]->material_emission_r, object[i]->material_emission_g, object[i]->material_emission_b);
+		printf("material_spcular[%d] %f %f %f\n", i, object[i]->material_spcular_r, object[i]->material_spcular_g, object[i]->material_spcular_b);
 		printf("material_shininess[%d] %f\n", i, object[i]->material_shininess);
 		printf("color[%d] %f %f %f\n", i, object[i]->color_r, object[i]->color_g, object[i]->color_b);
 	}
@@ -949,11 +988,23 @@ if ( string_f == 1 ) {
 	}
 	for ( i = 0; i < object_num; i++ ) {
 		print_bc(-1);
-		sprintf(tmp, "%f", object[i]->material_diffuse  ); printf("%s,", f(tmp, 1.0f));
-		sprintf(tmp, "%f", object[i]->material_ambient  ); printf("%s,", f(tmp, 1.0f));
-		sprintf(tmp, "%f", object[i]->material_emission ); printf("%s,", f(tmp, 1.0f));
-		sprintf(tmp, "%f", object[i]->material_spcular  ); printf("%s,", f(tmp, 1.0f));
-		sprintf(tmp, "%f", object[i]->material_shininess); printf("%s,", f(tmp, 1.0f));
+		printf("-1,");
+		sprintf(tmp, "%f", object[i]->material_diffuse_r ); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_diffuse_g ); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_diffuse_b ); printf("%s,", f(tmp, 1.0f));
+		printf("-1,");
+		sprintf(tmp, "%f", object[i]->material_ambient_r ); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_ambient_g ); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_ambient_b ); printf("%s,", f(tmp, 1.0f));
+		printf("-1,");
+		sprintf(tmp, "%f", object[i]->material_emission_r); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_emission_g); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_emission_b); printf("%s,", f(tmp, 1.0f));
+		printf("-1,");
+		sprintf(tmp, "%f", object[i]->material_spcular_r ); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_spcular_g ); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_spcular_b ); printf("%s,", f(tmp, 1.0f));
+		sprintf(tmp, "%f", object[i]->material_shininess ); printf("%s,", f(tmp, 1.0f));
 		if ( enter_f == 1 ) {
 			printf("\n");
 		}

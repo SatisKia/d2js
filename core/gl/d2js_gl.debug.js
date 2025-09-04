@@ -541,23 +541,52 @@ function createGLModel( _data, scale, id, depth, lighting, strip_type ){
 	var material_emi = new Array(texture_num * 4);
 	var material_spc = new Array(texture_num * 4);
 	var material_power = new Array(texture_num);
+	var material_val;
 	for ( i = 0; i < texture_num; i++ ) {
 		texture_index[i] = data.get();
-		material_dif[i * 4] = data.get();
-		material_dif[i * 4 + 1] = material_dif[i * 4];
-		material_dif[i * 4 + 2] = material_dif[i * 4];
+		material_val = data.get();
+		if ( material_val < 0.0 ) {
+			material_dif[i * 4 ] = data.get();
+			material_dif[i * 4 + 1] = data.get();
+			material_dif[i * 4 + 2] = data.get();
+		} else {
+			material_dif[i * 4 ] = material_val;
+			material_dif[i * 4 + 1] = material_dif[i * 4];
+			material_dif[i * 4 + 2] = material_dif[i * 4];
+		}
 		material_dif[i * 4 + 3] = 1.0;
-		material_amb[i * 4] = data.get();
-		material_amb[i * 4 + 1] = material_amb[i * 4];
-		material_amb[i * 4 + 2] = material_amb[i * 4];
+		material_val = data.get();
+		if ( material_val < 0.0 ) {
+			material_amb[i * 4 ] = data.get();
+			material_amb[i * 4 + 1] = data.get();
+			material_amb[i * 4 + 2] = data.get();
+		} else {
+			material_amb[i * 4 ] = material_val;
+			material_amb[i * 4 + 1] = material_amb[i * 4];
+			material_amb[i * 4 + 2] = material_amb[i * 4];
+		}
 		material_amb[i * 4 + 3] = 1.0;
-		material_emi[i * 4] = data.get();
-		material_emi[i * 4 + 1] = material_emi[i * 4];
-		material_emi[i * 4 + 2] = material_emi[i * 4];
+		material_val = data.get();
+		if ( material_val < 0.0 ) {
+			material_emi[i * 4 ] = data.get();
+			material_emi[i * 4 + 1] = data.get();
+			material_emi[i * 4 + 2] = data.get();
+		} else {
+			material_emi[i * 4 ] = material_val;
+			material_emi[i * 4 + 1] = material_emi[i * 4];
+			material_emi[i * 4 + 2] = material_emi[i * 4];
+		}
 		material_emi[i * 4 + 3] = 1.0;
-		material_spc[i * 4] = data.get();
-		material_spc[i * 4 + 1] = material_spc[i * 4];
-		material_spc[i * 4 + 2] = material_spc[i * 4];
+		material_val = data.get();
+		if ( material_val < 0.0 ) {
+			material_spc[i * 4 ] = data.get();
+			material_spc[i * 4 + 1] = data.get();
+			material_spc[i * 4 + 2] = data.get();
+		} else {
+			material_spc[i * 4 ] = material_val;
+			material_spc[i * 4 + 1] = material_spc[i * 4];
+			material_spc[i * 4 + 2] = material_spc[i * 4];
+		}
 		material_spc[i * 4 + 3] = 1.0;
 		material_power[i] = data.get() * 128.0 / 100.0;
 	}
@@ -2157,21 +2186,21 @@ _GLUtility.prototype = {
 		this.viewport_mat[2] = width;
 		this.viewport_mat[3] = height;
 	},
-	project : function( obj_x, obj_y, obj_z, model_mat, proj_mat ){
-		if( (model_mat == null) || (model_mat == undefined) ){
-			model_mat = this.view_mat;
+	project : function( obj_x, obj_y, obj_z, mv_mat, p_mat ){
+		if( (mv_mat == null) || (mv_mat == undefined) ){
+			mv_mat = this.view_mat;
 		}
-		if( (proj_mat == null) || (proj_mat == undefined) ){
-			proj_mat = this.proj_mat;
+		if( (p_mat == null) || (p_mat == undefined) ){
+			p_mat = this.proj_mat;
 		}
-		this.project_in[0] = obj_x * model_mat[ 0] + obj_y * model_mat[ 1] + obj_z * model_mat[ 2] + model_mat[ 3];
-		this.project_in[1] = obj_x * model_mat[ 4] + obj_y * model_mat[ 5] + obj_z * model_mat[ 6] + model_mat[ 7];
-		this.project_in[2] = obj_x * model_mat[ 8] + obj_y * model_mat[ 9] + obj_z * model_mat[10] + model_mat[11];
-		this.project_in[3] = obj_x * model_mat[12] + obj_y * model_mat[13] + obj_z * model_mat[14] + model_mat[15];
-		this.project_out[0] = this.project_in[0] * proj_mat[ 0] + this.project_in[1] * proj_mat[ 1] + this.project_in[2] * proj_mat[ 2] + this.project_in[3] * proj_mat[ 3];
-		this.project_out[1] = this.project_in[0] * proj_mat[ 4] + this.project_in[1] * proj_mat[ 5] + this.project_in[2] * proj_mat[ 6] + this.project_in[3] * proj_mat[ 7];
-		this.project_out[2] = this.project_in[0] * proj_mat[ 8] + this.project_in[1] * proj_mat[ 9] + this.project_in[2] * proj_mat[10] + this.project_in[3] * proj_mat[11];
-		this.project_out[3] = this.project_in[0] * proj_mat[12] + this.project_in[1] * proj_mat[13] + this.project_in[2] * proj_mat[14] + this.project_in[3] * proj_mat[15];
+		this.project_in[0] = obj_x * mv_mat[ 0] + obj_y * mv_mat[ 1] + obj_z * mv_mat[ 2] + mv_mat[ 3];
+		this.project_in[1] = obj_x * mv_mat[ 4] + obj_y * mv_mat[ 5] + obj_z * mv_mat[ 6] + mv_mat[ 7];
+		this.project_in[2] = obj_x * mv_mat[ 8] + obj_y * mv_mat[ 9] + obj_z * mv_mat[10] + mv_mat[11];
+		this.project_in[3] = obj_x * mv_mat[12] + obj_y * mv_mat[13] + obj_z * mv_mat[14] + mv_mat[15];
+		this.project_out[0] = this.project_in[0] * p_mat[ 0] + this.project_in[1] * p_mat[ 1] + this.project_in[2] * p_mat[ 2] + this.project_in[3] * p_mat[ 3];
+		this.project_out[1] = this.project_in[0] * p_mat[ 4] + this.project_in[1] * p_mat[ 5] + this.project_in[2] * p_mat[ 6] + this.project_in[3] * p_mat[ 7];
+		this.project_out[2] = this.project_in[0] * p_mat[ 8] + this.project_in[1] * p_mat[ 9] + this.project_in[2] * p_mat[10] + this.project_in[3] * p_mat[11];
+		this.project_out[3] = this.project_in[0] * p_mat[12] + this.project_in[1] * p_mat[13] + this.project_in[2] * p_mat[14] + this.project_in[3] * p_mat[15];
 		if( this.project_out[3] == 0.0 ){
 			return false;
 		}
@@ -2180,15 +2209,15 @@ _GLUtility.prototype = {
 		this.project_z = (this.project_out[2] / this.project_out[3] + 1.0) / 2.0;
 		return true;
 	},
-	unProject : function( win_x, win_y, win_z, model_mat, proj_mat ){
-		if( (model_mat == null) || (model_mat == undefined) ){
-			model_mat = this.view_mat;
+	unProject : function( win_x, win_y, win_z, mv_mat, p_mat ){
+		if( (mv_mat == null) || (mv_mat == undefined) ){
+			mv_mat = this.view_mat;
 		}
-		if( (proj_mat == null) || (proj_mat == undefined) ){
-			proj_mat = this.proj_mat;
+		if( (p_mat == null) || (p_mat == undefined) ){
+			p_mat = this.proj_mat;
 		}
-		this.set( proj_mat );
-		this.multiply( model_mat );
+		this.set( p_mat );
+		this.multiply( mv_mat );
 		this.invert();
 		this.project_in[0] = (win_x - this.viewport_mat[0]) * 2.0 / this.viewport_mat[2] - 1.0;
 		this.project_in[1] = (win_y - this.viewport_mat[1]) * 2.0 / this.viewport_mat[3] - 1.0;
