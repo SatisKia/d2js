@@ -345,11 +345,54 @@ _GLModel.prototype = {
 	stripNum : function(){
 		return this._strip_num;
 	},
+	stripRotate : function( index ){
+		var r = this._strip_or[index];
+		var x = this._strip_ox[index];
+		var y = this._strip_oy[index];
+		var z = this._strip_oz[index];
+		if(
+			((x == 1.0) && (y == 0.0) && (z == 0.0)) ||
+			((x == 0.0) && (y == 1.0) && (z == 0.0)) ||
+			((x == 0.0) && (y == 0.0) && (z == 1.0))
+		){
+			_glu.rotate( r, x, y, z );
+		} else {
+			switch( r ){
+			case 0:
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				break;
+			case 1:
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				break;
+			case 2:
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				break;
+			case 3:
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				break;
+			case 4:
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				break;
+			case 5:
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				break;
+			}
+		}
+	},
 	stripTranslate : function( index ){
 		_glu.translate( this._strip_tx[index], this._strip_ty[index], this._strip_tz[index] );
-	},
-	stripRotate : function( index ){
-		_glu.rotate( this._strip_or[index], this._strip_ox[index], this._strip_oy[index], this._strip_oz[index] );
 	},
 	textureIndex : function( index ){
 		if( this._strip_material[index] < 0 ){
@@ -599,8 +642,47 @@ function createGLModel( _data, scale, id, depth, lighting, strip_type ){
 	var group_oy = data.get();
 	var group_oz = data.get();
 	_glu.setIdentity();
+	if (
+		((group_ox == 1.0) && (group_oy == 0.0) && (group_oz == 0.0)) ||
+		((group_ox == 0.0) && (group_oy == 1.0) && (group_oz == 0.0)) ||
+		((group_ox == 0.0) && (group_oy == 0.0) && (group_oz == 1.0))
+	) {
+		_glu.rotate(group_or, group_ox, group_oy, group_oz);
+	} else {
+		switch ( group_or ) {
+		case 0:
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			break;
+		case 1:
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			break;
+		case 2:
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			break;
+		case 3:
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			break;
+		case 4:
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			break;
+		case 5:
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			break;
+		}
+	}
 	_glu.translate(group_tx, group_ty, group_tz);
-	_glu.rotate(group_ox, group_oy, group_oz, group_or);
 	var x, y, z;
 	var tx, ty, tz, r;
 	var radius = 0.0;

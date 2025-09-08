@@ -46,7 +46,7 @@ _Gamepad.prototype = {
 				for( i = 0; i < num; i++ ){
 					this._pressed[i] = this.isButtonPressed( i );
 					if( this._pressed[i] ){
-						processGamepadEvent( _GAMEPAD_BUTTON_PRESSED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_BUTTON_PRESSED_EVENT, id, i );
 					}
 				}
 			} else {
@@ -54,10 +54,10 @@ _Gamepad.prototype = {
 				for( i = 0; i < num; i++ ){
 					tmp = this.isButtonPressed( i );
 					if( this._pressed[i] == false && tmp == true ){
-						processGamepadEvent( _GAMEPAD_BUTTON_PRESSED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_BUTTON_PRESSED_EVENT, id, i );
 					}
 					if( this._pressed[i] == true && tmp == false ){
-						processGamepadEvent( _GAMEPAD_BUTTON_RELEASED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_BUTTON_RELEASED_EVENT, id, i );
 					}
 					this._pressed[i] = tmp;
 				}
@@ -69,7 +69,7 @@ _Gamepad.prototype = {
 				for( i = 0; i < num; i++ ){
 					this._inputted_minus[i] = (this.axisValue( i ) < 0.0);
 					if( this._inputted_minus[i] ){
-						processGamepadEvent( _GAMEPAD_AXIS_MINUS_INPUTTED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_AXIS_MINUS_INPUTTED_EVENT, id, i );
 					}
 				}
 			} else {
@@ -77,10 +77,10 @@ _Gamepad.prototype = {
 				for( i = 0; i < num; i++ ){
 					tmp = (this.axisValue( i ) < 0.0);
 					if( this._inputted_minus[i] == false && tmp == true ){
-						processGamepadEvent( _GAMEPAD_AXIS_MINUS_INPUTTED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_AXIS_MINUS_INPUTTED_EVENT, id, i );
 					}
 					if( this._inputted_minus[i] == true && tmp == false ){
-						processGamepadEvent( _GAMEPAD_AXIS_MINUS_RELEASED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_AXIS_MINUS_RELEASED_EVENT, id, i );
 					}
 					this._inputted_minus[i] = tmp;
 				}
@@ -90,7 +90,7 @@ _Gamepad.prototype = {
 				for( i = 0; i < num; i++ ){
 					this._inputted_plus[i] = (this.axisValue( i ) > 0.0);
 					if( this._inputted_plus[i] ){
-						processGamepadEvent( _GAMEPAD_AXIS_PLUS_INPUTTED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_AXIS_PLUS_INPUTTED_EVENT, id, i );
 					}
 				}
 			} else {
@@ -98,10 +98,10 @@ _Gamepad.prototype = {
 				for( i = 0; i < num; i++ ){
 					tmp = (this.axisValue( i ) > 0.0);
 					if( this._inputted_plus[i] == false && tmp == true ){
-						processGamepadEvent( _GAMEPAD_AXIS_PLUS_INPUTTED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_AXIS_PLUS_INPUTTED_EVENT, id, i );
 					}
 					if( this._inputted_plus[i] == true && tmp == false ){
-						processGamepadEvent( _GAMEPAD_AXIS_PLUS_RELEASED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_AXIS_PLUS_RELEASED_EVENT, id, i );
 					}
 					this._inputted_plus[i] = tmp;
 				}
@@ -111,17 +111,17 @@ _Gamepad.prototype = {
 				var id = this.id();
 				for( i = 0; i < this._pressed.length; i++ ){
 					if( this._pressed[i] ){
-						processGamepadEvent( _GAMEPAD_BUTTON_RELEASED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_BUTTON_RELEASED_EVENT, id, i );
 					}
 				}
 				for( i = 0; i < this._inputted_minus.length; i++ ){
 					if( this._inputted_minus[i] ){
-						processGamepadEvent( _GAMEPAD_AXIS_MINUS_RELEASED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_AXIS_MINUS_RELEASED_EVENT, id, i );
 					}
 				}
 				for( i = 0; i < this._inputted_plus.length; i++ ){
 					if( this._inputted_plus[i] ){
-						processGamepadEvent( _GAMEPAD_AXIS_PLUS_RELEASED_EVENT, id, i );
+						processGamepadEvent( window._GAMEPAD_AXIS_PLUS_RELEASED_EVENT, id, i );
 					}
 				}
 			}

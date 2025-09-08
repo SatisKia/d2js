@@ -43,7 +43,7 @@ _Gesture.prototype = {
 		this._cx = (ax + bx) / 2;
 		this._cy = (ay + by) / 2;
 		this._len = this._getVectorLength( bx - ax, by - ay );
-		this._angle = this._getAngle( bx - ax, by - ay );
+		this._angle = this._getAngle( ax, ay, bx, by );
 	},
 
 	pinch : function( ax, ay, bx, by ){
@@ -63,7 +63,7 @@ _Gesture.prototype = {
 			this._ay = ay;
 			this._bx = bx;
 			this._by = by;
-			var angle = this._getAngle( bx - ax, by - ay );
+			var angle = this._getAngle( ax, ay, bx, by );
 			processGestureEvent( window._GESTURE_ROTATE_EVENT, angle - this._angle );
 		}
 	},

@@ -36,7 +36,7 @@ function _geolocationSuccess( position ){
 	_geolocation_speed             = coords.speed;
 	_geolocation_timestamp         = position.timestamp;
 
-	onGeolocation( _GEOLOCATION_SUCCESS, "" );
+	onGeolocation( window._GEOLOCATION_SUCCESS, "" );
 }
 
 function _geolocationError( error ){
