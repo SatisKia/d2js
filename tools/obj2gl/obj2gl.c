@@ -603,6 +603,7 @@ int main(int argc, char* argv[]) {
 
 	double scale;
 	double ambient;
+	double diffuse;
 
 	char material_file[256];
 	FILE* material_fp;
@@ -660,14 +661,15 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	if ( argc < 5 + offset ) {
-		printf("usage: %s [-o] [-E|-e|-s] <obj_file> <keta> <scale> <ambient>\n", progName(argv[0]));
+	if ( argc < 6 + offset ) {
+		printf("usage: %s [-o] [-E|-e|-s] <obj_file> <keta> <scale> <ambient> <diffuse>\n", progName(argv[0]));
 		return 0;
 	}
 
 	sprintf(keta, "%%.%df", atoi(argv[2 + offset]));
 	scale = atof(argv[3 + offset]);
 	ambient = atof(argv[4 + offset]);
+	diffuse = atof(argv[5 + offset]);
 
 	object = NULL;
 	object_num = 0;
@@ -713,6 +715,12 @@ int main(int argc, char* argv[]) {
 									top = end + 1;
 									object[object_num - 1]->material_diffuse_b = atof(top);
 								}
+
+								if ( diffuse != 0.0 ) {
+									object[object_num - 1]->color_r = object[object_num - 1]->material_diffuse_r / diffuse;
+									object[object_num - 1]->color_g = object[object_num - 1]->material_diffuse_g / diffuse;
+									object[object_num - 1]->color_b = object[object_num - 1]->material_diffuse_b / diffuse;
+								}
 							} else if ( strncmp(line, "Ka ", 3) == 0 ) {	// material_ambient
 								top = &line[3];
 								if ( (end = strchr(top, ' ')) != NULL ) {
@@ -730,9 +738,11 @@ int main(int argc, char* argv[]) {
 									object[object_num - 1]->material_ambient_b = atof(top);
 								}
 
-								object[object_num - 1]->color_r = object[object_num - 1]->material_ambient_r / ambient;
-								object[object_num - 1]->color_g = object[object_num - 1]->material_ambient_g / ambient;
-								object[object_num - 1]->color_b = object[object_num - 1]->material_ambient_b / ambient;
+								if ( ambient != 0.0 ) {
+									object[object_num - 1]->color_r = object[object_num - 1]->material_ambient_r / ambient;
+									object[object_num - 1]->color_g = object[object_num - 1]->material_ambient_g / ambient;
+									object[object_num - 1]->color_b = object[object_num - 1]->material_ambient_b / ambient;
+								}
 							} else if ( strncmp(line, "Ke ", 3) == 0 ) {	// material_emission
 								top = &line[3];
 								if ( (end = strchr(top, ' ')) != NULL ) {

@@ -800,6 +800,8 @@ int main(int argc, char* argv[]) {
 	int cnt;
 
 	double scale;
+	double ambient;
+	double diffuse;
 
 	FILE* texture_fp;
 	FILE* in;
@@ -862,14 +864,16 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	if ( argc < 6 + offset ) {
-		printf("usage: %s [-o] [-E|-e|-s] <fbx_file> <keta> <scale> <texture_file_list> <line_length>\n", progName(argv[0]));
+	if ( argc < 8 + offset ) {
+		printf("usage: %s [-o] [-E|-e|-s] <fbx_file> <keta> <scale> <ambient> <diffuse> <texture_file_list> <line_length>\n", progName(argv[0]));
 		return 0;
 	}
 
 	sprintf(keta, "%%.%df", atoi(argv[2 + offset]));
 	scale = atof(argv[3 + offset]);
-	line_len = atoi(argv[5 + offset]);
+	ambient = atof(argv[4 + offset]);
+	diffuse = atof(argv[5 + offset]);
+	line_len = atoi(argv[7 + offset]);
 
 	_init();
 
@@ -1240,7 +1244,7 @@ int main(int argc, char* argv[]) {
 					texture[texture_num - 1]->file_name = strdup(top);
 
 					cnt = 0;
-					if ( (texture_fp = fopen(argv[4 + offset], "rt")) != NULL ) {
+					if ( (texture_fp = fopen(argv[6 + offset], "rt")) != NULL ) {
 						while ( fgets2(tmp_texture, 255, texture_fp) != NULL ) {
 							if ( strstr(texture[texture_num - 1]->file_name, tmp_texture) != NULL ) {
 								texture[texture_num - 1]->texture_index = cnt;
@@ -1259,7 +1263,7 @@ int main(int argc, char* argv[]) {
 					texture[texture_num - 1]->file_name2 = strdup(top);
 
 					cnt = 0;
-					if ( (texture_fp = fopen(argv[4 + offset], "rt")) != NULL ) {
+					if ( (texture_fp = fopen(argv[6 + offset], "rt")) != NULL ) {
 						while ( fgets2(tmp_texture, 255, texture_fp) != NULL ) {
 							if ( strstr(texture[texture_num - 1]->file_name2, tmp_texture) != NULL ) {
 								texture[texture_num - 1]->texture_index = cnt;
@@ -1549,9 +1553,24 @@ if ( string_f == 1 ) {
 				colors[i][vertex_index * 4 + 3] = geometry[i]->colors[geometry[i]->color_index[color_index] * 4 + 3];
 				color_index++;
 			} else {
-				colors[i][vertex_index * 4    ] = 0.5f;
-				colors[i][vertex_index * 4 + 1] = 0.5f;
-				colors[i][vertex_index * 4 + 2] = 0.5f;
+				for ( k = 0; k < conn_geometry_num; k++ ) {
+					if ( cmp_conn(conn_geometry[k]->geometry_id, geometry[i]->geometry_id) == 0 ) {
+						for ( l = 0; l < material_num; l++ ) {
+							if ( cmp_conn(conn_geometry[k]->material_id, material[l]->material_id) == 0 ) {
+								if ( ambient != 0.0 ) {
+									colors[i][vertex_index * 4    ] = material[l]->ambient_r / ambient;
+									colors[i][vertex_index * 4 + 1] = material[l]->ambient_g / ambient;
+									colors[i][vertex_index * 4 + 2] = material[l]->ambient_b / ambient;
+								}
+								if ( diffuse != 0.0 ) {
+									colors[i][vertex_index * 4    ] = material[l]->diffuse_r / diffuse;
+									colors[i][vertex_index * 4 + 1] = material[l]->diffuse_g / diffuse;
+									colors[i][vertex_index * 4 + 2] = material[l]->diffuse_b / diffuse;
+								}
+							}
+						}
+					}
+				}
 				colors[i][vertex_index * 4 + 3] = 1.0f;
 			}
 
