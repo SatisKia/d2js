@@ -168,7 +168,7 @@ function init3D( gl, glu ){
 
 			vTextureCoord = aTextureCoord;
 
-			vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
+			vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 0.0));
 		}
 	`;
 

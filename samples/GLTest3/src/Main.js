@@ -87,7 +87,7 @@ function init3D( gl, _glu ){
 
 			vColor = aVertexColor;
 
-			vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
+			vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 0.0));
 		}
 	`;
 
@@ -229,13 +229,24 @@ function paint3D( gl, glu ){
 		glu.pop();
 */
 
+		glu.push();
+		glu.set( glu.utMatrix( modelViewMatrix ) );
+		glu.invert();	// モデル座標変換行列の逆行列
+		gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
+		glu.pop();
+
 		gl.uniform3fv(shader.vars.uAmbientLightColor, ambientLightColor);
 		gl.uniform3fv(shader.vars.uDirectionalLightColor, directionalLightColor);
 		gl.uniform3fv(shader.vars.uDirectionalLightPosition, directionalLightPosition);
 		gl.uniform3fv(shader.vars.uSpecularLightColor, specularLightColor);
 
-		glu.normalize(-viewProjMatrix[2], -viewProjMatrix[6], -viewProjMatrix[10]);
-		gl.uniform3fv(shader.vars.uEyeDirection, [glu.normalize_x, glu.normalize_y, glu.normalize_z]);
+		glu.normalize(
+			-viewProjMatrix[ 2],
+			-viewProjMatrix[ 6],
+			-viewProjMatrix[10]
+		);
+		var eyeDirection = [glu.normalize_x, glu.normalize_y, glu.normalize_z];
+		gl.uniform3fv(shader.vars.uEyeDirection, eyeDirection);
 	}
 
 	if( useStereo ){
@@ -309,7 +320,6 @@ g.drawString( "[2]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.project
 		gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, glu.glMatrix() );
 		if( useLighting ){
 			glu.invert();	// モデル座標変換行列の逆行列
-			gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
 			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 			gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
 		}
@@ -332,7 +342,6 @@ g.drawString( "[0]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.project
 		gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, matrix );
 		if( useLighting ){
 			glu.invert();	// モデル座標変換行列の逆行列
-			gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
 			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 			gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
 		}
@@ -356,7 +365,6 @@ g.drawString( "[1]" + (_INT(glu.projectX() * 10) / 10) + "," + (_INT(glu.project
 		gl.uniformMatrix4fv( shader.vars.uModelViewMatrix, false, matrix );
 		if( useLighting ){
 			glu.invert();	// モデル座標変換行列の逆行列
-			gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
 			glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 			gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
 		}
@@ -445,7 +453,6 @@ function glDrawSetModelViewMatrix( gl, mat ){
 		glu.push();
 		glu.set( glu.utMatrix( mat ) );
 		glu.invert();	// モデル座標変換行列の逆行列
-		gl.uniformMatrix4fv( shader.vars.uInvMatrix, false, glu.glMatrix() );
 		glu.transpose();	// 行列の転置により、法線を正しい向きに修正する
 		gl.uniformMatrix4fv( shader.vars.uNormalMatrix, false, glu.glMatrix() );
 		glu.pop();
