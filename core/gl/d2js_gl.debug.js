@@ -345,6 +345,9 @@ _GLModel.prototype = {
 	stripNum : function(){
 		return this._strip_num;
 	},
+	stripTranslate : function( index ){
+		_glu.translate( this._strip_tx[index], this._strip_ty[index], this._strip_tz[index] );
+	},
 	stripRotate : function( index ){
 		var r = this._strip_or[index];
 		var x = this._strip_ox[index];
@@ -359,40 +362,37 @@ _GLModel.prototype = {
 		} else {
 			switch( r ){
 			case 0:
-				_glu.rotate( x, 1.0, 0.0, 0.0 );
-				_glu.rotate( y, 0.0, 1.0, 0.0 );
 				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
 				break;
 			case 1:
-				_glu.rotate( x, 1.0, 0.0, 0.0 );
-				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
 				break;
 			case 2:
-				_glu.rotate( y, 0.0, 1.0, 0.0 );
-				_glu.rotate( x, 1.0, 0.0, 0.0 );
 				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
 				break;
 			case 3:
-				_glu.rotate( y, 0.0, 1.0, 0.0 );
-				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
 				break;
 			case 4:
-				_glu.rotate( z, 0.0, 0.0, 1.0 );
-				_glu.rotate( x, 1.0, 0.0, 0.0 );
 				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				break;
 			case 5:
-				_glu.rotate( z, 0.0, 0.0, 1.0 );
-				_glu.rotate( y, 0.0, 1.0, 0.0 );
 				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				break;
 			}
 		}
-	},
-	stripTranslate : function( index ){
-		_glu.translate( this._strip_tx[index], this._strip_ty[index], this._strip_tz[index] );
 	},
 	textureIndex : function( index ){
 		if( this._strip_material[index] < 0 ){
@@ -533,6 +533,72 @@ _GLModel.prototype = {
 	radius : function(){
 		return this._radius;
 	},
+	rotate : function( r, x, y, z ){
+		_glu.setIdentity();
+		if(
+			((x == 1.0) && (y == 0.0) && (z == 0.0)) ||
+			((x == 0.0) && (y == 1.0) && (z == 0.0)) ||
+			((x == 0.0) && (y == 0.0) && (z == 1.0))
+		){
+			_glu.rotate( r, x, y, z );
+		} else {
+			switch( r ){
+			case 0:
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				break;
+			case 1:
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				break;
+			case 2:
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				break;
+			case 3:
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				break;
+			case 4:
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				break;
+			case 5:
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				break;
+			}
+		}
+		var i, j;
+		var num;
+		var count;
+		num = this._coord.length;
+		for ( j = 0; j < num; j++ ) {
+			count = this._coord[j].length;
+			for ( i = 0; i < count; i += 3 ) {
+				_glu.transVector(this._coord[j][i], this._coord[j][i + 1], this._coord[j][i + 2]);
+				this._coord[j][i ] = _glu.transX();
+				this._coord[j][i + 1] = _glu.transY();
+				this._coord[j][i + 2] = _glu.transZ();
+			}
+		}
+		num = this._normal.length;
+		for ( j = 0; j < num; j++ ) {
+			count = this._normal[j].length;
+			for ( i = 0; i < count; i += 3 ) {
+				_glu.transVector(this._normal[j][i], this._normal[j][i + 1], this._normal[j][i + 2]);
+				this._normal[j][i ] = _glu.transX();
+				this._normal[j][i + 1] = _glu.transY();
+				this._normal[j][i + 2] = _glu.transZ();
+			}
+		}
+	}
 };
 function _GLModelData( data ){
 	this._data = data;
@@ -642,6 +708,7 @@ function createGLModel( _data, scale, id, depth, lighting, strip_type ){
 	var group_oy = data.get();
 	var group_oz = data.get();
 	_glu.setIdentity();
+	_glu.translate(group_tx, group_ty, group_tz);
 	if (
 		((group_ox == 1.0) && (group_oy == 0.0) && (group_oz == 0.0)) ||
 		((group_ox == 0.0) && (group_oy == 1.0) && (group_oz == 0.0)) ||
@@ -651,38 +718,37 @@ function createGLModel( _data, scale, id, depth, lighting, strip_type ){
 	} else {
 		switch ( group_or ) {
 		case 0:
-			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
-			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
 			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
 			break;
 		case 1:
-			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
-			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
 			break;
 		case 2:
-			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
-			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
 			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
 			break;
 		case 3:
-			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
-			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
 			break;
 		case 4:
-			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
-			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
 			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			break;
 		case 5:
-			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
-			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
 			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			break;
 		}
 	}
-	_glu.translate(group_tx, group_ty, group_tz);
 	var x, y, z;
 	var tx, ty, tz, r;
 	var radius = 0.0;
@@ -2430,6 +2496,12 @@ window._GLUtilitySave = _GLUtilitySave;
 window._GLUtility = _GLUtility;
 window._GLPRIMITIVE_TYPE_MODEL = 0;
 window._GLPRIMITIVE_TYPE_SPRITE = 1;
+window._GLROTATE_ORDER_XYZ = 0;
+window._GLROTATE_ORDER_XZY = 1;
+window._GLROTATE_ORDER_YXZ = 2;
+window._GLROTATE_ORDER_YZX = 3;
+window._GLROTATE_ORDER_ZXY = 4;
+window._GLROTATE_ORDER_ZYX = 5;
 window._GLSTRIP_TYPE_LINE_STRIP = 0;
 window._GLSTRIP_TYPE_LINES = 1;
 window._GLSTRIP_TYPE_TRIANGLE_STRIP = 2;

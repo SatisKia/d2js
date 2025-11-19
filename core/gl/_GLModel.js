@@ -15,19 +15,19 @@ function _GLModel( id, depth, lighting ){
 
 	// マテリアル
 	this._material_num = 0;
-	this._material_texture = null;
-	this._material_diffuse = null;	// R、G、B、Aを各0.0～1.0
-	this._material_ambient = null;	// R、G、B、Aを各0.0～1.0
-	this._material_emission = null;	// R、G、B、Aを各0.0～1.0
-	this._material_specular = null;	// R、G、B、Aを各0.0～1.0
+	this._material_texture   = null;
+	this._material_diffuse   = null;	// R、G、B、Aを各0.0～1.0
+	this._material_ambient   = null;	// R、G、B、Aを各0.0～1.0
+	this._material_emission  = null;	// R、G、B、Aを各0.0～1.0
+	this._material_specular  = null;	// R、G、B、Aを各0.0～1.0
 	this._material_shininess = null;	// 0.0～128.0
 
 	// オブジェクト
 	this._object_num = 0;
-	this._coord = null;		// X、Y、Z
+	this._coord  = null;	// X、Y、Z
 	this._normal = null;	// X、Y、Z
-	this._color = null;		// R、G、B、Aを各0.0～1.0
-	this._map = null;		// U、V
+	this._color  = null;	// R、G、B、Aを各0.0～1.0
+	this._map    = null;	// U、V
 	this._radius = 0.0;
 
 	// ストリップ
@@ -150,6 +150,9 @@ _GLModel.prototype = {
 		return this._strip_num;
 	},
 
+	stripTranslate : function( index ){
+		_glu.translate( this._strip_tx[index], this._strip_ty[index], this._strip_tz[index] );
+	},
 	stripRotate : function( index ){
 		var r = this._strip_or[index];
 		var x = this._strip_ox[index];
@@ -163,41 +166,38 @@ _GLModel.prototype = {
 			_glu.rotate( r, x, y, z );
 		} else {
 			switch( r ){
-			case 0:	// X、Y、Zの順
-				_glu.rotate( x, 1.0, 0.0, 0.0 );
-				_glu.rotate( y, 0.0, 1.0, 0.0 );
-				_glu.rotate( z, 0.0, 0.0, 1.0 );
-				break;
-			case 1:	// X、Z、Yの順
-				_glu.rotate( x, 1.0, 0.0, 0.0 );
+			case _GLROTATE_ORDER_XYZ:
 				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				_glu.rotate( y, 0.0, 1.0, 0.0 );
-				break;
-			case 2:	// Y、X、Zの順
-				_glu.rotate( y, 0.0, 1.0, 0.0 );
 				_glu.rotate( x, 1.0, 0.0, 0.0 );
-				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				break;
-			case 3:	// Y、Z、Xの順
+			case _GLROTATE_ORDER_XZY:
 				_glu.rotate( y, 0.0, 1.0, 0.0 );
 				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				_glu.rotate( x, 1.0, 0.0, 0.0 );
 				break;
-			case 4:	// Z、X、Yの順
+			case _GLROTATE_ORDER_YXZ:
 				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				_glu.rotate( x, 1.0, 0.0, 0.0 );
 				_glu.rotate( y, 0.0, 1.0, 0.0 );
 				break;
-			case 5:	// Z、Y、Xの順
+			case _GLROTATE_ORDER_YZX:
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
 				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				break;
+			case _GLROTATE_ORDER_ZXY:
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
 				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				break;
+			case _GLROTATE_ORDER_ZYX:
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
 				break;
 			}
 		}
-	},
-	stripTranslate : function( index ){
-		_glu.translate( this._strip_tx[index], this._strip_ty[index], this._strip_tz[index] );
 	},
 
 	textureIndex : function( index ){
@@ -372,6 +372,73 @@ _GLModel.prototype = {
 		return this._radius;
 	},
 
+	rotate : function( r, x, y, z ){
+		_glu.setIdentity();
+		if(
+			((x == 1.0) && (y == 0.0) && (z == 0.0)) ||
+			((x == 0.0) && (y == 1.0) && (z == 0.0)) ||
+			((x == 0.0) && (y == 0.0) && (z == 1.0))
+		){
+			_glu.rotate( r, x, y, z );
+		} else {
+			switch( r ){
+			case _GLROTATE_ORDER_XYZ:
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				break;
+			case _GLROTATE_ORDER_XZY:
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				break;
+			case _GLROTATE_ORDER_YXZ:
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				break;
+			case _GLROTATE_ORDER_YZX:
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				break;
+			case _GLROTATE_ORDER_ZXY:
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				break;
+			case _GLROTATE_ORDER_ZYX:
+				_glu.rotate( x, 1.0, 0.0, 0.0 );
+				_glu.rotate( y, 0.0, 1.0, 0.0 );
+				_glu.rotate( z, 0.0, 0.0, 1.0 );
+				break;
+			}
+		}
+		var i, j;
+		var num;
+		var count;
+		num = this._coord.length;
+		for ( j = 0; j < num; j++ ) {
+			count = this._coord[j].length;
+			for ( i = 0; i < count; i += 3 ) {
+				_glu.transVector(this._coord[j][i], this._coord[j][i + 1], this._coord[j][i + 2]);
+				this._coord[j][i    ] = _glu.transX();
+				this._coord[j][i + 1] = _glu.transY();
+				this._coord[j][i + 2] = _glu.transZ();
+			}
+		}
+		num = this._normal.length;
+		for ( j = 0; j < num; j++ ) {
+			count = this._normal[j].length;
+			for ( i = 0; i < count; i += 3 ) {
+				_glu.transVector(this._normal[j][i], this._normal[j][i + 1], this._normal[j][i + 2]);
+				this._normal[j][i    ] = _glu.transX();
+				this._normal[j][i + 1] = _glu.transY();
+				this._normal[j][i + 2] = _glu.transZ();
+			}
+		}
+	}
+
 };
 
 function _GLModelData( data ){
@@ -488,6 +555,7 @@ function createGLModel( _data, scale, id, depth, lighting, strip_type ){
 	var group_oy = data.get();
 	var group_oz = data.get();
 	_glu.setIdentity();
+	_glu.translate(group_tx, group_ty, group_tz);
 	if (
 		((group_ox == 1.0) && (group_oy == 0.0) && (group_oz == 0.0)) ||
 		((group_ox == 0.0) && (group_oy == 1.0) && (group_oz == 0.0)) ||
@@ -496,39 +564,38 @@ function createGLModel( _data, scale, id, depth, lighting, strip_type ){
 		_glu.rotate(group_or, group_ox, group_oy, group_oz);
 	} else {
 		switch ( group_or ) {
-		case 0:	// X、Y、Zの順
-			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
-			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
-			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
-			break;
-		case 1:	// X、Z、Yの順
-			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+		case _GLROTATE_ORDER_XYZ:
 			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
-			break;
-		case 2:	// Y、X、Zの順
-			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
 			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
-			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			break;
-		case 3:	// Y、Z、Xの順
+		case _GLROTATE_ORDER_XZY:
 			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
 			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
 			break;
-		case 4:	// Z、X、Yの順
+		case _GLROTATE_ORDER_YXZ:
 			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
 			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
 			break;
-		case 5:	// Z、Y、Xの順
+		case _GLROTATE_ORDER_YZX:
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
 			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			break;
+		case _GLROTATE_ORDER_ZXY:
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
 			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
+			break;
+		case _GLROTATE_ORDER_ZYX:
+			_glu.rotate(group_ox, 1.0, 0.0, 0.0);
+			_glu.rotate(group_oy, 0.0, 1.0, 0.0);
+			_glu.rotate(group_oz, 0.0, 0.0, 1.0);
 			break;
 		}
 	}
-	_glu.translate(group_tx, group_ty, group_tz);
 
 	var x, y, z;
 	var tx, ty, tz, r;
