@@ -310,8 +310,17 @@ void string(char** buf, char* str) {
 	char* end;
 
 	top = *buf;
+	if ( *top == '\0' ) {
+		str[0] = '\0';
+		return;
+	}
 	while ( (*top == ' ') || (*top == '\t') || (*top == '\r') || (*top == '\n') || (*top == '"') ) {
 		top++;
+		if ( *top == '\0' ) {
+			str[0] = '\0';
+			*buf = top;
+			return;
+		}
 	}
 
 	end = top;
@@ -330,8 +339,17 @@ void word(char** buf, char* str) {
 	char* end;
 
 	top = *buf;
+	if ( *top == '\0' ) {
+		str[0] = '\0';
+		return;
+	}
 	while ( (*top == ' ') || (*top == '\t') || (*top == '\r') || (*top == '\n') ) {
 		top++;
+		if ( *top == '\0' ) {
+			str[0] = '\0';
+			*buf = top;
+			return;
+		}
 	}
 
 	end = top;
@@ -518,11 +536,13 @@ int main(int argc, char* argv[]) {
 	int col;
 
 	int optimize_level;
+	int debug_f;
 	int enter_f;
 //	int string_f;
 	int offset;
 
 	optimize_level = 0;
+	debug_f = 0;
 	enter_f = 0;
 	string_f = 0;
 	offset = 0;
@@ -533,7 +553,11 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	if ( argc > offset + 1 ) {
-		if ( stricmp(argv[offset + 1], "-e") == 0 ) {
+		if ( stricmp(argv[offset + 1], "-E") == 0 ) {
+			debug_f = 1;
+			enter_f = 1;
+			offset++;
+		} else if ( stricmp(argv[offset + 1], "-e") == 0 ) {
 			enter_f = 1;
 			offset++;
 		} else if ( stricmp(argv[offset + 1], "-s") == 0 ) {
@@ -543,7 +567,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	if ( argc < 6 + offset ) {
-		printf("usage: %s [-o] [-e|-s] <mqo_file> <keta> <scale> <texture_file_list> <max_face_num>\n", progName(argv[0]));
+		printf("usage: %s [-o] [-E|-e|-s] <mqo_file> <keta> <scale> <texture_file_list> <max_face_num>\n", progName(argv[0]));
 		return 0;
 	}
 
@@ -825,6 +849,9 @@ if ( string_f == 1 ) {
 								color[coord_index[j] * 3    ] = material_col[face[face_cnt * 7 + 1] * 3    ];
 								color[coord_index[j] * 3 + 1] = material_col[face[face_cnt * 7 + 1] * 3 + 1];
 								color[coord_index[j] * 3 + 2] = material_col[face[face_cnt * 7 + 1] * 3 + 2];
+if ( debug_f == 1 ) {
+	printf("color[%d]=material_col[%d] %f %f %f\n", coord_index[j], face[face_cnt * 7 + 1], color[coord_index[j] * 3], color[coord_index[j] * 3 + 1], color[coord_index[j] * 3 + 2]);
+}
 							}
 						}
 					}
@@ -836,6 +863,9 @@ if ( string_f == 1 ) {
 							color[coord_index[j] * 3    ] = (float) (col & 0x0000ff)        / 255.0f;
 							color[coord_index[j] * 3 + 1] = (float)((col & 0x00ff00) >>  8) / 255.0f;
 							color[coord_index[j] * 3 + 2] = (float)((col & 0xff0000) >> 16) / 255.0f;
+if ( debug_f == 1 ) {
+	printf("color[%d]=%d %f %f %f\n", coord_index[j], col, color[coord_index[j] * 3], color[coord_index[j] * 3 + 1], color[coord_index[j] * 3 + 2]);
+}
 						}
 					}
 
@@ -1011,6 +1041,24 @@ if ( string_f == 1 ) {
 		printf("%d\",\n", tri_num);
 } else {
 		printf("%d,\n", tri_num);
+}
+
+if ( debug_f == 1 ) {
+	printf("/*\n");
+	for ( i = 0; i < material_num; i++ ) {
+		printf("material_f[%d] %d\n", i, material_f[i]);
+		printf("material_col[%d] %f %f %f\n", i, material_col[i * 3], material_col[i * 3 + 1], material_col[i * 3 + 2]);
+	}
+	for ( i = 0; i < coord_num; i++ ) {
+		printf("coord[%d] %f %f %f\n", i, coord[i * 3], coord[i * 3 + 1], coord[i * 3 + 2]);
+		printf("normal[%d] %f %f %f\n", i, normal[i * 3], normal[i * 3 + 1], normal[i * 3 + 2]);
+		printf("color[%d] %f %f %f\n", i, color[i * 3], color[i * 3 + 1], color[i * 3 + 2]);
+		printf("map[%d] %f %f\n", i, map[i * 2], map[i * 2 + 1]);
+	}
+	for ( i = 0; i < face_cnt; i++ ) {
+		printf("face[%d] group:%d material:%d v_num:%d %d %d %d %d\n", i, face[i * 7], face[i * 7 + 1], face[i * 7 + 2], face[i * 7 + 3], face[i * 7 + 4], face[i * 7 + 5], face[i * 7 + 6]);
+	}
+	printf("*/\n");
 }
 
 		free(material_f);
