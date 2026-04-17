@@ -674,7 +674,13 @@ function launch( url ){
 
 function setFont( size, family ){
 	_font_size = size;
-	_font_family = (family.indexOf( " " ) >= 0) ? "'" + family + "'" : family;
+	if( Array.isArray( family ) ){
+		_font_family = family.map( function( f ){
+			return (f.indexOf( " " ) >= 0) ? "'" + f + "'" : f;
+		} ).join( ", " );
+	} else {
+		_font_family = (family.indexOf( " " ) >= 0) ? "'" + family + "'" : family;
+	}
 	_text.style.cssText = _text_style + ";font:" + _font_size + "px " + _font_family;
 }
 function stringWidth( str ){
