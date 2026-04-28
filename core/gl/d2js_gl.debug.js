@@ -117,14 +117,14 @@ function canUseWebGL(){
 	var context = canvas.getContext( "webgl" );
 	return (context != null);
 }
-function canUseWebGLDepthTexture(context){
+function canUseWebGLDepthTexture( context ){
 	if( context == undefined ){
 		var canvas = document.createElement( "canvas" );
 		context = canvas.getContext( "webgl" );
 	}
 	return (context.getExtension( "WEBGL_depth_texture" ) != null);
 }
-function canUseWebGLTextureFloat(context){
+function canUseWebGLTextureFloat( context ){
 	if( context == undefined ){
 		var canvas = document.createElement( "canvas" );
 		context = canvas.getContext( "webgl" );
@@ -134,19 +134,30 @@ function canUseWebGLTextureFloat(context){
 var _gl;
 var _glu;
 var _3d = null;
-function setCurrent3D( id, id2D, stencil ){
+function setCurrent3D( id, id2D, stencil, antialias ){
 	if( id2D == undefined ){
 		id2D = "";
 	}
 	if( stencil == undefined ){
 		stencil = false;
 	}
+	if( antialias == undefined ){
+		antialias = false;
+	}
 	removeMouseEvent();
 	var _canvas = setCanvas( document.getElementById( id ) );
-	if( stencil ){
-		_gl = _canvas.getContext( "webgl", { stencil: true } );
+	if( antialias ){
+		if( stencil ){
+			_gl = _canvas.getContext( "webgl", { antialias: true, stencil: true } );
+		} else {
+			_gl = _canvas.getContext( "webgl", { antialias: true } );
+		}
 	} else {
-		_gl = _canvas.getContext( "webgl" );
+		if( stencil ){
+			_gl = _canvas.getContext( "webgl", { stencil: true } );
+		} else {
+			_gl = _canvas.getContext( "webgl" );
+		}
 	}
 	initLock();
 	if( id2D.length > 0 ){
@@ -1351,6 +1362,35 @@ _GLTexture.prototype = {
 		}
 		return tmp;
 	},
+	_setTexParameter : function( index ){
+		var magFilter = glTextureFilter( _gl, index );
+		var minFilter = magFilter;
+		if( typeof glTextureMinFilter != 'undefined' ){
+			minFilter = glTextureMinFilter( _gl, index );
+			if(
+				(minFilter == _gl.NEAREST_MIPMAP_NEAREST) ||
+				(minFilter == _gl.LINEAR_MIPMAP_NEAREST ) ||
+				(minFilter == _gl.NEAREST_MIPMAP_LINEAR ) ||
+				(minFilter == _gl.LINEAR_MIPMAP_LINEAR )
+			){
+				_gl.generateMipmap( _gl.TEXTURE_2D );
+			}
+		}
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, magFilter );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, minFilter );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, glTextureWrap( _gl, index ) );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, glTextureWrap( _gl, index ) );
+		if( typeof glTextureMaxAnisotropy != 'undefined' ){
+			var extAnisotropic = _gl.getExtension( "EXT_texture_filter_anisotropic" );
+			if( extAnisotropic ){
+				var maxAnisotropy = _gl.getParameter( extAnisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT );
+				var level = Math.min( glTextureMaxAnisotropy( index ), maxAnisotropy );
+				if( level >= 1.0 ){
+					_gl.texParameterf( _gl.TEXTURE_2D, extAnisotropic.TEXTURE_MAX_ANISOTROPY_EXT, level );
+				}
+			}
+		}
+	},
 	use : function( index, use_trans ){
 		if( this._index2id[index] >= 0 ){
 			return;
@@ -1386,10 +1426,7 @@ _GLTexture.prototype = {
 		_gl.pixelStorei( _gl.UNPACK_ALIGNMENT, 1 );
 		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
 		_glu.texImage2D( this._image_data[index] );
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, glTextureFilter( _gl, index ) );
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, glTextureFilter( _gl, index ) );
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, glTextureWrap( _gl, index ) );
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, glTextureWrap( _gl, index ) );
+		this._setTexParameter( index );
 	},
 	unuse : function( index ){
 		if( this._index2id[index] >= 0 ){
@@ -1424,6 +1461,7 @@ _GLTexture.prototype = {
 				_glu.bindTexture( this._id[this._index2id[index]] );
 				_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
 				_glu.texImage2D( this._image_data[index] );
+				this._setTexParameter( index );
 			}
 		}
 	},
@@ -1451,6 +1489,7 @@ _GLTexture.prototype = {
 		_glu.bindTexture( this._id[this._index2id[index]] );
 		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
 		_glu.texImage2D( this._image_data[index] );
+		this._setTexParameter( index );
 	},
 	translate : function( index, x, y ){
 		this.use( index );
@@ -1617,6 +1656,7 @@ _GLTexture.prototype = {
 			_glu.bindTexture( this._id[this._index2id[index]] );
 			_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
 			_glu.texImage2D( this._image_data[index] );
+			this._setTexParameter( index );
 		}
 	},
 	id : function( index ){

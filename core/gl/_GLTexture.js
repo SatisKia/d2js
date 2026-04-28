@@ -138,6 +138,41 @@ _GLTexture.prototype = {
 		return tmp;
 	},
 
+	_setTexParameter : function( index ){
+		var magFilter = glTextureFilter( _gl, index );
+		var minFilter = magFilter;
+
+		// ミップマップ
+		if( typeof glTextureMinFilter != 'undefined' ){
+			minFilter = glTextureMinFilter( _gl, index );
+			if(
+				(minFilter == _gl.NEAREST_MIPMAP_NEAREST) ||
+				(minFilter == _gl.LINEAR_MIPMAP_NEAREST ) ||
+				(minFilter == _gl.NEAREST_MIPMAP_LINEAR ) ||
+				(minFilter == _gl.LINEAR_MIPMAP_LINEAR  )
+			){
+				_gl.generateMipmap( _gl.TEXTURE_2D );
+			}
+		}
+
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, magFilter );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, minFilter );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, glTextureWrap( _gl, index ) );
+		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, glTextureWrap( _gl, index ) );
+
+		// 異方性フィルタ（拡張機能）
+		if( typeof glTextureMaxAnisotropy != 'undefined' ){
+			var extAnisotropic = _gl.getExtension( "EXT_texture_filter_anisotropic" );
+			if( extAnisotropic ){
+				var maxAnisotropy = _gl.getParameter( extAnisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT );
+				var level = Math.min( glTextureMaxAnisotropy( index ), maxAnisotropy );
+				if( level >= 1.0 ){
+					_gl.texParameterf( _gl.TEXTURE_2D, extAnisotropic.TEXTURE_MAX_ANISOTROPY_EXT, level );
+				}
+			}
+		}
+	},
+
 	use : function( index, use_trans ){
 		if( this._index2id[index] >= 0 ){
 			return;
@@ -182,11 +217,7 @@ _GLTexture.prototype = {
 		_gl.pixelStorei( _gl.UNPACK_ALIGNMENT, 1 );
 		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
 		_glu.texImage2D( /*_gl.TEXTURE_2D,*/ this._image_data[index] );
-
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MAG_FILTER, glTextureFilter( _gl, index ) );
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_MIN_FILTER, glTextureFilter( _gl, index ) );
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_S, glTextureWrap( _gl, index ) );
-		_gl.texParameteri( _gl.TEXTURE_2D, _gl.TEXTURE_WRAP_T, glTextureWrap( _gl, index ) );
+		this._setTexParameter( index );
 	},
 
 	unuse : function( index ){
@@ -231,6 +262,7 @@ _GLTexture.prototype = {
 				_glu.bindTexture( /*_gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
 				_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
 				_glu.texImage2D( /*_gl.TEXTURE_2D,*/ this._image_data[index] );
+				this._setTexParameter( index );
 			}
 		}
 	},
@@ -268,6 +300,7 @@ _GLTexture.prototype = {
 		_glu.bindTexture( /*_gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
 		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
 		_glu.texImage2D( /*_gl.TEXTURE_2D,*/ this._image_data[index] );
+		this._setTexParameter( index );
 	},
 
 	/*
@@ -445,6 +478,7 @@ _GLTexture.prototype = {
 			_glu.bindTexture( /*_gl.TEXTURE_2D,*/ this._id[this._index2id[index]] );
 			_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, glTextureFlipY( index ) );
 			_glu.texImage2D( /*_gl.TEXTURE_2D,*/ this._image_data[index] );
+			this._setTexParameter( index );
 		}
 	},
 
@@ -475,3 +509,6 @@ _GLTexture.prototype = {
 //function glTextureFlipY( index ){ return false; }
 //function glTextureFilter( gl, index ){ return gl.LINEAR; }
 //function glTextureWrap( gl, index ){ return gl.CLAMP_TO_EDGE; }
+
+//function glTextureMinFilter( gl, index ){ return gl.LINEAR; }
+//function glTextureMaxAnisotropy( index ){ return 0.0; }

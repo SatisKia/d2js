@@ -10,14 +10,14 @@ function canUseWebGL(){
 	var context = canvas.getContext( "webgl" );
 	return (context != null);
 }
-function canUseWebGLDepthTexture(context){
+function canUseWebGLDepthTexture( context ){
 	if( context == undefined ){
 		var canvas = document.createElement( "canvas" );
 		context = canvas.getContext( "webgl" );
 	}
 	return (context.getExtension( "WEBGL_depth_texture" ) != null);
 }
-function canUseWebGLTextureFloat(context){
+function canUseWebGLTextureFloat( context ){
 	if( context == undefined ){
 		var canvas = document.createElement( "canvas" );
 		context = canvas.getContext( "webgl" );
@@ -30,22 +30,33 @@ var _glu;
 
 var _3d = null;
 
-function setCurrent3D( id, id2D, stencil ){
+function setCurrent3D( id, id2D, stencil, antialias ){
 	if( id2D == undefined ){
 		id2D = "";
 	}
 	if( stencil == undefined ){
 		stencil = false;
 	}
+	if( antialias == undefined ){
+		antialias = false;
+	}
 
 	// マウスイベント
 	removeMouseEvent();
 
 	var _canvas = setCanvas( document.getElementById( id ) );
-	if( stencil ){
-		_gl = _canvas.getContext( "webgl", { stencil: true } );
+	if( antialias ){
+		if( stencil ){
+			_gl = _canvas.getContext( "webgl", { antialias: true, stencil: true } );
+		} else {
+			_gl = _canvas.getContext( "webgl", { antialias: true } );
+		}
 	} else {
-		_gl = _canvas.getContext( "webgl" );
+		if( stencil ){
+			_gl = _canvas.getContext( "webgl", { stencil: true } );
+		} else {
+			_gl = _canvas.getContext( "webgl" );
+		}
 	}
 	initLock();
 
