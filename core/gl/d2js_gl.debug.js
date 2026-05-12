@@ -138,11 +138,16 @@ function setCurrent3D( id, id2D, stencil, antialias ){
 	if( id2D == undefined ){
 		id2D = "";
 	}
-	if( stencil == undefined ){
-		stencil = false;
-	}
-	if( antialias == undefined ){
-		antialias = false;
+	if( typeof stencil == "object" && stencil != null ){
+		antialias = !!stencil.antialias;
+		stencil = !!stencil.stencil;
+	} else {
+		if( stencil == undefined ){
+			stencil = false;
+		}
+		if( antialias == undefined ){
+			antialias = false;
+		}
 	}
 	removeMouseEvent();
 	var _canvas = setCanvas( document.getElementById( id ) );
