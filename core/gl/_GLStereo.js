@@ -77,13 +77,17 @@ _GLStereo.prototype = {
 	draw : function(){
 		// ビュー座標変換行列
 		if( this._view_mat != null ){
-			_glu.set( _glu.utMatrix( this._view_mat ) );
+			// カメラ位置を中心にY軸回転（左目）
+			_glu.setIdentity();
 			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
+			_glu.multiply( _glu.utMatrix( this._view_mat ) );
 			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
 
 			// スプライト用
 			_glu.setViewMatrix();
+			_glu.setIdentity();
 			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
+			_glu.multiply( _glu.viewMatrix() );
 			_glu.translate( this._position_x, this._position_y, this._position_z );
 			_glu.transpose();
 			_glu.setLookMatrix();
@@ -94,13 +98,17 @@ _GLStereo.prototype = {
 
 		// ビュー座標変換行列
 		if( this._view_mat != null ){
-			_glu.set( _glu.utMatrix( this._view_mat ) );
+			// カメラ位置を中心にY軸回転（右目）
+			_glu.setIdentity();
 			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
+			_glu.multiply( _glu.utMatrix( this._view_mat ) );
 			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
 
 			// スプライト用
 			_glu.setViewMatrix();
+			_glu.setIdentity();
 			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
+			_glu.multiply( _glu.viewMatrix() );
 			_glu.translate( this._position_x, this._position_y, this._position_z );
 			_glu.transpose();
 			_glu.setLookMatrix();

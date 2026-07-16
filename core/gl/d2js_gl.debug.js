@@ -1211,11 +1211,14 @@ _GLStereo.prototype = {
 	},
 	draw : function(){
 		if( this._view_mat != null ){
-			_glu.set( _glu.utMatrix( this._view_mat ) );
+			_glu.setIdentity();
 			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
+			_glu.multiply( _glu.utMatrix( this._view_mat ) );
 			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
 			_glu.setViewMatrix();
+			_glu.setIdentity();
 			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
+			_glu.multiply( _glu.viewMatrix() );
 			_glu.translate( this._position_x, this._position_y, this._position_z );
 			_glu.transpose();
 			_glu.setLookMatrix();
@@ -1223,11 +1226,14 @@ _GLStereo.prototype = {
 		this._left = true;
 		glStereoDraw( _gl, _glu, this._left );
 		if( this._view_mat != null ){
-			_glu.set( _glu.utMatrix( this._view_mat ) );
+			_glu.setIdentity();
 			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
+			_glu.multiply( _glu.utMatrix( this._view_mat ) );
 			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
 			_glu.setViewMatrix();
+			_glu.setIdentity();
 			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
+			_glu.multiply( _glu.viewMatrix() );
 			_glu.translate( this._position_x, this._position_y, this._position_z );
 			_glu.transpose();
 			_glu.setLookMatrix();
