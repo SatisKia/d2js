@@ -102,6 +102,12 @@ function _GLUtility(){
 	this.position_x = 0.0;
 	this.position_y = 0.0;
 	this.position_z = 0.0;
+	this.look_x = 0.0;
+	this.look_y = 0.0;
+	this.look_z = 0.0;
+	this.up_x = 0.0;
+	this.up_y = 1.0;
+	this.up_z = 0.0;
 	this.look_side = new Array( 3 );
 	this.look_mat = new Array( 16 );
 	this.view_mat = new Array( 16 );
@@ -600,6 +606,12 @@ _GLUtility.prototype = {
 		this.position_x = position_x;
 		this.position_y = position_y;
 		this.position_z = position_z;
+		this.look_x = look_x;
+		this.look_y = look_y;
+		this.look_z = look_z;
+		this.up_x = up_x;
+		this.up_y = up_y;
+		this.up_z = up_z;
 		look_x -= this.position_x;
 		look_y -= this.position_y;
 		look_z -= this.position_z;
@@ -979,6 +991,24 @@ _GLUtility.prototype = {
 	},
 	positionZ : function(){
 		return this.position_z;
+	},
+	lookX : function(){
+		return this.look_x;
+	},
+	lookY : function(){
+		return this.look_y;
+	},
+	lookZ : function(){
+		return this.look_z;
+	},
+	upX : function(){
+		return this.up_x;
+	},
+	upY : function(){
+		return this.up_y;
+	},
+	upZ : function(){
+		return this.up_z;
 	},
 	projectX : function(){
 		return this.project_x;

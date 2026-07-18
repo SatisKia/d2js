@@ -13,10 +13,15 @@ function _GLStereo( x, y, width, height ){
 	this._angle = 0.0;
 	this._left = true;
 
-	// スプライト用
 	this._position_x = 0.0;
 	this._position_y = 0.0;
 	this._position_z = 0.0;
+	this._look_x = 0.0;
+	this._look_y = 0.0;
+	this._look_z = 0.0;
+	this._up_x = 0.0;
+	this._up_y = 1.0;
+	this._up_z = 0.0;
 }
 
 _GLStereo.prototype = {
@@ -37,10 +42,15 @@ _GLStereo.prototype = {
 		this._view_mat = mat;
 		this._angle = angle;
 
-		// スプライト用
 		this._position_x = _glu.positionX();
 		this._position_y = _glu.positionY();
 		this._position_z = _glu.positionZ();
+		this._look_x = _glu.lookX();
+		this._look_y = _glu.lookY();
+		this._look_z = _glu.lookZ();
+		this._up_x = _glu.upX();
+		this._up_y = _glu.upY();
+		this._up_z = _glu.upZ();
 	},
 
 	clear : function( mask ){
@@ -74,23 +84,29 @@ _GLStereo.prototype = {
 		}
 	},
 
+	_setMatrix : function( angle ){
+		// 注視点を中心にY軸回転してカメラ位置を移動し、同じ注視点を見続ける
+		var a = _glu.deg2rad( angle );
+		var c = Math.cos( a );
+		var s = Math.sin( a );
+		var dx = this._position_x - this._look_x;
+		var dz = this._position_z - this._look_z;
+		var x = this._look_x + dx * c - dz * s;
+		var y = this._position_y;
+		var z = this._look_z + dx * s + dz * c;
+		_glu.lookAt( x, y, z, this._look_x, this._look_y, this._look_z, this._up_x, this._up_y, this._up_z );
+		glStereoSetViewMatrix( _gl, _glu.glMatrix() );
+		_glu.setViewMatrix();
+		_glu.setIdentity();
+		_glu.multiply( _glu.viewMatrix() );
+		_glu.translate( x, y, z );
+		_glu.transpose();
+		_glu.setLookMatrix();
+	},
 	draw : function(){
 		// ビュー座標変換行列
 		if( this._view_mat != null ){
-			// カメラ位置を中心にY軸回転（左目）
-			_glu.setIdentity();
-			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
-			_glu.multiply( _glu.utMatrix( this._view_mat ) );
-			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
-
-			// スプライト用
-			_glu.setViewMatrix();
-			_glu.setIdentity();
-			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
-			_glu.multiply( _glu.viewMatrix() );
-			_glu.translate( this._position_x, this._position_y, this._position_z );
-			_glu.transpose();
-			_glu.setLookMatrix();
+			this._setMatrix( -this._angle );
 		}
 
 		this._left = true;
@@ -98,20 +114,7 @@ _GLStereo.prototype = {
 
 		// ビュー座標変換行列
 		if( this._view_mat != null ){
-			// カメラ位置を中心にY軸回転（右目）
-			_glu.setIdentity();
-			_glu.rotate( this._angle, 0.0, 1.0, 0.0 );
-			_glu.multiply( _glu.utMatrix( this._view_mat ) );
-			glStereoSetViewMatrix( _gl, _glu.glMatrix() );
-
-			// スプライト用
-			_glu.setViewMatrix();
-			_glu.setIdentity();
-			_glu.rotate( -this._angle, 0.0, 1.0, 0.0 );
-			_glu.multiply( _glu.viewMatrix() );
-			_glu.translate( this._position_x, this._position_y, this._position_z );
-			_glu.transpose();
-			_glu.setLookMatrix();
+			this._setMatrix( this._angle );
 		}
 
 		this._left = false;
